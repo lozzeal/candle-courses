@@ -1273,7 +1273,7 @@ html, body {
       </div>
 
 
-      <a href="#" class="hero__cta">Обрати курс та отримати доступ</a>
+      <a href="#courses" class="hero__cta">Обрати курс та отримати доступ</a>
       <p class="hero__note">* місця обмежені, акційна пропозиція діє недовго</p>
     </div>
 
@@ -1772,7 +1772,7 @@ html, body {
 }
 </style>
 
-<section class="courses">
+<section class="courses" id="courses">
   <div class="petal" style="top: 30px; right: -30px; transform: rotate(-40deg); width: 200px; height: 200px;"></div>
   <div class="petal" style="bottom: 60px; left: -30px; transform: rotate(120deg); width: 200px; height: 200px;"></div>
   <div class="courses__inner">
@@ -1802,7 +1802,7 @@ html, body {
           <li>як уникати проблем із запахом, кольором і текстурою</li>
           <li>як зробити таємний напис у свічці, який проявляється при запалюванні</li>
         </ul>
-        <a href="#" class="course-card__cta">Обрати цей курс</a>
+        <a href="#modal-course-1" class="course-card__cta">Обрати цей курс</a>
       </div>
 
       <div class="course-card">
@@ -1824,15 +1824,15 @@ html, body {
           <li>як зробити, щоб кольори не змішувались</li>
           <li>підбір ароматів для десертних свічок</li>
         </ul>
-        <a href="#" class="course-card__cta">Обрати цей курс</a>
+        <a href="#modal-course-2" class="course-card__cta">Обрати цей курс</a>
       </div>
 
       <div class="course-card">
         <img class="course-card__photo" src="assets/course-3-7b7b4a75.jpg" alt="">
         <h3 class="course-card__title">Гіпсові та бетонні вироби</h3>
         <span class="course-card__badge">20 відеоуроків</span>
+        <p class="course-card__subhead">Освоїмо техніки:</p>
         <ul class="course-card__list">
-          <li>тара для свічок з гіпсу та бетону</li>
           <li>золотий мармур</li>
           <li>тераццо</li>
           <li>текстурні поверхні</li>
@@ -1843,7 +1843,7 @@ html, body {
           <li>мармур</li>
           <li>бархатне покриття</li>
         </ul>
-        <p class="course-card__subhead">Освоїмо техніки:</p>
+        <p style="margin:0 0 10px;"></p>
         <ul class="course-card__list">
           <li>навчитесь виготовляти гіпсову та бетонну тару</li>
           <li>правильно обробляти та декорувати вироби</li>
@@ -1854,7 +1854,7 @@ html, body {
           <li>підбір матеріалів і лаків</li>
           <li>тест декоративних матеріалів</li>
         </ul>
-        <a href="#" class="course-card__cta">Обрати цей курс</a>
+        <a href="#modal-course-3" class="course-card__cta">Обрати цей курс</a>
       </div>
 
       <div class="course-card">
@@ -1876,7 +1876,7 @@ html, body {
           <li>Як уникнути окислення і позеленіння поталі</li>
           <li>Все про роботу з восками: вибір воску, фарбування та ароматизація</li>
         </ul>
-        <a href="#" class="course-card__cta">Обрати цей курс</a>
+        <a href="#modal-course-4" class="course-card__cta">Обрати цей курс</a>
       </div>
 
       <div class="course-card">
@@ -1890,7 +1890,7 @@ html, body {
           <li>отримувати заявки без таргетолога</li>
           <li>просувати свої вироби та послуги самостійно</li>
         </ul>
-        <a href="#" class="course-card__cta">Отримати мінікурс</a>
+        <a href="#modal-course-5" class="course-card__cta">Отримати мінікурс</a>
       </div>
 
     </div>
@@ -2294,7 +2294,7 @@ html, body {
     </div>
 
     <div class="gives__cta-wrap">
-      <a href="#" class="gives__cta">Отримати доступ</a>
+      <a href="#modal-gives" class="gives__cta">Отримати доступ</a>
       <p class="gives__note">кількість місць обмежена</p>
     </div>
   </div>
@@ -2324,50 +2324,51 @@ html, body {
 }
 .reviews__title--accent { color: #38A30D; }
 .reviews__gallery-wrap {
-  position: relative;
-  padding: 0 32px;
+  overflow: hidden;
+  padding: 6px 0 24px;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
 }
 .reviews__gallery {
   display: flex;
   gap: 18px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  padding: 6px 4px 22px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(56, 163, 13, 0.4) rgba(56, 163, 13, 0.08);
+  width: max-content;
+  animation: reviews-marquee 55s linear infinite;
 }
-.reviews__gallery::-webkit-scrollbar { height: 6px; }
-.reviews__gallery::-webkit-scrollbar-track { background: rgba(56, 163, 13, 0.08); border-radius: 3px; }
-.reviews__gallery::-webkit-scrollbar-thumb { background: rgba(56, 163, 13, 0.45); border-radius: 3px; }
+.reviews__gallery:hover {
+  animation-play-state: paused;
+}
+@keyframes reviews-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
 .reviews__item {
   flex: 0 0 auto;
-  width: 280px;
+  width: 260px;
   aspect-ratio: 9 / 16;
-  scroll-snap-align: start;
   border-radius: 22px;
   overflow: hidden;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.10);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.10);
   background: #fff;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
 }
 .reviews__item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.14);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.16);
 }
 .reviews__item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  pointer-events: none;
 }
 @media (max-width: 768px) {
   .reviews { padding: 40px 0; }
   .reviews__title { margin: 0 16px 24px; font-size: clamp(26px, 7vw, 36px); }
-  .reviews__gallery-wrap { padding: 0 0 0 16px; }
-  .reviews__gallery { gap: 12px; padding: 6px 0 18px; }
-  .reviews__item { width: 220px; border-radius: 18px; }
-  .reviews__gallery > .reviews__item:last-child { margin-right: 16px; }
+  .reviews__gallery { gap: 12px; animation-duration: 40s; }
+  .reviews__item { width: 200px; border-radius: 16px; }
 }
 </style>
 
@@ -2377,20 +2378,34 @@ html, body {
   <div class="reviews__inner">
     <h2 class="reviews__title">Відгуки <span class="reviews__title--accent">наших учнів</span></h2>
     <div class="reviews__gallery-wrap">
-      <div class="reviews__gallery">
-      <div class="reviews__item"><img src="assets/review-01.jpg" alt="Відгук учениці 1" loading="lazy"></div>
-      <div class="reviews__item"><img src="assets/review-02.jpg" alt="Відгук учениці 2" loading="lazy"></div>
-      <div class="reviews__item"><img src="assets/review-03.jpg" alt="Відгук учениці 3" loading="lazy"></div>
-      <div class="reviews__item"><img src="assets/review-04.jpg" alt="Відгук учениці 4" loading="lazy"></div>
-      <div class="reviews__item"><img src="assets/review-05.jpg" alt="Відгук учениці 5" loading="lazy"></div>
-      <div class="reviews__item"><img src="assets/review-06.jpg" alt="Відгук учениці 6" loading="lazy"></div>
-      <div class="reviews__item"><img src="assets/review-07.jpg" alt="Відгук учениці 7" loading="lazy"></div>
-      <div class="reviews__item"><img src="assets/review-08.jpg" alt="Відгук учениці 8" loading="lazy"></div>
-      <div class="reviews__item"><img src="assets/review-09.jpg" alt="Відгук учениці 9" loading="lazy"></div>
-      <div class="reviews__item"><img src="assets/review-10.jpg" alt="Відгук учениці 10" loading="lazy"></div>
-      <div class="reviews__item"><img src="assets/review-11.jpg" alt="Відгук учениці 11" loading="lazy"></div>
-      <div class="reviews__item"><img src="assets/review-12.jpg" alt="Відгук учениці 12" loading="lazy"></div>
-      <div class="reviews__item"><img src="assets/review-13.jpg" alt="Відгук учениці 13" loading="lazy"></div>
+      <div class="reviews__gallery" aria-label="Відгуки учениць">
+        <div class="reviews__item"><img src="assets/review-01.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item"><img src="assets/review-02.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item"><img src="assets/review-03.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item"><img src="assets/review-04.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item"><img src="assets/review-05.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item"><img src="assets/review-06.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item"><img src="assets/review-07.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item"><img src="assets/review-08.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item"><img src="assets/review-09.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item"><img src="assets/review-10.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item"><img src="assets/review-11.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item"><img src="assets/review-12.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item"><img src="assets/review-13.jpg" alt="" loading="lazy"></div>
+        <!-- дублікат для безшовної петлі -->
+        <div class="reviews__item" aria-hidden="true"><img src="assets/review-01.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item" aria-hidden="true"><img src="assets/review-02.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item" aria-hidden="true"><img src="assets/review-03.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item" aria-hidden="true"><img src="assets/review-04.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item" aria-hidden="true"><img src="assets/review-05.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item" aria-hidden="true"><img src="assets/review-06.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item" aria-hidden="true"><img src="assets/review-07.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item" aria-hidden="true"><img src="assets/review-08.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item" aria-hidden="true"><img src="assets/review-09.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item" aria-hidden="true"><img src="assets/review-10.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item" aria-hidden="true"><img src="assets/review-11.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item" aria-hidden="true"><img src="assets/review-12.jpg" alt="" loading="lazy"></div>
+        <div class="reviews__item" aria-hidden="true"><img src="assets/review-13.jpg" alt="" loading="lazy"></div>
       </div>
     </div>
   </div>
@@ -2491,7 +2506,560 @@ html, body {
   .faq__icon::after { height: 10px; }
   .faq__answer { padding: 0 18px 14px; font-size: 13px; }
 }
+
+/* ===== МАГАЗИН ===== */
+.shop {
+  background: var(--color-bg);
+  padding: 72px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.shop__inner { max-width: 1200px; margin: 0 auto; }
+.shop__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(28px, 4vw, 48px);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.shop__title--accent { color: #9EE86A; }
+.shop__lead { font-size: 15px; color: rgba(255,255,255,0.75); margin-bottom: 48px; }
+
+.shop__category { margin-bottom: 52px; }
+.shop__category-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: 22px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #fff;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(255,255,255,0.3);
+}
+.shop__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.product-card {
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+  border: 1.5px solid rgba(56,163,13,0.12);
+  display: flex;
+  flex-direction: column;
+}
+.product-card__photo {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+.product-card__photo-placeholder {
+  width: 100%;
+  height: 220px;
+  background: linear-gradient(135deg, #f5f0ee, #ede5e0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+}
+.product-card__photo-placeholder svg { opacity: 0.3; }
+.product-card__photo-hint { font-size: 12px; color: #aaa; text-align: center; }
+
+.product-card__body {
+  padding: 16px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.product-card__name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: #262626;
+  margin-bottom: 4px;
+}
+.product-card__desc {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+.product-card__colors {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.product-card__colors-label { font-size: 11px; color: #aaa; margin-right: 2px; }
+.color-radio { display: none; }
+.color-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  display: inline-block;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  transition: transform 0.15s, border-color 0.15s;
+}
+.color-radio:checked + .color-dot {
+  border-color: #38A30D;
+  transform: scale(1.2);
+}
+.product-card__price {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-top: auto;
+  margin-bottom: 14px;
+}
+
+/* Швидке замовлення — розкривається через <details> */
+.quick-order { margin-top: 0; }
+.quick-order > summary {
+  list-style: none;
+  background: linear-gradient(180deg,#49C318,#38A30D);
+  color: #fff;
+  text-align: center;
+  padding: 11px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+.quick-order > summary::-webkit-details-marker { display: none; }
+.quick-order[open] > summary { border-radius: 12px 12px 0 0; }
+.quick-order__form {
+  background: #f9f6f4;
+  border: 1.5px solid rgba(56,163,13,0.15);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  padding: 14px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Поля форм */
+.form-field { display: flex; flex-direction: column; gap: 3px; }
+.form-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: #999; }
+.form-input {
+  padding: 8px 10px;
+  border: 1.5px solid #e0dbd8;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #262626;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  background: #fff;
+}
+.form-input:focus { border-color: #38A30D; }
+textarea.form-input { resize: vertical; min-height: 60px; }
+.form-submit {
+  background: linear-gradient(180deg,#49C318,#38A30D);
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 2px;
+}
+
+/* Повне оформлення */
+.shop__full-order {
+  background: linear-gradient(135deg, #FFE5E0, #FFD9D2);
+  border-radius: 28px;
+  padding: 40px 44px;
+  margin-top: 12px;
+}
+.shop__full-order-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: 28px;
+  color: #262626;
+  margin-bottom: 4px;
+}
+.shop__full-order-sub { font-size: 14px; color: #666; margin-bottom: 24px; }
+.full-order-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.full-order-grid .form-field--wide { grid-column: 1 / -1; }
+.full-order-grid .form-submit {
+  grid-column: 1 / -1;
+  padding: 14px;
+  font-size: 15px;
+  border-radius: 14px;
+}
+
+/* Друга кнопка картки товару */
+.product-card__btn-secondary {
+  display: block;
+  text-align: center;
+  padding: 11px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  background: #3D2E2A;
+  color: #fff;
+  margin-top: 8px;
+  transition: background 0.18s;
+}
+.product-card__btn-secondary:hover { background: #2a1f1c; }
+
+/* ===== МОДАЛКИ (CSS :target) ===== */
+body:has(.modal:target) { overflow: hidden; }
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal:target { display: flex; }
+
+.modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(38,28,24,0.6);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+.modal__box {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 24px;
+  padding: 36px 32px 32px;
+  width: 100%;
+  max-width: 460px;
+  max-height: 92vh;
+  overflow-y: auto;
+}
+.modal__close-bg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  cursor: pointer;
+  text-decoration: none;
+}
+.modal__close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  font-size: 22px;
+  line-height: 1;
+  color: #bbb;
+  text-decoration: none;
+  z-index: 2;
+  transition: color 0.15s;
+}
+.modal__close:hover { color: #262626; }
+.modal__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: 24px;
+  color: #262626;
+  margin-bottom: 4px;
+}
+.modal__sub { font-size: 13px; color: #888; margin-bottom: 22px; line-height: 1.5; }
+.modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.modal__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.modal__grid .form-field--wide { grid-column: 1 / -1; }
+.modal__grid .form-submit { grid-column: 1 / -1; padding: 14px; font-size: 15px; border-radius: 14px; }
+
+@media (max-width: 768px) {
+  .shop { padding: 48px 16px; }
+  .shop__grid { grid-template-columns: 1fr; gap: 16px; }
+  .product-card__photo,
+  .product-card__photo-placeholder { height: 200px; }
+  .shop__full-order { padding: 24px 18px; }
+  .full-order-grid { grid-template-columns: 1fr; }
+  .full-order-grid .form-field--wide { grid-column: 1; }
+  .full-order-grid .form-submit { grid-column: 1; }
+  .modal__box { padding: 28px 18px 24px; }
+  .modal__grid { grid-template-columns: 1fr; }
+  .modal__grid .form-field--wide { grid-column: 1; }
+  .modal__grid .form-submit { grid-column: 1; }
+}
 </style>
+
+<section class="shop" id="shop">
+  <div class="shop__inner">
+    <h2 class="shop__title">Магазин — <span class="shop__title--accent">товари</span></h2>
+    <p class="shop__lead">Готові вироби ручної роботи. Оберіть колір і оформіть замовлення прямо тут.</p>
+
+    <!-- ── Категорія: Свічки ── -->
+    <div class="shop__category">
+      <h3 class="shop__category-title">Свічки</h3>
+      <div class="shop__grid">
+
+        <div class="product-card">
+          <img class="product-card__photo" src="https://images.unsplash.com/photo-1561212856-44e9bae482aa?w=400&h=220&fit=crop&q=80" alt="Свічка">
+          <div class="product-card__body">
+            <p class="product-card__name">Назва виробу</p>
+            <p class="product-card__desc">матеріал · розмір · короткий опис</p>
+            <div class="product-card__colors">
+              <span class="product-card__colors-label">Колір:</span>
+              <input class="color-radio" type="radio" name="c1" id="c1a" checked><!-- p1 -->
+              <label class="color-dot" for="c1a" style="background:#F5F0E8;" title="Слонова кістка"></label>
+              <input class="color-radio" type="radio" name="c1" id="c1b">
+              <label class="color-dot" for="c1b" style="background:#F2B8B0;" title="Рожевий"></label>
+              <input class="color-radio" type="radio" name="c1" id="c1c">
+              <label class="color-dot" for="c1c" style="background:#A8C5A0;" title="Шавлія"></label>
+            </div>
+            <p class="product-card__price">___ ₴</p>
+            <details class="quick-order">
+              <summary>Швидке замовлення</summary>
+              <form class="quick-order__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+                <input type="hidden" name="Товар" value="Свічка — Назва виробу">
+                <div class="form-field">
+                  <label class="form-label" for="s1n">Ім'я</label>
+                  <input class="form-input" id="s1n" type="text" name="Імʼя" placeholder="Ваше ім'я" required>
+                </div>
+                <div class="form-field">
+                  <label class="form-label" for="s1p">Телефон</label>
+                  <input class="form-input" id="s1p" type="tel" name="Телефон" placeholder="+380..." required>
+                </div>
+                <div class="form-field">
+                  <label class="form-label" for="s1e">Email</label>
+                  <input class="form-input" id="s1e" type="email" name="Email" placeholder="email@...">
+                </div>
+                <button class="form-submit" type="submit">Надіслати</button>
+              </form>
+            </details>
+            <a href="#modal-product-1" class="product-card__btn-secondary">Замовити</a>
+          </div>
+        </div>
+
+        <div class="product-card">
+          <img class="product-card__photo" src="https://images.unsplash.com/photo-1528351655744-27cc30462816?w=400&h=220&fit=crop&q=80" alt="Свічка">
+          <div class="product-card__body">
+            <p class="product-card__name">Назва виробу</p>
+            <p class="product-card__desc">матеріал · розмір · короткий опис</p>
+            <div class="product-card__colors">
+              <span class="product-card__colors-label">Колір:</span>
+              <input class="color-radio" type="radio" name="c2" id="c2a" checked>
+              <label class="color-dot" for="c2a" style="background:#fff;box-shadow:0 0 0 1px #ddd;" title="Білий"></label>
+              <input class="color-radio" type="radio" name="c2" id="c2b">
+              <label class="color-dot" for="c2b" style="background:#3A3A3A;" title="Чорний"></label>
+              <input class="color-radio" type="radio" name="c2" id="c2c">
+              <label class="color-dot" for="c2c" style="background:#C4704A;" title="Теракота"></label>
+            </div>
+            <p class="product-card__price">___ ₴</p>
+            <details class="quick-order">
+              <summary>Швидке замовлення</summary>
+              <form class="quick-order__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+                <input type="hidden" name="Товар" value="Свічка — Назва виробу 2">
+                <div class="form-field">
+                  <label class="form-label" for="s2n">Ім'я</label>
+                  <input class="form-input" id="s2n" type="text" name="Імʼя" placeholder="Ваше ім'я" required>
+                </div>
+                <div class="form-field">
+                  <label class="form-label" for="s2p">Телефон</label>
+                  <input class="form-input" id="s2p" type="tel" name="Телефон" placeholder="+380..." required>
+                </div>
+                <div class="form-field">
+                  <label class="form-label" for="s2e">Email</label>
+                  <input class="form-input" id="s2e" type="email" name="Email" placeholder="email@...">
+                </div>
+                <button class="form-submit" type="submit">Надіслати</button>
+              </form>
+            </details>
+            <a href="#modal-product-2" class="product-card__btn-secondary">Замовити</a>
+          </div>
+        </div>
+
+        <div class="product-card">
+          <img class="product-card__photo" src="https://images.unsplash.com/photo-1601922046210-41e129a3e64a?w=400&h=220&fit=crop&q=80" alt="Свічка">
+          <div class="product-card__body">
+            <p class="product-card__name">Назва виробу</p>
+            <p class="product-card__desc">матеріал · розмір · короткий опис</p>
+            <div class="product-card__colors">
+              <span class="product-card__colors-label">Колір:</span>
+              <input class="color-radio" type="radio" name="c3" id="c3a" checked>
+              <label class="color-dot" for="c3a" style="background:#E8D5C4;" title="Нюд"></label>
+              <input class="color-radio" type="radio" name="c3" id="c3b">
+              <label class="color-dot" for="c3b" style="background:#B8A0B8;" title="Пилова слива"></label>
+              <input class="color-radio" type="radio" name="c3" id="c3c">
+              <label class="color-dot" for="c3c" style="background:#D4C5A9;" title="Латте"></label>
+            </div>
+            <p class="product-card__price">___ ₴</p>
+            <details class="quick-order">
+              <summary>Швидке замовлення</summary>
+              <form class="quick-order__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+                <input type="hidden" name="Товар" value="Свічка — Назва виробу 3">
+                <div class="form-field">
+                  <label class="form-label" for="s3n">Ім'я</label>
+                  <input class="form-input" id="s3n" type="text" name="Імʼя" placeholder="Ваше ім'я" required>
+                </div>
+                <div class="form-field">
+                  <label class="form-label" for="s3p">Телефон</label>
+                  <input class="form-input" id="s3p" type="tel" name="Телефон" placeholder="+380..." required>
+                </div>
+                <div class="form-field">
+                  <label class="form-label" for="s3e">Email</label>
+                  <input class="form-input" id="s3e" type="email" name="Email" placeholder="email@...">
+                </div>
+                <button class="form-submit" type="submit">Надіслати</button>
+              </form>
+            </details>
+            <a href="#modal-product-3" class="product-card__btn-secondary">Замовити</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- /Свічки -->
+
+    <!-- ── Категорія: Аромапродукти ── -->
+    <div class="shop__category">
+      <h3 class="shop__category-title">Аромапродукти</h3>
+      <div class="shop__grid">
+
+        <div class="product-card">
+          <img class="product-card__photo" src="https://images.unsplash.com/photo-1640095889747-2090ee12fa7d?w=400&h=220&fit=crop&q=80" alt="Аромапродукт">
+          <div class="product-card__body">
+            <p class="product-card__name">Назва виробу</p>
+            <p class="product-card__desc">матеріал · об'єм · аромат</p>
+            <div class="product-card__colors">
+              <span class="product-card__colors-label">Аромат:</span>
+              <input class="color-radio" type="radio" name="c4" id="c4a" checked>
+              <label class="color-dot" for="c4a" style="background:#F9E4C8;" title="Ваніль"></label>
+              <input class="color-radio" type="radio" name="c4" id="c4b">
+              <label class="color-dot" for="c4b" style="background:#D4EAC8;" title="Евкаліпт"></label>
+              <input class="color-radio" type="radio" name="c4" id="c4c">
+              <label class="color-dot" for="c4c" style="background:#F5D0D0;" title="Троянда"></label>
+            </div>
+            <p class="product-card__price">___ ₴</p>
+            <details class="quick-order">
+              <summary>Швидке замовлення</summary>
+              <form class="quick-order__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+                <input type="hidden" name="Товар" value="Аромапродукт — Назва виробу">
+                <div class="form-field">
+                  <label class="form-label" for="a1n">Ім'я</label>
+                  <input class="form-input" id="a1n" type="text" name="Імʼя" placeholder="Ваше ім'я" required>
+                </div>
+                <div class="form-field">
+                  <label class="form-label" for="a1p">Телефон</label>
+                  <input class="form-input" id="a1p" type="tel" name="Телефон" placeholder="+380..." required>
+                </div>
+                <div class="form-field">
+                  <label class="form-label" for="a1e">Email</label>
+                  <input class="form-input" id="a1e" type="email" name="Email" placeholder="email@...">
+                </div>
+                <button class="form-submit" type="submit">Надіслати</button>
+              </form>
+            </details>
+            <a href="#modal-product-4" class="product-card__btn-secondary">Замовити</a>
+          </div>
+        </div>
+
+        <div class="product-card">
+          <img class="product-card__photo" src="https://images.unsplash.com/photo-1612293905607-b003de9e54fb?w=400&h=220&fit=crop&q=80" alt="Аромапродукт">
+          <div class="product-card__body">
+            <p class="product-card__name">Назва виробу</p>
+            <p class="product-card__desc">матеріал · об'єм · аромат</p>
+            <div class="product-card__colors">
+              <span class="product-card__colors-label">Аромат:</span>
+              <input class="color-radio" type="radio" name="c5" id="c5a" checked>
+              <label class="color-dot" for="c5a" style="background:#E8E0F5;" title="Лаванда"></label>
+              <input class="color-radio" type="radio" name="c5" id="c5b">
+              <label class="color-dot" for="c5b" style="background:#FFF0C8;" title="Цитрус"></label>
+            </div>
+            <p class="product-card__price">___ ₴</p>
+            <details class="quick-order">
+              <summary>Швидке замовлення</summary>
+              <form class="quick-order__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+                <input type="hidden" name="Товар" value="Аромапродукт — Назва виробу 2">
+                <div class="form-field">
+                  <label class="form-label" for="a2n">Ім'я</label>
+                  <input class="form-input" id="a2n" type="text" name="Імʼя" placeholder="Ваше ім'я" required>
+                </div>
+                <div class="form-field">
+                  <label class="form-label" for="a2p">Телефон</label>
+                  <input class="form-input" id="a2p" type="tel" name="Телефон" placeholder="+380..." required>
+                </div>
+                <div class="form-field">
+                  <label class="form-label" for="a2e">Email</label>
+                  <input class="form-input" id="a2e" type="email" name="Email" placeholder="email@...">
+                </div>
+                <button class="form-submit" type="submit">Надіслати</button>
+              </form>
+            </details>
+            <a href="#modal-product-5" class="product-card__btn-secondary">Замовити</a>
+          </div>
+        </div>
+
+        <div class="product-card">
+          <img class="product-card__photo" src="https://images.unsplash.com/photo-1537948756265-406a522f1a45?w=400&h=220&fit=crop&q=80" alt="Аромапродукт">
+          <div class="product-card__body">
+            <p class="product-card__name">Назва виробу</p>
+            <p class="product-card__desc">матеріал · об'єм · аромат</p>
+            <div class="product-card__colors">
+              <span class="product-card__colors-label">Аромат:</span>
+              <input class="color-radio" type="radio" name="c6" id="c6a" checked>
+              <label class="color-dot" for="c6a" style="background:#F5ECD4;" title="Сандал"></label>
+              <input class="color-radio" type="radio" name="c6" id="c6b">
+              <label class="color-dot" for="c6b" style="background:#D8EEE8;" title="М'ята"></label>
+              <input class="color-radio" type="radio" name="c6" id="c6c">
+              <label class="color-dot" for="c6c" style="background:#F0D8E8;" title="Піон"></label>
+            </div>
+            <p class="product-card__price">___ ₴</p>
+            <details class="quick-order">
+              <summary>Швидке замовлення</summary>
+              <form class="quick-order__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+                <input type="hidden" name="Товар" value="Аромапродукт — Назва виробу 3">
+                <div class="form-field">
+                  <label class="form-label" for="a3n">Ім'я</label>
+                  <input class="form-input" id="a3n" type="text" name="Імʼя" placeholder="Ваше ім'я" required>
+                </div>
+                <div class="form-field">
+                  <label class="form-label" for="a3p">Телефон</label>
+                  <input class="form-input" id="a3p" type="tel" name="Телефон" placeholder="+380..." required>
+                </div>
+                <div class="form-field">
+                  <label class="form-label" for="a3e">Email</label>
+                  <input class="form-input" id="a3e" type="email" name="Email" placeholder="email@...">
+                </div>
+                <button class="form-submit" type="submit">Надіслати</button>
+              </form>
+            </details>
+            <a href="#modal-product-6" class="product-card__btn-secondary">Замовити</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- /Аромапродукти -->
+
+  </div>
+</section>
 
 <section class="faq">
   <div class="petal" style="top: 40px; left: -30px; transform: rotate(80deg); width: 200px; height: 200px;"></div>
@@ -2538,6 +3106,476 @@ html, body {
 <img class="petal-decor" src="assets/petals-2.png" style="position:absolute;top:7065px;left:1025px;width:150px;height:150px;transform:rotate(0deg);pointer-events:none;z-index:5;" alt="">
 <img class="petal-decor" src="assets/petals-1.png" style="position:absolute;top:7530px;left:-43px;width:332px;height:322px;transform:rotate(30deg);pointer-events:none;z-index:5;" alt="">
 <img class="petal-decor" src="assets/petals-2.png" style="position:absolute;top:7783px;left:1228px;width:384px;height:282px;transform:rotate(-30deg);pointer-events:none;z-index:5;" alt="">
+
+<!-- Anchor для закриття модалок без стрибка сторінки -->
+<span id="x" style="position:fixed;top:0;left:0;width:0;height:0;overflow:hidden;pointer-events:none;visibility:hidden"></span>
+
+<!-- ══════════════ МОДАЛКИ КУРСІВ ══════════════ -->
+
+<div id="modal-course-1" class="modal">
+  <a href="#x" class="modal__close-bg modal__overlay"></a>
+  <div class="modal__box">
+    <a href="#x" class="modal__close" aria-label="Закрити">×</a>
+    <p class="modal__title">Свічковаріння базовий + професійний</p>
+    <p class="modal__sub">30 відеоуроків · доступ у Telegram · без дедлайнів</p>
+    <form class="modal__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+      <input type="hidden" name="Курс" value="Свічковаріння базовий + професійний">
+      <div class="modal__grid">
+        <div class="form-field"><label class="form-label">Ім'я</label><input class="form-input" type="text" name="Імʼя" placeholder="Ваше ім'я" required></div>
+        <div class="form-field"><label class="form-label">Телефон</label><input class="form-input" type="tel" name="Телефон" placeholder="+380..." required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Email</label><input class="form-input" type="email" name="Email" placeholder="email@..."></div>
+        <button class="form-submit" type="submit">Записатись на курс</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal-course-2" class="modal">
+  <a href="#x" class="modal__close-bg modal__overlay"></a>
+  <div class="modal__box">
+    <a href="#x" class="modal__close" aria-label="Закрити">×</a>
+    <p class="modal__title">Десертна свічка</p>
+    <p class="modal__sub">17 відеоуроків · доступ у Telegram · без дедлайнів</p>
+    <form class="modal__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+      <input type="hidden" name="Курс" value="Десертна свічка">
+      <div class="modal__grid">
+        <div class="form-field"><label class="form-label">Ім'я</label><input class="form-input" type="text" name="Імʼя" placeholder="Ваше ім'я" required></div>
+        <div class="form-field"><label class="form-label">Телефон</label><input class="form-input" type="tel" name="Телефон" placeholder="+380..." required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Email</label><input class="form-input" type="email" name="Email" placeholder="email@..."></div>
+        <button class="form-submit" type="submit">Записатись на курс</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal-course-3" class="modal">
+  <a href="#x" class="modal__close-bg modal__overlay"></a>
+  <div class="modal__box">
+    <a href="#x" class="modal__close" aria-label="Закрити">×</a>
+    <p class="modal__title">Гіпсові та бетонні вироби</p>
+    <p class="modal__sub">20 відеоуроків · доступ у Telegram · без дедлайнів</p>
+    <form class="modal__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+      <input type="hidden" name="Курс" value="Гіпсові та бетонні вироби">
+      <div class="modal__grid">
+        <div class="form-field"><label class="form-label">Ім'я</label><input class="form-input" type="text" name="Імʼя" placeholder="Ваше ім'я" required></div>
+        <div class="form-field"><label class="form-label">Телефон</label><input class="form-input" type="tel" name="Телефон" placeholder="+380..." required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Email</label><input class="form-input" type="email" name="Email" placeholder="email@..."></div>
+        <button class="form-submit" type="submit">Записатись на курс</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal-course-4" class="modal">
+  <a href="#x" class="modal__close-bg modal__overlay"></a>
+  <div class="modal__box">
+    <a href="#x" class="modal__close" aria-label="Закрити">×</a>
+    <p class="modal__title">Бетонна свічка</p>
+    <p class="modal__sub">14 відеоуроків · доступ у Telegram · без дедлайнів</p>
+    <form class="modal__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+      <input type="hidden" name="Курс" value="Бетонна свічка">
+      <div class="modal__grid">
+        <div class="form-field"><label class="form-label">Ім'я</label><input class="form-input" type="text" name="Імʼя" placeholder="Ваше ім'я" required></div>
+        <div class="form-field"><label class="form-label">Телефон</label><input class="form-input" type="tel" name="Телефон" placeholder="+380..." required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Email</label><input class="form-input" type="email" name="Email" placeholder="email@..."></div>
+        <button class="form-submit" type="submit">Записатись на курс</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal-course-5" class="modal">
+  <a href="#x" class="modal__close-bg modal__overlay"></a>
+  <div class="modal__box">
+    <a href="#x" class="modal__close" aria-label="Закрити">×</a>
+    <p class="modal__title">Реклама для своїх виробів</p>
+    <p class="modal__sub">Мінікурс · доступ у Telegram · без дедлайнів</p>
+    <form class="modal__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+      <input type="hidden" name="Курс" value="Реклама для своїх виробів">
+      <div class="modal__grid">
+        <div class="form-field"><label class="form-label">Ім'я</label><input class="form-input" type="text" name="Імʼя" placeholder="Ваше ім'я" required></div>
+        <div class="form-field"><label class="form-label">Телефон</label><input class="form-input" type="tel" name="Телефон" placeholder="+380..." required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Email</label><input class="form-input" type="email" name="Email" placeholder="email@..."></div>
+        <button class="form-submit" type="submit">Отримати мінікурс</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════ МОДАЛКА «ОТРИМАТИ ДОСТУП» ══════════════ -->
+
+<div id="modal-gives" class="modal">
+  <a href="#x" class="modal__close-bg modal__overlay"></a>
+  <div class="modal__box">
+    <a href="#x" class="modal__close" aria-label="Закрити">×</a>
+    <p class="modal__title">Отримати доступ</p>
+    <p class="modal__sub">Залиште контакти — ми напишемо вам з деталями та посиланням на оплату</p>
+    <form class="modal__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+      <input type="hidden" name="Джерело" value="Блок — Що ви отримуєте">
+      <div class="modal__grid">
+        <div class="form-field"><label class="form-label">Ім'я</label><input class="form-input" type="text" name="Імʼя" placeholder="Ваше ім'я" required></div>
+        <div class="form-field"><label class="form-label">Телефон</label><input class="form-input" type="tel" name="Телефон" placeholder="+380..." required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Email</label><input class="form-input" type="email" name="Email" placeholder="email@..."></div>
+        <div class="form-field form-field--wide"><label class="form-label">Який курс вас цікавить?</label><input class="form-input" type="text" name="Курс" placeholder="або залиште порожнім — підберемо разом"></div>
+        <button class="form-submit" type="submit">Надіслати заявку</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════ МОДАЛКИ ТОВАРІВ ══════════════ -->
+
+<div id="modal-product-1" class="modal">
+  <a href="#x" class="modal__close-bg modal__overlay"></a>
+  <div class="modal__box">
+    <a href="#x" class="modal__close" aria-label="Закрити">×</a>
+    <p class="modal__title">Оформити замовлення</p>
+    <p class="modal__sub">Свічки · вкажіть деталі та адресу доставки</p>
+    <form class="modal__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+      <input type="hidden" name="Товар" value="Свічка 1">
+      <div class="modal__grid">
+        <div class="form-field"><label class="form-label">Ім'я та прізвище</label><input class="form-input" type="text" name="Імʼя" placeholder="Ім'я Прізвище" required></div>
+        <div class="form-field"><label class="form-label">Телефон</label><input class="form-input" type="tel" name="Телефон" placeholder="+380..." required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Email</label><input class="form-input" type="email" name="Email" placeholder="email@..."></div>
+        <div class="form-field form-field--wide"><label class="form-label">Адреса (Нова Пошта або кур'єр)</label><input class="form-input" type="text" name="Адреса" placeholder="Місто, відділення НП або адреса" required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Колір / побажання</label><textarea class="form-input" name="Побажання" rows="2" placeholder="Колір, кількість, побажання до пакування..."></textarea></div>
+        <button class="form-submit" type="submit">Оформити замовлення</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal-product-2" class="modal">
+  <a href="#x" class="modal__close-bg modal__overlay"></a>
+  <div class="modal__box">
+    <a href="#x" class="modal__close" aria-label="Закрити">×</a>
+    <p class="modal__title">Оформити замовлення</p>
+    <p class="modal__sub">Свічки · вкажіть деталі та адресу доставки</p>
+    <form class="modal__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+      <input type="hidden" name="Товар" value="Свічка 2">
+      <div class="modal__grid">
+        <div class="form-field"><label class="form-label">Ім'я та прізвище</label><input class="form-input" type="text" name="Імʼя" placeholder="Ім'я Прізвище" required></div>
+        <div class="form-field"><label class="form-label">Телефон</label><input class="form-input" type="tel" name="Телефон" placeholder="+380..." required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Email</label><input class="form-input" type="email" name="Email" placeholder="email@..."></div>
+        <div class="form-field form-field--wide"><label class="form-label">Адреса (Нова Пошта або кур'єр)</label><input class="form-input" type="text" name="Адреса" placeholder="Місто, відділення НП або адреса" required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Колір / побажання</label><textarea class="form-input" name="Побажання" rows="2" placeholder="Колір, кількість, побажання до пакування..."></textarea></div>
+        <button class="form-submit" type="submit">Оформити замовлення</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal-product-3" class="modal">
+  <a href="#x" class="modal__close-bg modal__overlay"></a>
+  <div class="modal__box">
+    <a href="#x" class="modal__close" aria-label="Закрити">×</a>
+    <p class="modal__title">Оформити замовлення</p>
+    <p class="modal__sub">Свічки · вкажіть деталі та адресу доставки</p>
+    <form class="modal__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+      <input type="hidden" name="Товар" value="Свічка 3">
+      <div class="modal__grid">
+        <div class="form-field"><label class="form-label">Ім'я та прізвище</label><input class="form-input" type="text" name="Імʼя" placeholder="Ім'я Прізвище" required></div>
+        <div class="form-field"><label class="form-label">Телефон</label><input class="form-input" type="tel" name="Телефон" placeholder="+380..." required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Email</label><input class="form-input" type="email" name="Email" placeholder="email@..."></div>
+        <div class="form-field form-field--wide"><label class="form-label">Адреса (Нова Пошта або кур'єр)</label><input class="form-input" type="text" name="Адреса" placeholder="Місто, відділення НП або адреса" required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Колір / побажання</label><textarea class="form-input" name="Побажання" rows="2" placeholder="Колір, кількість, побажання до пакування..."></textarea></div>
+        <button class="form-submit" type="submit">Оформити замовлення</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal-product-4" class="modal">
+  <a href="#x" class="modal__close-bg modal__overlay"></a>
+  <div class="modal__box">
+    <a href="#x" class="modal__close" aria-label="Закрити">×</a>
+    <p class="modal__title">Оформити замовлення</p>
+    <p class="modal__sub">Аромапродукти · вкажіть деталі та адресу доставки</p>
+    <form class="modal__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+      <input type="hidden" name="Товар" value="Аромапродукт 1">
+      <div class="modal__grid">
+        <div class="form-field"><label class="form-label">Ім'я та прізвище</label><input class="form-input" type="text" name="Імʼя" placeholder="Ім'я Прізвище" required></div>
+        <div class="form-field"><label class="form-label">Телефон</label><input class="form-input" type="tel" name="Телефон" placeholder="+380..." required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Email</label><input class="form-input" type="email" name="Email" placeholder="email@..."></div>
+        <div class="form-field form-field--wide"><label class="form-label">Адреса (Нова Пошта або кур'єр)</label><input class="form-input" type="text" name="Адреса" placeholder="Місто, відділення НП або адреса" required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Аромат / побажання</label><textarea class="form-input" name="Побажання" rows="2" placeholder="Аромат, кількість, побажання..."></textarea></div>
+        <button class="form-submit" type="submit">Оформити замовлення</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal-product-5" class="modal">
+  <a href="#x" class="modal__close-bg modal__overlay"></a>
+  <div class="modal__box">
+    <a href="#x" class="modal__close" aria-label="Закрити">×</a>
+    <p class="modal__title">Оформити замовлення</p>
+    <p class="modal__sub">Аромапродукти · вкажіть деталі та адресу доставки</p>
+    <form class="modal__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+      <input type="hidden" name="Товар" value="Аромапродукт 2">
+      <div class="modal__grid">
+        <div class="form-field"><label class="form-label">Ім'я та прізвище</label><input class="form-input" type="text" name="Імʼя" placeholder="Ім'я Прізвище" required></div>
+        <div class="form-field"><label class="form-label">Телефон</label><input class="form-input" type="tel" name="Телефон" placeholder="+380..." required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Email</label><input class="form-input" type="email" name="Email" placeholder="email@..."></div>
+        <div class="form-field form-field--wide"><label class="form-label">Адреса (Нова Пошта або кур'єр)</label><input class="form-input" type="text" name="Адреса" placeholder="Місто, відділення НП або адреса" required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Аромат / побажання</label><textarea class="form-input" name="Побажання" rows="2" placeholder="Аромат, кількість, побажання..."></textarea></div>
+        <button class="form-submit" type="submit">Оформити замовлення</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal-product-6" class="modal">
+  <a href="#x" class="modal__close-bg modal__overlay"></a>
+  <div class="modal__box">
+    <a href="#x" class="modal__close" aria-label="Закрити">×</a>
+    <p class="modal__title">Оформити замовлення</p>
+    <p class="modal__sub">Аромапродукти · вкажіть деталі та адресу доставки</p>
+    <form class="modal__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+      <input type="hidden" name="Товар" value="Аромапродукт 3">
+      <div class="modal__grid">
+        <div class="form-field"><label class="form-label">Ім'я та прізвище</label><input class="form-input" type="text" name="Імʼя" placeholder="Ім'я Прізвище" required></div>
+        <div class="form-field"><label class="form-label">Телефон</label><input class="form-input" type="tel" name="Телефон" placeholder="+380..." required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Email</label><input class="form-input" type="email" name="Email" placeholder="email@..."></div>
+        <div class="form-field form-field--wide"><label class="form-label">Адреса (Нова Пошта або кур'єр)</label><input class="form-input" type="text" name="Адреса" placeholder="Місто, відділення НП або адреса" required></div>
+        <div class="form-field form-field--wide"><label class="form-label">Аромат / побажання</label><textarea class="form-input" name="Побажання" rows="2" placeholder="Аромат, кількість, побажання..."></textarea></div>
+        <button class="form-submit" type="submit">Оформити замовлення</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<style>
+/* ===== ФУТЕР ===== */
+.footer {
+  background: #2A1F1C;
+  color: rgba(255,255,255,0.7);
+  padding: 56px 32px 32px;
+}
+.footer__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 48px;
+}
+.footer__brand-name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+.footer__brand-desc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.55);
+  max-width: 220px;
+  margin-bottom: 24px;
+}
+.footer__social {
+  display: flex;
+  gap: 10px;
+}
+.footer__social-link {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: background 0.18s;
+  color: #fff;
+}
+.footer__social-link:hover { background: rgba(255,255,255,0.16); }
+.footer__social-link svg { display: block; }
+
+.footer__col-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 16px;
+}
+.footer__nav {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.footer__nav a {
+  color: rgba(255,255,255,0.65);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.15s;
+}
+.footer__nav a:hover { color: #fff; }
+
+.footer__contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+.footer__contact-item a {
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.footer__contact-item a:hover { color: #fff; }
+.footer__contact-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  opacity: 0.5;
+}
+
+.footer__divider {
+  max-width: 1200px;
+  margin: 40px auto 0;
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.footer__bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer__copy {
+  font-size: 12px;
+  color: rgba(255,255,255,0.3);
+}
+.footer__legal {
+  display: flex;
+  gap: 20px;
+}
+.footer__legal a {
+  font-size: 12px;
+  color: rgba(255,255,255,0.3);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.footer__legal a:hover { color: rgba(255,255,255,0.6); }
+
+@media (max-width: 900px) {
+  .footer__inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+@media (max-width: 560px) {
+  .footer { padding: 40px 16px 24px; }
+  .footer__inner { grid-template-columns: 1fr; gap: 28px; }
+  .footer__bottom { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+</style>
+
+<footer class="footer">
+  <div class="footer__inner">
+
+    <!-- Бренд -->
+    <div class="footer__col">
+      <p class="footer__brand-name">Крафт-свічки<br>та арома-професія</p>
+      <p class="footer__brand-desc">Онлайн-курси зі свічковаріння, аромапродуктів та декоративних виробів. Навчання у Telegram, без дедлайнів.</p>
+      <div class="footer__social">
+        <!-- Telegram -->
+        <a href="#" class="footer__social-link" aria-label="Telegram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M21.8 3.2L2.6 10.7c-1.3.5-1.3 1.3-.2 1.6l4.9 1.5 11.3-7.1c.5-.3 1 .1.6.5l-9.2 8.3v3.4c0 .7.5.9.9.4l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.6c.3-1.2-.5-1.8-1.9-1.3z" fill="white"/>
+          </svg>
+        </a>
+        <!-- Instagram -->
+        <a href="#" class="footer__social-link" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <rect x="2" y="2" width="20" height="20" rx="5" stroke="white" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="4.5" stroke="white" stroke-width="1.8"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="white"/>
+          </svg>
+        </a>
+        <!-- TikTok -->
+        <a href="#" class="footer__social-link" aria-label="TikTok">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M19.6 6.9A4.6 4.6 0 0115 2.3v1.4a4.6 4.6 0 004.6 4.6V6.9zM15 2.3h-2.9v13.1a2.6 2.6 0 11-2.5-2.7 2.8 2.8 0 01.8.1v-3a5.5 5.5 0 00-.8-.1 5.6 5.6 0 105.4 5.6V9.8a7.5 7.5 0 004.6 1.6V8.5A4.6 4.6 0 0115 4V2.3z" fill="white"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Навігація: Навчання -->
+    <div class="footer__col">
+      <p class="footer__col-title">Навчання</p>
+      <ul class="footer__nav">
+        <li><a href="#courses">Усі курси</a></li>
+        <li><a href="#courses">Свічковаріння</a></li>
+        <li><a href="#courses">Десертні свічки</a></li>
+        <li><a href="#courses">Гіпс та бетон</a></li>
+        <li><a href="#courses">Бетонна свічка</a></li>
+        <li><a href="#courses">Реклама виробів</a></li>
+      </ul>
+    </div>
+
+    <!-- Навігація: Сайт -->
+    <div class="footer__col">
+      <p class="footer__col-title">Сторінка</p>
+      <ul class="footer__nav">
+        <li><a href="#">Головна</a></li>
+        <li><a href="#shop">Магазин</a></li>
+        <li><a href="#courses">Ціни</a></li>
+        <li><a href="#modal-gives">Отримати доступ</a></li>
+      </ul>
+    </div>
+
+    <!-- Контакти -->
+    <div class="footer__col">
+      <p class="footer__col-title">Контакти</p>
+      <div class="footer__contact-item">
+        <svg class="footer__contact-icon" viewBox="0 0 24 24" fill="none">
+          <path d="M21.8 3.2L2.6 10.7c-1.3.5-1.3 1.3-.2 1.6l4.9 1.5 11.3-7.1c.5-.3 1 .1.6.5l-9.2 8.3v3.4c0 .7.5.9.9.4l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.6c.3-1.2-.5-1.8-1.9-1.3z" fill="currentColor"/>
+        </svg>
+        <a href="#">Написати у Telegram</a>
+      </div>
+      <div class="footer__contact-item">
+        <svg class="footer__contact-icon" viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="4" width="20" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <a href="mailto:YOUR@EMAIL.COM">YOUR@EMAIL.COM</a>
+      </div>
+      <div class="footer__contact-item">
+        <svg class="footer__contact-icon" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" fill="currentColor"/>
+        </svg>
+        Україна · онлайн
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="footer__divider">
+
+  <div class="footer__bottom">
+    <span class="footer__copy">© 2026 Крафт-свічки та арома-професія. Усі права захищені.</span>
+    <nav class="footer__legal">
+      <a href="#">Політика конфіденційності</a>
+      <a href="#">Публічна оферта</a>
+    </nav>
+  </div>
+</footer>
 
 </body>
 </html>
