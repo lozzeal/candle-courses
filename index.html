@@ -48,6 +48,9 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Щоб якірні посилання не ховались під фіксований хедер */
+section[id] { scroll-margin-top: 72px; }
+
 @media (max-width: 768px) {
   html, body {
     overflow-x: hidden !important;
@@ -58,6 +61,8 @@ html, body {
     touch-action: pan-y;
     overscroll-behavior-x: contain;
   }
+  .hero { padding-top: 56px; }
+  section[id] { scroll-margin-top: 64px; }
   section {
     overflow-x: clip;
     overflow-y: visible;
@@ -78,6 +83,7 @@ html, body {
 .hero {
   min-height: 100vh;
   min-height: 100dvh;
+  padding-top: 64px;
   display: flex;
   align-items: center;
   padding: 32px;
@@ -1227,6 +1233,234 @@ html, body {
   }
 }
 
+/* ============================================================
+   SITE HEADER
+   ============================================================ */
+.site-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 8000;
+  background: #fff;
+  border-bottom: 1px solid rgba(38,38,38,0.08);
+  box-shadow: 0 2px 16px rgba(38,38,38,0.06);
+}
+
+/* Прихований чекбокс — керує мобільним меню */
+.nav__toggle-cb { display: none; }
+
+.site-header__bar {
+  max-width: 1280px;
+  margin: 0 auto;
+  height: 64px;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Логотип */
+.site-header__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.site-header__logo-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(180deg,#49C318,#38A30D);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.site-header__logo-text {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #262626;
+  line-height: 1.1;
+}
+.site-header__logo-text span { color: #38A30D; }
+
+/* Десктоп навігація */
+.site-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+}
+.site-header__nav a {
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.site-header__nav a:hover { color: #262626; background: rgba(38,163,13,0.06); }
+
+/* CTA */
+.site-header__cta {
+  margin-left: 16px;
+  padding: 9px 20px;
+  background: linear-gradient(180deg,#49C318,#38A30D);
+  color: #fff !important;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(56,163,13,0.3);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.site-header__cta:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(56,163,13,0.4); }
+
+/* Гамбургер (тільки мобайл) */
+.nav__burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+.nav__burger span {
+  display: block;
+  height: 2px;
+  background: #262626;
+  border-radius: 2px;
+  transition: transform 0.25s, opacity 0.25s;
+}
+
+/* Drawer (мобільне меню) */
+.nav__drawer {
+  position: fixed;
+  top: 0; left: 0;
+  width: min(320px, 85vw);
+  height: 100dvh;
+  background: #fff;
+  z-index: 8100;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.nav__drawer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 16px;
+  border-bottom: 1px solid rgba(38,38,38,0.07);
+}
+.nav__drawer-logo {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: 17px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #262626;
+  text-decoration: none;
+}
+.nav__drawer-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(38,38,38,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  color: #555;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.nav__drawer-body { padding: 8px 0; flex: 1; }
+.nav__drawer-section {
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(38,38,38,0.06);
+}
+.nav__drawer-section:last-child { border-bottom: none; }
+.nav__drawer-section-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #aaa;
+  padding: 10px 20px 4px;
+}
+.nav__drawer-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #262626;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.nav__drawer-link:hover { background: rgba(38,163,13,0.05); }
+.nav__drawer-link-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(38,163,13,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.nav__drawer-cta {
+  margin: 16px 20px;
+  display: block;
+  text-align: center;
+  padding: 13px;
+  background: linear-gradient(180deg,#49C318,#38A30D);
+  color: #fff;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(56,163,13,0.3);
+}
+
+/* Overlay */
+.nav__overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(38,28,24,0.45);
+  backdrop-filter: blur(3px);
+  z-index: 8050;
+  cursor: pointer;
+}
+
+/* Стан: меню відкрите */
+.nav__toggle-cb:checked ~ .site-header__bar .nav__burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav__toggle-cb:checked ~ .site-header__bar .nav__burger span:nth-child(2) { opacity: 0; }
+.nav__toggle-cb:checked ~ .site-header__bar .nav__burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.nav__toggle-cb:checked ~ .nav__drawer { transform: translateX(0); }
+.nav__toggle-cb:checked ~ .nav__overlay { display: block; }
+
+@media (max-width: 900px) {
+  .site-header__bar { height: 56px; padding: 0 16px; }
+  .site-header__nav { display: none; }
+  .site-header__cta { display: none; }
+  .nav__burger { display: flex; }
+}
+
 </style>
 
 <style>
@@ -1235,6 +1469,117 @@ html, body {
 </style>
 </head>
 <body>
+
+<!-- ============================================================
+     SITE HEADER
+     ============================================================ -->
+<header class="site-header">
+  <input type="checkbox" id="nav-toggle" class="nav__toggle-cb">
+
+  <div class="site-header__bar">
+    <!-- Гамбургер (мобайл) -->
+    <label for="nav-toggle" class="nav__burger" aria-label="Меню">
+      <span></span><span></span><span></span>
+    </label>
+
+    <!-- Логотип -->
+    <a href="#" class="site-header__logo">
+      <span class="site-header__logo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M12 3c0 0-3 3-3 5.5a3 3 0 006 0C15 6 12 3 12 3z" fill="white"/>
+          <rect x="9" y="13" width="6" height="8" rx="1.5" fill="white" opacity=".85"/>
+        </svg>
+      </span>
+      <span class="site-header__logo-text">Свічка<span>&nbsp;UA</span></span>
+    </a>
+
+    <!-- Десктоп навігація -->
+    <nav class="site-header__nav" aria-label="Головна навігація">
+      <a href="#courses">Курси</a>
+      <a href="#benefits">Про навчання</a>
+      <a href="shop.html">Магазин</a>
+      <a href="#reviews">Відгуки</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <a href="#courses" class="site-header__cta">Обрати курс</a>
+  </div>
+
+  <!-- Мобільний drawer -->
+  <nav class="nav__drawer" aria-label="Мобільне меню">
+    <div class="nav__drawer-top">
+      <a href="#" class="nav__drawer-logo">Свічка UA</a>
+      <label for="nav-toggle" class="nav__drawer-close" aria-label="Закрити">×</label>
+    </div>
+    <div class="nav__drawer-body">
+
+      <div class="nav__drawer-section">
+        <p class="nav__drawer-section-title">Навчання</p>
+        <label for="nav-toggle">
+          <a href="#courses" class="nav__drawer-link">
+            <span class="nav__drawer-link-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3l9 4.5-9 4.5-9-4.5L12 3z" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/><path d="M3 12l9 4.5 9-4.5" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/><path d="M3 16.5l9 4.5 9-4.5" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            </span>
+            Усі курси
+          </a>
+        </label>
+        <label for="nav-toggle">
+          <a href="#benefits" class="nav__drawer-link">
+            <span class="nav__drawer-link-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="#38A30D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="#38A30D" stroke-width="1.8"/></svg>
+            </span>
+            Про навчання
+          </a>
+        </label>
+      </div>
+
+      <div class="nav__drawer-section">
+        <p class="nav__drawer-section-title">Магазин</p>
+        <label for="nav-toggle">
+          <a href="shop.html" class="nav__drawer-link">
+            <span class="nav__drawer-link-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/><line x1="3" y1="6" x2="21" y2="6" stroke="#38A30D" stroke-width="1.8"/></svg>
+            </span>
+            Свічки
+          </a>
+        </label>
+        <label for="nav-toggle">
+          <a href="shop.html" class="nav__drawer-link">
+            <span class="nav__drawer-link-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2c0 0-4 4-4 8a4 4 0 008 0c0-4-4-8-4-8z" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            </span>
+            Аромапродукти
+          </a>
+        </label>
+      </div>
+
+      <div class="nav__drawer-section">
+        <p class="nav__drawer-section-title">Сторінка</p>
+        <label for="nav-toggle">
+          <a href="#reviews" class="nav__drawer-link">
+            <span class="nav__drawer-link-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            </span>
+            Відгуки учнів
+          </a>
+        </label>
+        <label for="nav-toggle">
+          <a href="#faq" class="nav__drawer-link">
+            <span class="nav__drawer-link-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#38A30D" stroke-width="1.8"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" stroke="#38A30D" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="17" r=".5" fill="#38A30D" stroke="#38A30D"/></svg>
+            </span>
+            FAQ
+          </a>
+        </label>
+      </div>
+
+    </div>
+    <a href="#courses" class="nav__drawer-cta">Обрати курс →</a>
+  </nav>
+
+  <!-- Overlay для закриття -->
+  <label for="nav-toggle" class="nav__overlay"></label>
+</header>
 
 <section class="hero">
   <div class="petal" style="top: -40px; left: -40px; transform: rotate(20deg);"></div>
@@ -1325,7 +1670,7 @@ html, body {
 </section>
 
 
-<section class="benefits">
+<section class="benefits" id="benefits">
   <div class="petal" style="top: 130px; right: -50px; transform: rotate(45deg); width: 220px; height: 220px;"></div>
   <div class="petal" style="bottom: -30px; left: 40px; transform: rotate(-100deg) scaleX(-1);"></div>
   <div class="benefits__inner">
@@ -2372,7 +2717,7 @@ html, body {
 }
 </style>
 
-<section class="reviews">
+<section class="reviews" id="reviews">
   <div class="petal" style="top: 50px; right: -40px; transform: rotate(120deg); width: 200px; height: 200px;"></div>
   <div class="petal" style="bottom: 30px; left: -30px; transform: rotate(-30deg); width: 220px; height: 220px;"></div>
   <div class="reviews__inner">
@@ -2525,7 +2870,37 @@ html, body {
   margin-bottom: 6px;
 }
 .shop__title--accent { color: #9EE86A; }
-.shop__lead { font-size: 15px; color: rgba(255,255,255,0.75); margin-bottom: 48px; }
+.shop__lead { font-size: 15px; color: rgba(255,255,255,0.75); margin-bottom: 48px; max-width: 600px; }
+
+/* === Featured товари на лендингу === */
+.shop__featured-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px; }
+.shop-featured { display: flex; flex-direction: column; background: #fff; border-radius: 16px; overflow: hidden; text-decoration: none; color: inherit; border: 1px solid rgba(38,38,38,0.06); transition: transform 0.25s, box-shadow 0.25s; }
+.shop-featured:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(0,0,0,0.18); }
+.shop-featured__photo-wrap { position: relative; aspect-ratio: 1; overflow: hidden; background: #f5f0ee; }
+.shop-featured__photo { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s; }
+.shop-featured:hover .shop-featured__photo { transform: scale(1.05); }
+.shop-featured__tag { position: absolute; top: 10px; left: 10px; background: #38A30D; color: #fff; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 4px 8px; border-radius: 6px; }
+.shop-featured__tag--new { background: #38A30D; }
+.shop-featured__tag--sale { background: #D14A3F; }
+.shop-featured__body { padding: 14px 16px 18px; display: flex; flex-direction: column; }
+.shop-featured__cat { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #aaa; margin-bottom: 4px; }
+.shop-featured__name { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 17px; color: #262626; margin-bottom: 8px; line-height: 1.2; }
+.shop-featured__price { font-size: 18px; font-weight: 700; color: #38A30D; }
+
+/* CTA каталогу */
+.shop__catalog-cta { display: inline-flex; align-items: center; gap: 12px; padding: 18px 36px; background: #fff; color: #262626; text-decoration: none; border-radius: 14px; font-size: 16px; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.12); transition: transform 0.2s, box-shadow 0.2s, gap 0.2s; }
+.shop__catalog-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.2); gap: 18px; }
+.shop__catalog-cta svg { color: #38A30D; }
+
+@media (max-width: 1024px) {
+  .shop__featured-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .shop__featured-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 28px; }
+  .shop-featured--hide-mobile { display: none; }
+  .shop-featured__name { font-size: 15px; }
+  .shop__catalog-cta { display: flex; width: 100%; justify-content: center; padding: 16px 24px; font-size: 15px; }
+}
 
 .shop__category { margin-bottom: 52px; }
 .shop__category-title {
@@ -2811,257 +3186,71 @@ body:has(.modal:target) { overflow: hidden; }
 
 <section class="shop" id="shop">
   <div class="shop__inner">
-    <h2 class="shop__title">Магазин — <span class="shop__title--accent">товари</span></h2>
-    <p class="shop__lead">Готові вироби ручної роботи. Оберіть колір і оформіть замовлення прямо тут.</p>
+    <h2 class="shop__title">Популярні <span class="shop__title--accent">товари</span></h2>
+    <p class="shop__lead">Готові вироби ручної роботи. Це лише обрані позиції — дивіться повний каталог.</p>
 
-    <!-- ── Категорія: Свічки ── -->
-    <div class="shop__category">
-      <h3 class="shop__category-title">Свічки</h3>
-      <div class="shop__grid">
+    <div class="shop__featured-grid">
 
-        <div class="product-card">
-          <img class="product-card__photo" src="https://images.unsplash.com/photo-1561212856-44e9bae482aa?w=400&h=220&fit=crop&q=80" alt="Свічка">
-          <div class="product-card__body">
-            <p class="product-card__name">Назва виробу</p>
-            <p class="product-card__desc">матеріал · розмір · короткий опис</p>
-            <div class="product-card__colors">
-              <span class="product-card__colors-label">Колір:</span>
-              <input class="color-radio" type="radio" name="c1" id="c1a" checked><!-- p1 -->
-              <label class="color-dot" for="c1a" style="background:#F5F0E8;" title="Слонова кістка"></label>
-              <input class="color-radio" type="radio" name="c1" id="c1b">
-              <label class="color-dot" for="c1b" style="background:#F2B8B0;" title="Рожевий"></label>
-              <input class="color-radio" type="radio" name="c1" id="c1c">
-              <label class="color-dot" for="c1c" style="background:#A8C5A0;" title="Шавлія"></label>
-            </div>
-            <p class="product-card__price">___ ₴</p>
-            <details class="quick-order">
-              <summary>Швидке замовлення</summary>
-              <form class="quick-order__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
-                <input type="hidden" name="Товар" value="Свічка — Назва виробу">
-                <div class="form-field">
-                  <label class="form-label" for="s1n">Ім'я</label>
-                  <input class="form-input" id="s1n" type="text" name="Імʼя" placeholder="Ваше ім'я" required>
-                </div>
-                <div class="form-field">
-                  <label class="form-label" for="s1p">Телефон</label>
-                  <input class="form-input" id="s1p" type="tel" name="Телефон" placeholder="+380..." required>
-                </div>
-                <div class="form-field">
-                  <label class="form-label" for="s1e">Email</label>
-                  <input class="form-input" id="s1e" type="email" name="Email" placeholder="email@...">
-                </div>
-                <button class="form-submit" type="submit">Надіслати</button>
-              </form>
-            </details>
-            <a href="#modal-product-1" class="product-card__btn-secondary">Замовити</a>
-          </div>
+      <a href="shop.html" class="shop-featured">
+        <div class="shop-featured__photo-wrap">
+          <img class="shop-featured__photo" src="https://images.unsplash.com/photo-1561212856-44e9bae482aa?w=400&h=400&fit=crop&q=80" alt="">
+          <span class="shop-featured__tag">Хіт</span>
         </div>
-
-        <div class="product-card">
-          <img class="product-card__photo" src="https://images.unsplash.com/photo-1528351655744-27cc30462816?w=400&h=220&fit=crop&q=80" alt="Свічка">
-          <div class="product-card__body">
-            <p class="product-card__name">Назва виробу</p>
-            <p class="product-card__desc">матеріал · розмір · короткий опис</p>
-            <div class="product-card__colors">
-              <span class="product-card__colors-label">Колір:</span>
-              <input class="color-radio" type="radio" name="c2" id="c2a" checked>
-              <label class="color-dot" for="c2a" style="background:#fff;box-shadow:0 0 0 1px #ddd;" title="Білий"></label>
-              <input class="color-radio" type="radio" name="c2" id="c2b">
-              <label class="color-dot" for="c2b" style="background:#3A3A3A;" title="Чорний"></label>
-              <input class="color-radio" type="radio" name="c2" id="c2c">
-              <label class="color-dot" for="c2c" style="background:#C4704A;" title="Теракота"></label>
-            </div>
-            <p class="product-card__price">___ ₴</p>
-            <details class="quick-order">
-              <summary>Швидке замовлення</summary>
-              <form class="quick-order__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
-                <input type="hidden" name="Товар" value="Свічка — Назва виробу 2">
-                <div class="form-field">
-                  <label class="form-label" for="s2n">Ім'я</label>
-                  <input class="form-input" id="s2n" type="text" name="Імʼя" placeholder="Ваше ім'я" required>
-                </div>
-                <div class="form-field">
-                  <label class="form-label" for="s2p">Телефон</label>
-                  <input class="form-input" id="s2p" type="tel" name="Телефон" placeholder="+380..." required>
-                </div>
-                <div class="form-field">
-                  <label class="form-label" for="s2e">Email</label>
-                  <input class="form-input" id="s2e" type="email" name="Email" placeholder="email@...">
-                </div>
-                <button class="form-submit" type="submit">Надіслати</button>
-              </form>
-            </details>
-            <a href="#modal-product-2" class="product-card__btn-secondary">Замовити</a>
-          </div>
+        <div class="shop-featured__body">
+          <p class="shop-featured__cat">Подарунковий набір</p>
+          <p class="shop-featured__name">Набір «Затишок»</p>
+          <p class="shop-featured__price">850 ₴</p>
         </div>
+      </a>
 
-        <div class="product-card">
-          <img class="product-card__photo" src="https://images.unsplash.com/photo-1601922046210-41e129a3e64a?w=400&h=220&fit=crop&q=80" alt="Свічка">
-          <div class="product-card__body">
-            <p class="product-card__name">Назва виробу</p>
-            <p class="product-card__desc">матеріал · розмір · короткий опис</p>
-            <div class="product-card__colors">
-              <span class="product-card__colors-label">Колір:</span>
-              <input class="color-radio" type="radio" name="c3" id="c3a" checked>
-              <label class="color-dot" for="c3a" style="background:#E8D5C4;" title="Нюд"></label>
-              <input class="color-radio" type="radio" name="c3" id="c3b">
-              <label class="color-dot" for="c3b" style="background:#B8A0B8;" title="Пилова слива"></label>
-              <input class="color-radio" type="radio" name="c3" id="c3c">
-              <label class="color-dot" for="c3c" style="background:#D4C5A9;" title="Латте"></label>
-            </div>
-            <p class="product-card__price">___ ₴</p>
-            <details class="quick-order">
-              <summary>Швидке замовлення</summary>
-              <form class="quick-order__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
-                <input type="hidden" name="Товар" value="Свічка — Назва виробу 3">
-                <div class="form-field">
-                  <label class="form-label" for="s3n">Ім'я</label>
-                  <input class="form-input" id="s3n" type="text" name="Імʼя" placeholder="Ваше ім'я" required>
-                </div>
-                <div class="form-field">
-                  <label class="form-label" for="s3p">Телефон</label>
-                  <input class="form-input" id="s3p" type="tel" name="Телефон" placeholder="+380..." required>
-                </div>
-                <div class="form-field">
-                  <label class="form-label" for="s3e">Email</label>
-                  <input class="form-input" id="s3e" type="email" name="Email" placeholder="email@...">
-                </div>
-                <button class="form-submit" type="submit">Надіслати</button>
-              </form>
-            </details>
-            <a href="#modal-product-3" class="product-card__btn-secondary">Замовити</a>
-          </div>
+      <a href="shop.html" class="shop-featured">
+        <div class="shop-featured__photo-wrap">
+          <img class="shop-featured__photo" src="https://images.unsplash.com/photo-1601922046210-41e129a3e64a?w=400&h=400&fit=crop&q=80" alt="">
         </div>
+        <div class="shop-featured__body">
+          <p class="shop-featured__cat">Фігурна свічка</p>
+          <p class="shop-featured__name">Букет троянд</p>
+          <p class="shop-featured__price">380 ₴</p>
+        </div>
+      </a>
 
-      </div>
+      <a href="shop.html" class="shop-featured shop-featured--hide-mobile">
+        <div class="shop-featured__photo-wrap">
+          <img class="shop-featured__photo" src="https://images.unsplash.com/photo-1640095889747-2090ee12fa7d?w=400&h=400&fit=crop&q=80" alt="">
+          <span class="shop-featured__tag shop-featured__tag--new">Новинка</span>
+        </div>
+        <div class="shop-featured__body">
+          <p class="shop-featured__cat">Аромасвічка</p>
+          <p class="shop-featured__name">Соєва свічка «Лаванда»</p>
+          <p class="shop-featured__price">240 ₴</p>
+        </div>
+      </a>
+
+      <a href="shop.html" class="shop-featured shop-featured--hide-mobile">
+        <div class="shop-featured__photo-wrap">
+          <img class="shop-featured__photo" src="https://images.unsplash.com/photo-1612293905607-b003de9e54fb?w=400&h=400&fit=crop&q=80" alt="">
+          <span class="shop-featured__tag shop-featured__tag--sale">−15%</span>
+        </div>
+        <div class="shop-featured__body">
+          <p class="shop-featured__cat">Фігурна свічка</p>
+          <p class="shop-featured__name">Свічка-піон білий</p>
+          <p class="shop-featured__price">270 ₴</p>
+        </div>
+      </a>
+
     </div>
-    <!-- /Свічки -->
 
-    <!-- ── Категорія: Аромапродукти ── -->
-    <div class="shop__category">
-      <h3 class="shop__category-title">Аромапродукти</h3>
-      <div class="shop__grid">
-
-        <div class="product-card">
-          <img class="product-card__photo" src="https://images.unsplash.com/photo-1640095889747-2090ee12fa7d?w=400&h=220&fit=crop&q=80" alt="Аромапродукт">
-          <div class="product-card__body">
-            <p class="product-card__name">Назва виробу</p>
-            <p class="product-card__desc">матеріал · об'єм · аромат</p>
-            <div class="product-card__colors">
-              <span class="product-card__colors-label">Аромат:</span>
-              <input class="color-radio" type="radio" name="c4" id="c4a" checked>
-              <label class="color-dot" for="c4a" style="background:#F9E4C8;" title="Ваніль"></label>
-              <input class="color-radio" type="radio" name="c4" id="c4b">
-              <label class="color-dot" for="c4b" style="background:#D4EAC8;" title="Евкаліпт"></label>
-              <input class="color-radio" type="radio" name="c4" id="c4c">
-              <label class="color-dot" for="c4c" style="background:#F5D0D0;" title="Троянда"></label>
-            </div>
-            <p class="product-card__price">___ ₴</p>
-            <details class="quick-order">
-              <summary>Швидке замовлення</summary>
-              <form class="quick-order__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
-                <input type="hidden" name="Товар" value="Аромапродукт — Назва виробу">
-                <div class="form-field">
-                  <label class="form-label" for="a1n">Ім'я</label>
-                  <input class="form-input" id="a1n" type="text" name="Імʼя" placeholder="Ваше ім'я" required>
-                </div>
-                <div class="form-field">
-                  <label class="form-label" for="a1p">Телефон</label>
-                  <input class="form-input" id="a1p" type="tel" name="Телефон" placeholder="+380..." required>
-                </div>
-                <div class="form-field">
-                  <label class="form-label" for="a1e">Email</label>
-                  <input class="form-input" id="a1e" type="email" name="Email" placeholder="email@...">
-                </div>
-                <button class="form-submit" type="submit">Надіслати</button>
-              </form>
-            </details>
-            <a href="#modal-product-4" class="product-card__btn-secondary">Замовити</a>
-          </div>
-        </div>
-
-        <div class="product-card">
-          <img class="product-card__photo" src="https://images.unsplash.com/photo-1612293905607-b003de9e54fb?w=400&h=220&fit=crop&q=80" alt="Аромапродукт">
-          <div class="product-card__body">
-            <p class="product-card__name">Назва виробу</p>
-            <p class="product-card__desc">матеріал · об'єм · аромат</p>
-            <div class="product-card__colors">
-              <span class="product-card__colors-label">Аромат:</span>
-              <input class="color-radio" type="radio" name="c5" id="c5a" checked>
-              <label class="color-dot" for="c5a" style="background:#E8E0F5;" title="Лаванда"></label>
-              <input class="color-radio" type="radio" name="c5" id="c5b">
-              <label class="color-dot" for="c5b" style="background:#FFF0C8;" title="Цитрус"></label>
-            </div>
-            <p class="product-card__price">___ ₴</p>
-            <details class="quick-order">
-              <summary>Швидке замовлення</summary>
-              <form class="quick-order__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
-                <input type="hidden" name="Товар" value="Аромапродукт — Назва виробу 2">
-                <div class="form-field">
-                  <label class="form-label" for="a2n">Ім'я</label>
-                  <input class="form-input" id="a2n" type="text" name="Імʼя" placeholder="Ваше ім'я" required>
-                </div>
-                <div class="form-field">
-                  <label class="form-label" for="a2p">Телефон</label>
-                  <input class="form-input" id="a2p" type="tel" name="Телефон" placeholder="+380..." required>
-                </div>
-                <div class="form-field">
-                  <label class="form-label" for="a2e">Email</label>
-                  <input class="form-input" id="a2e" type="email" name="Email" placeholder="email@...">
-                </div>
-                <button class="form-submit" type="submit">Надіслати</button>
-              </form>
-            </details>
-            <a href="#modal-product-5" class="product-card__btn-secondary">Замовити</a>
-          </div>
-        </div>
-
-        <div class="product-card">
-          <img class="product-card__photo" src="https://images.unsplash.com/photo-1537948756265-406a522f1a45?w=400&h=220&fit=crop&q=80" alt="Аромапродукт">
-          <div class="product-card__body">
-            <p class="product-card__name">Назва виробу</p>
-            <p class="product-card__desc">матеріал · об'єм · аромат</p>
-            <div class="product-card__colors">
-              <span class="product-card__colors-label">Аромат:</span>
-              <input class="color-radio" type="radio" name="c6" id="c6a" checked>
-              <label class="color-dot" for="c6a" style="background:#F5ECD4;" title="Сандал"></label>
-              <input class="color-radio" type="radio" name="c6" id="c6b">
-              <label class="color-dot" for="c6b" style="background:#D8EEE8;" title="М'ята"></label>
-              <input class="color-radio" type="radio" name="c6" id="c6c">
-              <label class="color-dot" for="c6c" style="background:#F0D8E8;" title="Піон"></label>
-            </div>
-            <p class="product-card__price">___ ₴</p>
-            <details class="quick-order">
-              <summary>Швидке замовлення</summary>
-              <form class="quick-order__form" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
-                <input type="hidden" name="Товар" value="Аромапродукт — Назва виробу 3">
-                <div class="form-field">
-                  <label class="form-label" for="a3n">Ім'я</label>
-                  <input class="form-input" id="a3n" type="text" name="Імʼя" placeholder="Ваше ім'я" required>
-                </div>
-                <div class="form-field">
-                  <label class="form-label" for="a3p">Телефон</label>
-                  <input class="form-input" id="a3p" type="tel" name="Телефон" placeholder="+380..." required>
-                </div>
-                <div class="form-field">
-                  <label class="form-label" for="a3e">Email</label>
-                  <input class="form-input" id="a3e" type="email" name="Email" placeholder="email@...">
-                </div>
-                <button class="form-submit" type="submit">Надіслати</button>
-              </form>
-            </details>
-            <a href="#modal-product-6" class="product-card__btn-secondary">Замовити</a>
-          </div>
-        </div>
-
-      </div>
-    </div>
-    <!-- /Аромапродукти -->
+    <a href="shop.html" class="shop__catalog-cta">
+      <span>Перейти в каталог товарів</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
 
   </div>
 </section>
 
-<section class="faq">
+<section class="faq" id="faq">
   <div class="petal" style="top: 40px; left: -30px; transform: rotate(80deg); width: 200px; height: 200px;"></div>
   <div class="petal" style="bottom: 60px; right: -40px; transform: rotate(-100deg); width: 220px; height: 220px;"></div>
   <div class="faq__inner">
@@ -3534,7 +3723,7 @@ body:has(.modal:target) { overflow: hidden; }
       <p class="footer__col-title">Сторінка</p>
       <ul class="footer__nav">
         <li><a href="#">Головна</a></li>
-        <li><a href="#shop">Магазин</a></li>
+        <li><a href="shop.html">Магазин</a></li>
         <li><a href="#courses">Ціни</a></li>
         <li><a href="#modal-gives">Отримати доступ</a></li>
       </ul>

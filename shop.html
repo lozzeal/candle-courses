@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Магазин — Крафт-свічки та арома-професія</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --accent: #38A30D;
+  --accent-light: #49C318;
+}
+
+html, body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: #262626;
+  background: #fbf7f4;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+a { color: inherit; }
+
+/* ===== HEADER (той самий що на лендингу) ===== */
+.site-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 8000;
+  background: #fff;
+  border-bottom: 1px solid rgba(38,38,38,0.08);
+  box-shadow: 0 2px 16px rgba(38,38,38,0.06);
+}
+.nav__toggle-cb { display: none; }
+.site-header__bar {
+  max-width: 1280px;
+  margin: 0 auto;
+  height: 64px;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.site-header__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.site-header__logo-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(180deg,var(--accent-light),var(--accent));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.site-header__logo-text {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #262626;
+  line-height: 1.1;
+}
+.site-header__logo-text span { color: var(--accent); }
+.site-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+}
+.site-header__nav a {
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.site-header__nav a:hover { color: #262626; background: rgba(56,163,13,0.06); }
+.site-header__nav a.is-active { color: var(--accent); background: rgba(56,163,13,0.1); }
+.site-header__cta {
+  margin-left: 16px;
+  padding: 9px 20px;
+  background: linear-gradient(180deg,var(--accent-light),var(--accent));
+  color: #fff !important;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(56,163,13,0.3);
+}
+.site-header__cta:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(56,163,13,0.4); }
+.nav__burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+.nav__burger span { display: block; height: 2px; background: #262626; border-radius: 2px; transition: transform 0.25s, opacity 0.25s; }
+.nav__drawer {
+  position: fixed;
+  top: 0; left: 0;
+  width: min(320px, 85vw);
+  height: 100dvh;
+  background: #fff;
+  z-index: 8100;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.nav__drawer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 16px;
+  border-bottom: 1px solid rgba(38,38,38,0.07);
+}
+.nav__drawer-logo {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: 17px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+}
+.nav__drawer-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(38,38,38,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  color: #555;
+  text-decoration: none;
+}
+.nav__drawer-body { padding: 8px 0; flex: 1; }
+.nav__drawer-section { padding: 6px 0; border-bottom: 1px solid rgba(38,38,38,0.06); }
+.nav__drawer-section:last-child { border-bottom: none; }
+.nav__drawer-section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #aaa; padding: 10px 20px 4px; }
+.nav__drawer-link { display: flex; align-items: center; gap: 12px; padding: 12px 20px; font-size: 15px; font-weight: 500; color: #262626; text-decoration: none; }
+.nav__drawer-link:hover { background: rgba(56,163,13,0.05); }
+.nav__drawer-link-icon { width: 36px; height: 36px; border-radius: 10px; background: rgba(56,163,13,0.1); display: flex; align-items: center; justify-content: center; }
+.nav__drawer-cta { margin: 16px 20px; display: block; text-align: center; padding: 13px; background: linear-gradient(180deg,var(--accent-light),var(--accent)); color: #fff; border-radius: 12px; font-size: 15px; font-weight: 600; text-decoration: none; }
+.nav__overlay { display: none; position: fixed; inset: 0; background: rgba(38,28,24,0.45); backdrop-filter: blur(3px); z-index: 8050; cursor: pointer; }
+.nav__toggle-cb:checked ~ .site-header__bar .nav__burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav__toggle-cb:checked ~ .site-header__bar .nav__burger span:nth-child(2) { opacity: 0; }
+.nav__toggle-cb:checked ~ .site-header__bar .nav__burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.nav__toggle-cb:checked ~ .nav__drawer { transform: translateX(0); }
+.nav__toggle-cb:checked ~ .nav__overlay { display: block; }
+@media (max-width: 900px) {
+  .site-header__bar { height: 56px; padding: 0 16px; }
+  .site-header__nav { display: none; }
+  .site-header__cta { display: none; }
+  .nav__burger { display: flex; }
+}
+
+/* ===== SHOP PAGE ===== */
+.shop-page { padding-top: 64px; min-height: 100vh; }
+@media (max-width: 900px) { .shop-page { padding-top: 56px; } }
+
+.shop-hero {
+  background: linear-gradient(135deg, #3D2E2A 0%, #5B463E 100%);
+  padding: 56px 32px 44px;
+  color: #fff;
+}
+.shop-hero__inner { max-width: 1280px; margin: 0 auto; }
+.shop-hero__crumbs { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 14px; }
+.shop-hero__crumbs a { color: rgba(255,255,255,0.8); text-decoration: none; }
+.shop-hero__crumbs a:hover { color: #fff; }
+.shop-hero__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(32px, 5vw, 52px);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.shop-hero__subtitle { font-size: 15px; color: rgba(255,255,255,0.7); max-width: 540px; }
+
+.shop-layout {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 36px 32px 80px;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 40px;
+}
+
+.cat-radio { display: none; }
+
+/* Sidebar */
+.sidebar { position: sticky; top: 84px; align-self: start; }
+.sidebar__section { margin-bottom: 32px; }
+.sidebar__title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #999;
+  margin-bottom: 12px;
+}
+.sidebar__nav, .sidebar__sub { list-style: none; }
+.sidebar__group-title {
+  padding: 10px 12px 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #262626;
+}
+.sidebar__sub {
+  margin-left: 12px;
+  border-left: 1px solid rgba(38,38,38,0.1);
+  padding-left: 4px;
+}
+.sidebar__link {
+  display: block;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #666;
+  text-decoration: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.sidebar__link:hover { background: rgba(56,163,13,0.06); color: #262626; }
+.sidebar__sub .sidebar__link { font-size: 13px; padding: 6px 12px; color: #777; }
+
+/* Активна категорія */
+.shop-layout:has(#cat-all:checked) label[for="cat-all"] .sidebar__link,
+.shop-layout:has(#cat-gift-sets:checked) label[for="cat-gift-sets"] .sidebar__link,
+.shop-layout:has(#cat-figured:checked) label[for="cat-figured"] .sidebar__link,
+.shop-layout:has(#cat-aroma-candles:checked) label[for="cat-aroma-candles"] .sidebar__link,
+.shop-layout:has(#cat-wedding:checked) label[for="cat-wedding"] .sidebar__link,
+.shop-layout:has(#cat-secret:checked) label[for="cat-secret"] .sidebar__link,
+.shop-layout:has(#cat-diffusers:checked) label[for="cat-diffusers"] .sidebar__link,
+.shop-layout:has(#cat-sprays:checked) label[for="cat-sprays"] .sidebar__link {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Фільтрація товарів */
+.shop-layout:has(#cat-gift-sets:checked)     .product:not([data-cat="gift-sets"]) { display: none; }
+.shop-layout:has(#cat-figured:checked)       .product:not([data-cat="figured"]) { display: none; }
+.shop-layout:has(#cat-aroma-candles:checked) .product:not([data-cat="aroma-candles"]) { display: none; }
+.shop-layout:has(#cat-wedding:checked)       .product:not([data-cat="wedding"]) { display: none; }
+.shop-layout:has(#cat-secret:checked)        .product:not([data-cat="secret"]) { display: none; }
+.shop-layout:has(#cat-diffusers:checked)     .product:not([data-cat="diffusers"]) { display: none; }
+.shop-layout:has(#cat-sprays:checked)        .product:not([data-cat="sprays"]) { display: none; }
+
+/* Main */
+.shop-main { min-width: 0; }
+.shop-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 18px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(38,38,38,0.08);
+}
+.shop-count { font-size: 14px; color: #777; }
+.shop-count-current { display: none; }
+.shop-layout:has(#cat-all:checked)           .shop-count-all { display: inline; }
+.shop-layout:has(#cat-gift-sets:checked)     .shop-count-current { display: inline; }
+.shop-layout:has(#cat-figured:checked)       .shop-count-current { display: inline; }
+.shop-layout:has(#cat-aroma-candles:checked) .shop-count-current { display: inline; }
+.shop-layout:has(#cat-wedding:checked)       .shop-count-current { display: inline; }
+.shop-layout:has(#cat-secret:checked)        .shop-count-current { display: inline; }
+.shop-layout:has(#cat-diffusers:checked)     .shop-count-current { display: inline; }
+.shop-layout:has(#cat-sprays:checked)        .shop-count-current { display: inline; }
+.shop-layout:not(:has(#cat-all:checked))     .shop-count-all { display: none; }
+
+/* Product grid */
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.product {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(38,38,38,0.06);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.product:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.09);
+}
+.product__photo-wrap {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: #f5f0ee;
+}
+.product__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+.product:hover .product__photo { transform: scale(1.04); }
+.product__tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.product__tag--new { background: #38A30D; }
+.product__tag--sale { background: #D14A3F; }
+.product__body {
+  padding: 14px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.product__cat {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #aaa;
+  margin-bottom: 4px;
+}
+.product__name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: 17px;
+  color: #262626;
+  margin-bottom: 8px;
+  line-height: 1.2;
+  min-height: 40px;
+}
+.product__price {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: auto;
+  margin-bottom: 12px;
+}
+.product__price-old {
+  font-size: 13px;
+  color: #aaa;
+  text-decoration: line-through;
+  margin-right: 6px;
+  font-weight: 400;
+}
+.product__btn {
+  display: block;
+  text-align: center;
+  padding: 10px;
+  background: linear-gradient(180deg, var(--accent-light), var(--accent));
+  color: #fff;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(56,163,13,0.2);
+}
+.product__btn:hover { box-shadow: 0 6px 14px rgba(56,163,13,0.3); }
+
+/* Пусто */
+.shop-empty {
+  display: none;
+  text-align: center;
+  padding: 80px 20px;
+  color: #999;
+}
+.shop-layout:has(.product:not([style*="display: none"])) ~ .shop-empty { display: none; }
+
+@media (max-width: 900px) {
+  .shop-layout { grid-template-columns: 1fr; gap: 24px; padding: 24px 16px 60px; }
+  .sidebar { position: static; }
+  .sidebar__section { margin-bottom: 0; }
+  .sidebar__nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  .sidebar__nav > li { flex-shrink: 0; }
+  .sidebar__group-title { display: none; }
+  .sidebar__sub {
+    display: flex;
+    gap: 8px;
+    margin-left: 0;
+    border: none;
+    padding: 0;
+  }
+  .sidebar__sub > li { flex-shrink: 0; }
+  .sidebar__link {
+    border: 1px solid rgba(38,38,38,0.12);
+    padding: 8px 14px !important;
+    font-size: 13px !important;
+    white-space: nowrap;
+    background: #fff;
+  }
+  .shop-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .product__name { font-size: 15px; min-height: 36px; }
+  .shop-hero { padding: 36px 16px 28px; }
+}
+@media (max-width: 480px) {
+  .shop-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ===== ORDER MODAL ===== */
+body:has(.modal:target) { overflow: hidden; }
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal:target { display: flex; }
+.modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(38,28,24,0.6);
+  backdrop-filter: blur(5px);
+  text-decoration: none;
+}
+.modal__box {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 24px;
+  padding: 36px 32px 32px;
+  width: 100%;
+  max-width: 460px;
+  max-height: 92vh;
+  overflow-y: auto;
+}
+.modal__close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  font-size: 22px;
+  line-height: 1;
+  color: #bbb;
+  text-decoration: none;
+  z-index: 2;
+}
+.modal__close:hover { color: #262626; }
+.modal__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+.modal__sub { font-size: 13px; color: #888; margin-bottom: 22px; line-height: 1.5; }
+.modal__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.modal__grid .field--wide { grid-column: 1 / -1; }
+.modal__grid .submit { grid-column: 1 / -1; padding: 14px; font-size: 15px; border-radius: 14px; }
+.field { display: flex; flex-direction: column; gap: 3px; }
+.field label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: #999; }
+.field input, .field textarea, .field select {
+  padding: 9px 11px;
+  border: 1.5px solid #e0dbd8;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #262626;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  background: #fff;
+}
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); }
+.field textarea { resize: vertical; min-height: 60px; }
+.submit {
+  background: linear-gradient(180deg, var(--accent-light), var(--accent));
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+@media (max-width: 560px) {
+  .modal__box { padding: 28px 18px 24px; }
+  .modal__grid { grid-template-columns: 1fr; }
+  .modal__grid .field--wide, .modal__grid .submit { grid-column: 1; }
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: #2A1F1C;
+  color: rgba(255,255,255,0.7);
+  padding: 56px 32px 32px;
+}
+.footer__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 48px;
+}
+.footer__brand-name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.footer__brand-desc { font-size: 13px; color: rgba(255,255,255,0.55); max-width: 220px; margin-bottom: 24px; line-height: 1.6; }
+.footer__col-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.35); margin-bottom: 16px; }
+.footer__nav { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer__nav a { color: rgba(255,255,255,0.65); text-decoration: none; font-size: 14px; }
+.footer__nav a:hover { color: #fff; }
+.footer__copy { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 32px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; }
+@media (max-width: 900px) { .footer__inner { grid-template-columns: 1fr 1fr; gap: 32px; } }
+@media (max-width: 560px) { .footer { padding: 40px 16px 24px; } .footer__inner { grid-template-columns: 1fr; gap: 28px; } }
+
+</style>
+</head>
+<body>
+
+<!-- ====== HEADER ====== -->
+<header class="site-header">
+  <input type="checkbox" id="nav-toggle" class="nav__toggle-cb">
+  <div class="site-header__bar">
+    <label for="nav-toggle" class="nav__burger" aria-label="Меню"><span></span><span></span><span></span></label>
+    <a href="index.html" class="site-header__logo">
+      <span class="site-header__logo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M12 3c0 0-3 3-3 5.5a3 3 0 006 0C15 6 12 3 12 3z" fill="white"/>
+          <rect x="9" y="13" width="6" height="8" rx="1.5" fill="white" opacity=".85"/>
+        </svg>
+      </span>
+      <span class="site-header__logo-text">Свічка<span>&nbsp;UA</span></span>
+    </a>
+    <nav class="site-header__nav">
+      <a href="index.html#courses">Курси</a>
+      <a href="index.html#benefits">Про навчання</a>
+      <a href="shop.html" class="is-active">Магазин</a>
+      <a href="index.html#reviews">Відгуки</a>
+      <a href="index.html#faq">FAQ</a>
+    </nav>
+    <a href="index.html#courses" class="site-header__cta">Обрати курс</a>
+  </div>
+  <nav class="nav__drawer">
+    <div class="nav__drawer-top">
+      <a href="index.html" class="nav__drawer-logo">Свічка UA</a>
+      <label for="nav-toggle" class="nav__drawer-close">×</label>
+    </div>
+    <div class="nav__drawer-body">
+      <div class="nav__drawer-section">
+        <p class="nav__drawer-section-title">Навчання</p>
+        <a href="index.html#courses" class="nav__drawer-link">Усі курси</a>
+        <a href="index.html#benefits" class="nav__drawer-link">Про навчання</a>
+      </div>
+      <div class="nav__drawer-section">
+        <p class="nav__drawer-section-title">Магазин</p>
+        <a href="shop.html" class="nav__drawer-link">Каталог товарів</a>
+      </div>
+      <div class="nav__drawer-section">
+        <p class="nav__drawer-section-title">Сторінка</p>
+        <a href="index.html#reviews" class="nav__drawer-link">Відгуки</a>
+        <a href="index.html#faq" class="nav__drawer-link">FAQ</a>
+      </div>
+    </div>
+    <a href="index.html#courses" class="nav__drawer-cta">Обрати курс →</a>
+  </nav>
+  <label for="nav-toggle" class="nav__overlay"></label>
+</header>
+
+<!-- ====== SHOP PAGE ====== -->
+<section class="shop-page">
+
+  <!-- Hero -->
+  <div class="shop-hero">
+    <div class="shop-hero__inner">
+      <nav class="shop-hero__crumbs">
+        <a href="index.html">Головна</a> · Магазин
+      </nav>
+      <h1 class="shop-hero__title">Магазин</h1>
+      <p class="shop-hero__subtitle">Готові вироби ручної роботи. Доставка Новою Поштою по Україні.</p>
+    </div>
+  </div>
+
+  <!-- Layout: sidebar + grid -->
+  <div class="shop-layout">
+
+    <!-- Радіо для фільтра — мають бути в межах .shop-layout -->
+    <input type="radio" name="cat" id="cat-all" class="cat-radio" checked>
+    <input type="radio" name="cat" id="cat-gift-sets" class="cat-radio">
+    <input type="radio" name="cat" id="cat-figured" class="cat-radio">
+    <input type="radio" name="cat" id="cat-aroma-candles" class="cat-radio">
+    <input type="radio" name="cat" id="cat-wedding" class="cat-radio">
+    <input type="radio" name="cat" id="cat-secret" class="cat-radio">
+    <input type="radio" name="cat" id="cat-diffusers" class="cat-radio">
+    <input type="radio" name="cat" id="cat-sprays" class="cat-radio">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar__section">
+        <p class="sidebar__title">Категорії</p>
+        <ul class="sidebar__nav">
+          <li><label for="cat-all"><span class="sidebar__link">Усі товари</span></label></li>
+
+          <li>
+            <p class="sidebar__group-title">Свічки</p>
+            <ul class="sidebar__sub">
+              <li><label for="cat-gift-sets"><span class="sidebar__link">Подарункові набори</span></label></li>
+              <li><label for="cat-figured"><span class="sidebar__link">Фігурні свічки</span></label></li>
+              <li><label for="cat-aroma-candles"><span class="sidebar__link">Аромасвічки</span></label></li>
+              <li><label for="cat-wedding"><span class="sidebar__link">Весільні свічки</span></label></li>
+              <li><label for="cat-secret"><span class="sidebar__link">З таємним написом</span></label></li>
+            </ul>
+          </li>
+
+          <li>
+            <p class="sidebar__group-title">Аромапродукти</p>
+            <ul class="sidebar__sub">
+              <li><label for="cat-diffusers"><span class="sidebar__link">Аромадифузори</span></label></li>
+              <li><label for="cat-sprays"><span class="sidebar__link">Спреї для дому</span></label></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main: products -->
+    <main class="shop-main">
+      <div class="shop-toolbar">
+        <span class="shop-count">
+          <span class="shop-count-all">Усі товари · 12</span>
+          <span class="shop-count-current">Товари в категорії</span>
+        </span>
+      </div>
+
+      <div class="shop-grid">
+
+        <!-- Подарункові набори (2) -->
+        <article class="product" data-cat="gift-sets">
+          <div class="product__photo-wrap">
+            <img class="product__photo" src="https://images.unsplash.com/photo-1561212856-44e9bae482aa?w=400&h=400&fit=crop&q=80" alt="">
+            <span class="product__tag product__tag--new">Новинка</span>
+          </div>
+          <div class="product__body">
+            <p class="product__cat">Подарунковий набір</p>
+            <p class="product__name">Набір «Затишок» (3 свічки)</p>
+            <p class="product__price">850 ₴</p>
+            <a href="#order" class="product__btn">Замовити</a>
+          </div>
+        </article>
+
+        <article class="product" data-cat="gift-sets">
+          <div class="product__photo-wrap">
+            <img class="product__photo" src="https://images.unsplash.com/photo-1528351655744-27cc30462816?w=400&h=400&fit=crop&q=80" alt="">
+          </div>
+          <div class="product__body">
+            <p class="product__cat">Подарунковий набір</p>
+            <p class="product__name">Набір «Романтичний вечір»</p>
+            <p class="product__price">1 200 ₴</p>
+            <a href="#order" class="product__btn">Замовити</a>
+          </div>
+        </article>
+
+        <!-- Фігурні свічки (2) -->
+        <article class="product" data-cat="figured">
+          <div class="product__photo-wrap">
+            <img class="product__photo" src="https://images.unsplash.com/photo-1601922046210-41e129a3e64a?w=400&h=400&fit=crop&q=80" alt="">
+          </div>
+          <div class="product__body">
+            <p class="product__cat">Фігурна свічка</p>
+            <p class="product__name">Букет троянд</p>
+            <p class="product__price">380 ₴</p>
+            <a href="#order" class="product__btn">Замовити</a>
+          </div>
+        </article>
+
+        <article class="product" data-cat="figured">
+          <div class="product__photo-wrap">
+            <img class="product__photo" src="https://images.unsplash.com/photo-1612293905607-b003de9e54fb?w=400&h=400&fit=crop&q=80" alt="">
+            <span class="product__tag product__tag--sale">−15%</span>
+          </div>
+          <div class="product__body">
+            <p class="product__cat">Фігурна свічка</p>
+            <p class="product__name">Свічка-піон білий</p>
+            <p class="product__price"><span class="product__price-old">320 ₴</span>270 ₴</p>
+            <a href="#order" class="product__btn">Замовити</a>
+          </div>
+        </article>
+
+        <!-- Аромасвічки (2) -->
+        <article class="product" data-cat="aroma-candles">
+          <div class="product__photo-wrap">
+            <img class="product__photo" src="https://images.unsplash.com/photo-1537948756265-406a522f1a45?w=400&h=400&fit=crop&q=80" alt="">
+          </div>
+          <div class="product__body">
+            <p class="product__cat">Аромасвічка</p>
+            <p class="product__name">Соєва свічка «Ваніль»</p>
+            <p class="product__price">220 ₴</p>
+            <a href="#order" class="product__btn">Замовити</a>
+          </div>
+        </article>
+
+        <article class="product" data-cat="aroma-candles">
+          <div class="product__photo-wrap">
+            <img class="product__photo" src="https://images.unsplash.com/photo-1640095889747-2090ee12fa7d?w=400&h=400&fit=crop&q=80" alt="">
+            <span class="product__tag product__tag--new">Хіт</span>
+          </div>
+          <div class="product__body">
+            <p class="product__cat">Аромасвічка</p>
+            <p class="product__name">Соєва свічка «Лаванда»</p>
+            <p class="product__price">240 ₴</p>
+            <a href="#order" class="product__btn">Замовити</a>
+          </div>
+        </article>
+
+        <!-- Весільні (2) -->
+        <article class="product" data-cat="wedding">
+          <div class="product__photo-wrap">
+            <img class="product__photo" src="https://images.unsplash.com/photo-1561212856-44e9bae482aa?w=400&h=400&fit=crop&q=80&sat=-20" alt="">
+          </div>
+          <div class="product__body">
+            <p class="product__cat">Весільна</p>
+            <p class="product__name">Свічки для церемонії (пара)</p>
+            <p class="product__price">680 ₴</p>
+            <a href="#order" class="product__btn">Замовити</a>
+          </div>
+        </article>
+
+        <article class="product" data-cat="wedding">
+          <div class="product__photo-wrap">
+            <img class="product__photo" src="https://images.unsplash.com/photo-1528351655744-27cc30462816?w=400&h=400&fit=crop&q=80&sat=-30" alt="">
+          </div>
+          <div class="product__body">
+            <p class="product__cat">Весільна</p>
+            <p class="product__name">Сімейне вогнище (набір 3 шт)</p>
+            <p class="product__price">950 ₴</p>
+            <a href="#order" class="product__btn">Замовити</a>
+          </div>
+        </article>
+
+        <!-- Свічки з таємним написом (2) -->
+        <article class="product" data-cat="secret">
+          <div class="product__photo-wrap">
+            <img class="product__photo" src="https://images.unsplash.com/photo-1612293905607-b003de9e54fb?w=400&h=400&fit=crop&q=80&sat=-15" alt="">
+            <span class="product__tag product__tag--new">Унікум</span>
+          </div>
+          <div class="product__body">
+            <p class="product__cat">З таємним написом</p>
+            <p class="product__name">Свічка-сюрприз «Я тебе кохаю»</p>
+            <p class="product__price">320 ₴</p>
+            <a href="#order" class="product__btn">Замовити</a>
+          </div>
+        </article>
+
+        <article class="product" data-cat="secret">
+          <div class="product__photo-wrap">
+            <img class="product__photo" src="https://images.unsplash.com/photo-1537948756265-406a522f1a45?w=400&h=400&fit=crop&q=80&sat=-10" alt="">
+          </div>
+          <div class="product__body">
+            <p class="product__cat">З таємним написом</p>
+            <p class="product__name">З персональним повідомленням</p>
+            <p class="product__price">от 350 ₴</p>
+            <a href="#order" class="product__btn">Замовити</a>
+          </div>
+        </article>
+
+        <!-- Аромадифузори (1) -->
+        <article class="product" data-cat="diffusers">
+          <div class="product__photo-wrap">
+            <img class="product__photo" src="https://images.unsplash.com/photo-1601922046210-41e129a3e64a?w=400&h=400&fit=crop&q=80&sat=-25" alt="">
+          </div>
+          <div class="product__body">
+            <p class="product__cat">Аромадифузор</p>
+            <p class="product__name">Дифузор «Цитрусовий бриз», 100 мл</p>
+            <p class="product__price">480 ₴</p>
+            <a href="#order" class="product__btn">Замовити</a>
+          </div>
+        </article>
+
+        <!-- Спреї для дому (1) -->
+        <article class="product" data-cat="sprays">
+          <div class="product__photo-wrap">
+            <img class="product__photo" src="https://images.unsplash.com/photo-1640095889747-2090ee12fa7d?w=400&h=400&fit=crop&q=80&sat=-30" alt="">
+          </div>
+          <div class="product__body">
+            <p class="product__cat">Спрей</p>
+            <p class="product__name">Спрей для дому «Сандал», 50 мл</p>
+            <p class="product__price">280 ₴</p>
+            <a href="#order" class="product__btn">Замовити</a>
+          </div>
+        </article>
+
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- ====== FOOTER ====== -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div>
+      <p class="footer__brand-name">Крафт-свічки<br>та арома-професія</p>
+      <p class="footer__brand-desc">Онлайн-курси та готові вироби ручної роботи. Доставка по Україні.</p>
+    </div>
+    <div>
+      <p class="footer__col-title">Магазин</p>
+      <ul class="footer__nav">
+        <li><a href="shop.html">Усі товари</a></li>
+        <li><a href="shop.html">Подарункові набори</a></li>
+        <li><a href="shop.html">Фігурні свічки</a></li>
+        <li><a href="shop.html">Аромасвічки</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer__col-title">Навчання</p>
+      <ul class="footer__nav">
+        <li><a href="index.html#courses">Усі курси</a></li>
+        <li><a href="index.html#reviews">Відгуки</a></li>
+        <li><a href="index.html#faq">FAQ</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer__col-title">Контакти</p>
+      <ul class="footer__nav">
+        <li><a href="#">Telegram</a></li>
+        <li><a href="mailto:YOUR@EMAIL.COM">Email</a></li>
+      </ul>
+    </div>
+  </div>
+  <p class="footer__copy">© 2026 Крафт-свічки та арома-професія. Усі права захищені.</p>
+</footer>
+
+<!-- ====== ORDER MODAL ====== -->
+<div id="order" class="modal">
+  <a href="#" class="modal__overlay" aria-label="Закрити"></a>
+  <div class="modal__box">
+    <a href="#" class="modal__close" aria-label="Закрити">×</a>
+    <p class="modal__title">Оформити замовлення</p>
+    <p class="modal__sub">Вкажіть деталі та адресу — ми зв'яжемось для підтвердження</p>
+    <form class="modal__grid" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+      <div class="field field--wide">
+        <label>Який товар замовляєте?</label>
+        <input type="text" name="Товар" placeholder="Назва товару з каталогу" required>
+      </div>
+      <div class="field">
+        <label>Ім'я та прізвище</label>
+        <input type="text" name="Імʼя" placeholder="Ім'я Прізвище" required>
+      </div>
+      <div class="field">
+        <label>Телефон</label>
+        <input type="tel" name="Телефон" placeholder="+380..." required>
+      </div>
+      <div class="field field--wide">
+        <label>Email</label>
+        <input type="email" name="Email" placeholder="email@...">
+      </div>
+      <div class="field field--wide">
+        <label>Адреса (Нова Пошта або кур'єр)</label>
+        <input type="text" name="Адреса" placeholder="Місто, відділення НП або адреса" required>
+      </div>
+      <div class="field field--wide">
+        <label>Колір / побажання</label>
+        <textarea name="Побажання" rows="2" placeholder="Колір, кількість, побажання до пакування..."></textarea>
+      </div>
+      <button class="submit" type="submit">Оформити замовлення</button>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>
