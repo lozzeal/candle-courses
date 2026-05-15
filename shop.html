@@ -15,6 +15,7 @@
   --accent-light: #49C318;
 }
 
+html { scroll-behavior: smooth; }
 html, body {
   font-family: 'Inter', -apple-system, sans-serif;
   color: #262626;
@@ -24,16 +25,22 @@ html, body {
   min-height: 100vh;
 }
 
+/* Прибране меню — залишаємо тільки логотип + CTA */
+.site-header__nav,
+.nav__burger,
+.nav__drawer,
+.nav__overlay { display: none !important; }
+@media (max-width: 900px) {
+  .site-header__cta { display: inline-flex !important; padding: 7px 14px; font-size: 13px; margin-left: auto; }
+}
+
 a { color: inherit; }
 
 /* ===== HEADER (той самий що на лендингу) ===== */
 .site-header {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 8000;
+  position: relative;
   background: #fff;
   border-bottom: 1px solid rgba(38,38,38,0.08);
-  box-shadow: 0 2px 16px rgba(38,38,38,0.06);
 }
 .nav__toggle-cb { display: none; }
 .site-header__bar {
@@ -178,36 +185,150 @@ a { color: inherit; }
 }
 
 /* ===== SHOP PAGE ===== */
-.shop-page { padding-top: 64px; min-height: 100vh; }
-@media (max-width: 900px) { .shop-page { padding-top: 56px; } }
+.shop-page { min-height: 100vh; }
 
+/* ===== HERO (з картинкою) ===== */
 .shop-hero {
-  background: linear-gradient(135deg, #3D2E2A 0%, #5B463E 100%);
-  padding: 56px 32px 44px;
+  position: relative;
+  background:
+    linear-gradient(110deg, rgba(42,31,28,0.92) 0%, rgba(91,70,62,0.75) 50%, rgba(91,70,62,0.35) 100%),
+    url('https://images.unsplash.com/photo-1601922046210-41e129a3e64a?w=1600&h=600&fit=crop&q=80') center/cover no-repeat;
+  padding: 72px 32px 56px;
   color: #fff;
+  overflow: hidden;
 }
-.shop-hero__inner { max-width: 1280px; margin: 0 auto; }
-.shop-hero__crumbs { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 14px; }
-.shop-hero__crumbs a { color: rgba(255,255,255,0.8); text-decoration: none; }
+.shop-hero__inner { max-width: 1280px; margin: 0 auto; position: relative; z-index: 1; }
+.shop-hero__crumbs { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 16px; }
+.shop-hero__crumbs a { color: rgba(255,255,255,0.85); text-decoration: none; }
 .shop-hero__crumbs a:hover { color: #fff; }
 .shop-hero__title {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-weight: 600;
-  font-size: clamp(32px, 5vw, 52px);
+  font-size: clamp(36px, 6vw, 64px);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  line-height: 1.05;
+  max-width: 700px;
 }
-.shop-hero__subtitle { font-size: 15px; color: rgba(255,255,255,0.7); max-width: 540px; }
+.shop-hero__title span { color: #9EE86A; }
+.shop-hero__subtitle { font-size: clamp(15px, 1.6vw, 17px); color: rgba(255,255,255,0.85); max-width: 560px; line-height: 1.5; }
+.shop-hero__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 24px;
+}
+.shop-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  border-radius: 50px;
+  font-size: 13px;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+/* ===== Категорії-картки (під hero) ===== */
+.shop-cats {
+  max-width: 1280px;
+  margin: -36px auto 0;
+  padding: 0 32px;
+  position: relative;
+  z-index: 2;
+}
+.shop-cats__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.shop-cat-tile {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px 16px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.shop-cat-tile:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.12);
+}
+.shop-cat-tile__icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: rgba(56,163,13,0.1);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.shop-cat-tile__text { display: flex; flex-direction: column; }
+.shop-cat-tile__name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: #262626;
+  line-height: 1.1;
+}
+.shop-cat-tile__count { font-size: 11px; color: #999; }
+
+/* ===== Trust badges ===== */
+.shop-trust {
+  max-width: 1280px;
+  margin: 36px auto 0;
+  padding: 0 32px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.shop-trust__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 12px;
+  border: 1px solid rgba(38,38,38,0.06);
+}
+.shop-trust__icon { width: 36px; height: 36px; border-radius: 50%; background: rgba(56,163,13,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.shop-trust__title { font-size: 13px; font-weight: 600; color: #262626; line-height: 1.2; margin-bottom: 2px; }
+.shop-trust__sub { font-size: 11px; color: #888; line-height: 1.3; }
 
 .shop-layout {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 36px 32px 80px;
+  padding: 48px 32px 80px;
   display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 40px;
+  grid-template-columns: 220px 1fr;
+  gap: 36px;
 }
+
+/* Чекбокс для toggle сайдбару на мобільному */
+.filter-toggle-cb { display: none; }
+.filter-toggle-btn {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 18px;
+  background: #fff;
+  border: 1.5px solid rgba(38,38,38,0.12);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #262626;
+  cursor: pointer;
+  margin-bottom: 16px;
+  user-select: none;
+}
+.filter-toggle-btn:hover { border-color: var(--accent); }
+.filter-toggle-btn svg { color: var(--accent); }
+.filter-close-btn { display: none; }
 
 .cat-radio { display: none; }
 
@@ -294,22 +415,22 @@ a { color: inherit; }
 /* Product grid */
 .shop-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
 }
 
 .product {
   display: flex;
   flex-direction: column;
   background: #fff;
-  border-radius: 16px;
+  border-radius: 14px;
   overflow: hidden;
   border: 1px solid rgba(38,38,38,0.06);
   transition: transform 0.25s, box-shadow 0.25s;
 }
 .product:hover {
   transform: translateY(-4px);
-  box-shadow: 0 14px 30px rgba(0,0,0,0.09);
+  box-shadow: 0 12px 26px rgba(0,0,0,0.09);
 }
 .product__photo-wrap {
   position: relative;
@@ -340,36 +461,36 @@ a { color: inherit; }
 .product__tag--new { background: #38A30D; }
 .product__tag--sale { background: #D14A3F; }
 .product__body {
-  padding: 14px 16px 18px;
+  padding: 12px 14px 14px;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 .product__cat {
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: #aaa;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 .product__name {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-weight: 600;
-  font-size: 17px;
+  font-size: 15px;
   color: #262626;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   line-height: 1.2;
-  min-height: 40px;
+  min-height: 36px;
 }
 .product__price {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--accent);
   margin-top: auto;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 .product__price-old {
-  font-size: 13px;
+  font-size: 12px;
   color: #aaa;
   text-decoration: line-through;
   margin-right: 6px;
@@ -378,16 +499,17 @@ a { color: inherit; }
 .product__btn {
   display: block;
   text-align: center;
-  padding: 10px;
+  padding: 8px;
   background: linear-gradient(180deg, var(--accent-light), var(--accent));
   color: #fff;
-  border-radius: 10px;
+  border-radius: 9px;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
-  box-shadow: 0 4px 10px rgba(56,163,13,0.2);
+  box-shadow: 0 3px 8px rgba(56,163,13,0.2);
 }
-.product__btn:hover { box-shadow: 0 6px 14px rgba(56,163,13,0.3); }
+.product__btn:hover { box-shadow: 0 5px 12px rgba(56,163,13,0.3); }
+.product__tag { font-size: 9px; padding: 3px 7px; }
 
 /* Пусто */
 .shop-empty {
@@ -398,41 +520,73 @@ a { color: inherit; }
 }
 .shop-layout:has(.product:not([style*="display: none"])) ~ .shop-empty { display: none; }
 
-@media (max-width: 900px) {
-  .shop-layout { grid-template-columns: 1fr; gap: 24px; padding: 24px 16px 60px; }
-  .sidebar { position: static; }
-  .sidebar__section { margin-bottom: 0; }
-  .sidebar__nav {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 8px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-  }
-  .sidebar__nav > li { flex-shrink: 0; }
-  .sidebar__group-title { display: none; }
-  .sidebar__sub {
-    display: flex;
-    gap: 8px;
-    margin-left: 0;
-    border: none;
-    padding: 0;
-  }
-  .sidebar__sub > li { flex-shrink: 0; }
-  .sidebar__link {
-    border: 1px solid rgba(38,38,38,0.12);
-    padding: 8px 14px !important;
-    font-size: 13px !important;
-    white-space: nowrap;
-    background: #fff;
-  }
-  .shop-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-  .product__name { font-size: 15px; min-height: 36px; }
-  .shop-hero { padding: 36px 16px 28px; }
+@media (max-width: 1100px) {
+  .shop-grid { grid-template-columns: repeat(3, 1fr); }
+  .shop-cats__grid { grid-template-columns: repeat(3, 1fr); }
+  .shop-trust { grid-template-columns: repeat(2, 1fr); }
 }
+
+@media (max-width: 900px) {
+  .shop-hero { padding: 48px 16px 36px; }
+  .shop-cats, .shop-trust { padding: 0 16px; }
+  .shop-cats__grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .shop-cat-tile { padding: 14px; }
+  .shop-trust { grid-template-columns: 1fr 1fr; margin-top: 24px; }
+
+  .shop-layout { grid-template-columns: 1fr; gap: 0; padding: 28px 16px 60px; }
+
+  /* Кнопка-фільтр видна на мобільному */
+  .filter-toggle-btn { display: inline-flex; }
+
+  /* Сайдбар стає off-canvas drawer */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: min(320px, 85vw);
+    height: 100dvh;
+    background: #fff;
+    z-index: 8200;
+    padding: 24px 20px;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.18);
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  .filter-toggle-cb:checked ~ .sidebar { transform: translateX(0); }
+  .filter-toggle-cb:checked ~ .shop-main::before {
+    content: "";
+    position: fixed; inset: 0;
+    background: rgba(38,28,24,0.5);
+    backdrop-filter: blur(3px);
+    z-index: 8100;
+  }
+  .filter-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(38,38,38,0.08);
+    color: #262626;
+    text-decoration: none;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .sidebar__section { margin-top: 28px; }
+
+  .shop-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .shop-cats { margin-top: -24px; }
+}
+
 @media (max-width: 480px) {
-  .shop-grid { grid-template-columns: repeat(2, 1fr); }
+  .shop-grid { gap: 10px; }
+  .product__body { padding: 10px 12px 12px; }
+  .product__name { font-size: 14px; min-height: 32px; margin-bottom: 4px; }
+  .product__price { font-size: 15px; margin-bottom: 8px; }
+  .product__btn { padding: 7px; font-size: 11px; }
+  .shop-cats__grid { grid-template-columns: 1fr; }
 }
 
 /* ===== ORDER MODAL ===== */
@@ -552,70 +706,82 @@ body:has(.modal:target) { overflow: hidden; }
 <body>
 
 <!-- ====== HEADER ====== -->
-<header class="site-header">
-  <input type="checkbox" id="nav-toggle" class="nav__toggle-cb">
-  <div class="site-header__bar">
-    <label for="nav-toggle" class="nav__burger" aria-label="Меню"><span></span><span></span><span></span></label>
-    <a href="index.html" class="site-header__logo">
-      <span class="site-header__logo-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M12 3c0 0-3 3-3 5.5a3 3 0 006 0C15 6 12 3 12 3z" fill="white"/>
-          <rect x="9" y="13" width="6" height="8" rx="1.5" fill="white" opacity=".85"/>
-        </svg>
-      </span>
-      <span class="site-header__logo-text">Свічка<span>&nbsp;UA</span></span>
-    </a>
-    <nav class="site-header__nav">
-      <a href="index.html#courses">Курси</a>
-      <a href="index.html#benefits">Про навчання</a>
-      <a href="shop.html" class="is-active">Магазин</a>
-      <a href="index.html#reviews">Відгуки</a>
-      <a href="index.html#faq">FAQ</a>
-    </nav>
-    <a href="index.html#courses" class="site-header__cta">Обрати курс</a>
-  </div>
-  <nav class="nav__drawer">
-    <div class="nav__drawer-top">
-      <a href="index.html" class="nav__drawer-logo">Свічка UA</a>
-      <label for="nav-toggle" class="nav__drawer-close">×</label>
-    </div>
-    <div class="nav__drawer-body">
-      <div class="nav__drawer-section">
-        <p class="nav__drawer-section-title">Навчання</p>
-        <a href="index.html#courses" class="nav__drawer-link">Усі курси</a>
-        <a href="index.html#benefits" class="nav__drawer-link">Про навчання</a>
-      </div>
-      <div class="nav__drawer-section">
-        <p class="nav__drawer-section-title">Магазин</p>
-        <a href="shop.html" class="nav__drawer-link">Каталог товарів</a>
-      </div>
-      <div class="nav__drawer-section">
-        <p class="nav__drawer-section-title">Сторінка</p>
-        <a href="index.html#reviews" class="nav__drawer-link">Відгуки</a>
-        <a href="index.html#faq" class="nav__drawer-link">FAQ</a>
-      </div>
-    </div>
-    <a href="index.html#courses" class="nav__drawer-cta">Обрати курс →</a>
-  </nav>
-  <label for="nav-toggle" class="nav__overlay"></label>
-</header>
 
 <!-- ====== SHOP PAGE ====== -->
 <section class="shop-page">
 
-  <!-- Hero -->
+  <!-- Hero з картинкою -->
   <div class="shop-hero">
     <div class="shop-hero__inner">
       <nav class="shop-hero__crumbs">
         <a href="index.html">Головна</a> · Магазин
       </nav>
-      <h1 class="shop-hero__title">Магазин</h1>
-      <p class="shop-hero__subtitle">Готові вироби ручної роботи. Доставка Новою Поштою по Україні.</p>
+      <h1 class="shop-hero__title">Свічки ручної роботи <span>з душею</span></h1>
+      <p class="shop-hero__subtitle">Соєві свічки, аромадифузори, подарункові набори та індивідуальні замовлення. Створено вручну в Україні.</p>
+      <div class="shop-hero__badges">
+        <span class="shop-hero__badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          100% натуральний соєвий віск
+        </span>
+        <span class="shop-hero__badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 9l2-5h14l2 5M3 9v11a1 1 0 001 1h16a1 1 0 001-1V9M3 9h18M8 13h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Доставка Новою Поштою
+        </span>
+        <span class="shop-hero__badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="currentColor"/></svg>
+          Індивідуальні замовлення
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Категорії-картки -->
+  <div class="shop-cats">
+    <div class="shop-cats__grid">
+      <a href="#cat-gift-sets" class="shop-cat-tile">
+        <span class="shop-cat-tile__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
+        <span class="shop-cat-tile__text"><span class="shop-cat-tile__name">Подарункові набори</span><span class="shop-cat-tile__count">від 850 ₴</span></span>
+      </a>
+      <a href="#cat-figured" class="shop-cat-tile">
+        <span class="shop-cat-tile__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2c0 0-5 4-5 9a5 5 0 0010 0c0-5-5-9-5-9zM7 16v4a2 2 0 002 2h6a2 2 0 002-2v-4" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
+        <span class="shop-cat-tile__text"><span class="shop-cat-tile__name">Фігурні свічки</span><span class="shop-cat-tile__count">від 270 ₴</span></span>
+      </a>
+      <a href="#cat-aroma-candles" class="shop-cat-tile">
+        <span class="shop-cat-tile__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v10M9 6c0-1.657 1.343-3 3-3s3 1.343 3 3" stroke="#38A30D" stroke-width="1.8" stroke-linecap="round"/><rect x="7" y="13" width="10" height="8" rx="2" stroke="#38A30D" stroke-width="1.8"/></svg></span>
+        <span class="shop-cat-tile__text"><span class="shop-cat-tile__name">Аромасвічки</span><span class="shop-cat-tile__count">від 220 ₴</span></span>
+      </a>
+      <a href="#cat-diffusers" class="shop-cat-tile">
+        <span class="shop-cat-tile__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2c0 0-4 4-4 8a4 4 0 008 0c0-4-4-8-4-8z" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
+        <span class="shop-cat-tile__text"><span class="shop-cat-tile__name">Аромадифузори</span><span class="shop-cat-tile__count">від 280 ₴</span></span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Trust badges -->
+  <div class="shop-trust">
+    <div class="shop-trust__item">
+      <span class="shop-trust__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#38A30D" stroke-width="1.8"/></svg></span>
+      <div><p class="shop-trust__title">Якість гарантовано</p><p class="shop-trust__sub">Перевірені матеріали</p></div>
+    </div>
+    <div class="shop-trust__item">
+      <span class="shop-trust__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 9l2-5h14l2 5M3 9v11a1 1 0 001 1h16a1 1 0 001-1V9" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
+      <div><p class="shop-trust__title">Швидка доставка</p><p class="shop-trust__sub">Нова Пошта 1–3 дні</p></div>
+    </div>
+    <div class="shop-trust__item">
+      <span class="shop-trust__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M17 9V7a5 5 0 00-10 0v2M5 9h14v12H5z" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
+      <div><p class="shop-trust__title">Безпечна оплата</p><p class="shop-trust__sub">Карта, накладений</p></div>
+    </div>
+    <div class="shop-trust__item">
+      <span class="shop-trust__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 01-9 8.38 8.5 8.5 0 01-7.5-4.38 8.38 8.38 0 016.5-12.4A8.5 8.5 0 0121 11.5z" stroke="#38A30D" stroke-width="1.8"/></svg></span>
+      <div><p class="shop-trust__title">Підтримка</p><p class="shop-trust__sub">Telegram-чат 24/7</p></div>
     </div>
   </div>
 
   <!-- Layout: sidebar + grid -->
   <div class="shop-layout">
+
+    <!-- Toggle сайдбару на мобільному -->
+    <input type="checkbox" id="filter-toggle" class="filter-toggle-cb">
 
     <!-- Радіо для фільтра — мають бути в межах .shop-layout -->
     <input type="radio" name="cat" id="cat-all" class="cat-radio" checked>
@@ -629,6 +795,7 @@ body:has(.modal:target) { overflow: hidden; }
 
     <!-- Sidebar -->
     <aside class="sidebar">
+      <label for="filter-toggle" class="filter-close-btn" aria-label="Закрити фільтр">×</label>
       <div class="sidebar__section">
         <p class="sidebar__title">Категорії</p>
         <ul class="sidebar__nav">
@@ -658,6 +825,11 @@ body:has(.modal:target) { overflow: hidden; }
 
     <!-- Main: products -->
     <main class="shop-main">
+      <label for="filter-toggle" class="filter-toggle-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M6 12h12M10 18h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Фільтри та категорії
+      </label>
+
       <div class="shop-toolbar">
         <span class="shop-count">
           <span class="shop-count-all">Усі товари · 12</span>
@@ -898,6 +1070,37 @@ body:has(.modal:target) { overflow: hidden; }
     </form>
   </div>
 </div>
+
+<script>
+(function() {
+  const ease = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+  document.addEventListener('click', function(e) {
+    const link = e.target.closest('a[href^="#"]');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    if (!href || href === '#') return;
+    const target = document.getElementById(href.slice(1));
+    if (!target) return;
+    if (window.getComputedStyle(target).position === 'fixed') return;
+    // Пропустити радіо-якорі фільтра (їх клік міняє :checked, не скролить)
+    if (target.classList.contains('cat-radio')) return;
+    e.preventDefault();
+    const startY = window.scrollY;
+    const targetY = target.getBoundingClientRect().top + window.scrollY;
+    const distance = targetY - startY;
+    if (Math.abs(distance) < 4) return;
+    const duration = 700;
+    const startTime = performance.now();
+    function step(now) {
+      const t = Math.min((now - startTime) / duration, 1);
+      window.scrollTo(0, startY + distance * ease(t));
+      if (t < 1) requestAnimationFrame(step);
+      else history.replaceState(null, '', href);
+    }
+    requestAnimationFrame(step);
+  });
+})();
+</script>
 
 </body>
 </html>

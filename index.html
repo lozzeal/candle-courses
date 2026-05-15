@@ -36,6 +36,9 @@
   --color-bg: #A69D97;
 }
 
+html {
+  scroll-behavior: smooth;
+}
 html, body {
   overflow-x: hidden;
   overflow-x: clip;
@@ -46,6 +49,75 @@ html, body {
   background: var(--color-bg);
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Прибране меню — залишаємо тільки логотип + CTA */
+.site-header__nav,
+.nav__burger,
+.nav__drawer,
+.nav__overlay { display: none !important; }
+
+/* ===== Плаваюча кнопка (FAB) ===== */
+.fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 7500;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+.fab__primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  background: linear-gradient(180deg, #49C318 0%, #38A30D 100%);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 12px 28px rgba(56,163,13,0.45), 0 4px 12px rgba(56,163,13,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.fab__primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 18px 36px rgba(56,163,13,0.55), 0 6px 16px rgba(56,163,13,0.4);
+}
+.fab__primary svg { animation: fab-pulse 2.4s ease-in-out infinite; }
+@keyframes fab-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+.fab__secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: #fff;
+  color: #262626;
+  text-decoration: none;
+  border-radius: 50%;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.fab__secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(0,0,0,0.25);
+}
+.fab__secondary--tg { background: #229ED9; color: #fff; }
+.fab__secondary--top { background: #fff; color: #38A30D; }
+
+@media (max-width: 768px) {
+  .fab { bottom: 14px; right: 14px; gap: 8px; }
+  .fab__primary { padding: 12px 18px; font-size: 14px; }
+  .fab__secondary { width: 40px; height: 40px; }
+}
+@media (max-width: 900px) {
+  .site-header__cta { display: inline-flex !important; padding: 7px 14px; font-size: 13px; margin-left: auto; }
 }
 
 /* Щоб якірні посилання не ховались під фіксований хедер */
@@ -61,8 +133,7 @@ section[id] { scroll-margin-top: 72px; }
     touch-action: pan-y;
     overscroll-behavior-x: contain;
   }
-  .hero { padding-top: 56px; }
-  section[id] { scroll-margin-top: 64px; }
+  section[id] { scroll-margin-top: 16px; }
   section {
     overflow-x: clip;
     overflow-y: visible;
@@ -83,7 +154,6 @@ section[id] { scroll-margin-top: 72px; }
 .hero {
   min-height: 100vh;
   min-height: 100dvh;
-  padding-top: 64px;
   display: flex;
   align-items: center;
   padding: 32px;
@@ -1237,12 +1307,9 @@ section[id] { scroll-margin-top: 72px; }
    SITE HEADER
    ============================================================ */
 .site-header {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 8000;
+  position: relative;
   background: #fff;
   border-bottom: 1px solid rgba(38,38,38,0.08);
-  box-shadow: 0 2px 16px rgba(38,38,38,0.06);
 }
 
 /* Прихований чекбокс — керує мобільним меню */
@@ -1473,113 +1540,6 @@ section[id] { scroll-margin-top: 72px; }
 <!-- ============================================================
      SITE HEADER
      ============================================================ -->
-<header class="site-header">
-  <input type="checkbox" id="nav-toggle" class="nav__toggle-cb">
-
-  <div class="site-header__bar">
-    <!-- Гамбургер (мобайл) -->
-    <label for="nav-toggle" class="nav__burger" aria-label="Меню">
-      <span></span><span></span><span></span>
-    </label>
-
-    <!-- Логотип -->
-    <a href="#" class="site-header__logo">
-      <span class="site-header__logo-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M12 3c0 0-3 3-3 5.5a3 3 0 006 0C15 6 12 3 12 3z" fill="white"/>
-          <rect x="9" y="13" width="6" height="8" rx="1.5" fill="white" opacity=".85"/>
-        </svg>
-      </span>
-      <span class="site-header__logo-text">Свічка<span>&nbsp;UA</span></span>
-    </a>
-
-    <!-- Десктоп навігація -->
-    <nav class="site-header__nav" aria-label="Головна навігація">
-      <a href="#courses">Курси</a>
-      <a href="#benefits">Про навчання</a>
-      <a href="shop.html">Магазин</a>
-      <a href="#reviews">Відгуки</a>
-      <a href="#faq">FAQ</a>
-    </nav>
-
-    <a href="#courses" class="site-header__cta">Обрати курс</a>
-  </div>
-
-  <!-- Мобільний drawer -->
-  <nav class="nav__drawer" aria-label="Мобільне меню">
-    <div class="nav__drawer-top">
-      <a href="#" class="nav__drawer-logo">Свічка UA</a>
-      <label for="nav-toggle" class="nav__drawer-close" aria-label="Закрити">×</label>
-    </div>
-    <div class="nav__drawer-body">
-
-      <div class="nav__drawer-section">
-        <p class="nav__drawer-section-title">Навчання</p>
-        <label for="nav-toggle">
-          <a href="#courses" class="nav__drawer-link">
-            <span class="nav__drawer-link-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3l9 4.5-9 4.5-9-4.5L12 3z" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/><path d="M3 12l9 4.5 9-4.5" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/><path d="M3 16.5l9 4.5 9-4.5" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/></svg>
-            </span>
-            Усі курси
-          </a>
-        </label>
-        <label for="nav-toggle">
-          <a href="#benefits" class="nav__drawer-link">
-            <span class="nav__drawer-link-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="#38A30D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="#38A30D" stroke-width="1.8"/></svg>
-            </span>
-            Про навчання
-          </a>
-        </label>
-      </div>
-
-      <div class="nav__drawer-section">
-        <p class="nav__drawer-section-title">Магазин</p>
-        <label for="nav-toggle">
-          <a href="shop.html" class="nav__drawer-link">
-            <span class="nav__drawer-link-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/><line x1="3" y1="6" x2="21" y2="6" stroke="#38A30D" stroke-width="1.8"/></svg>
-            </span>
-            Свічки
-          </a>
-        </label>
-        <label for="nav-toggle">
-          <a href="shop.html" class="nav__drawer-link">
-            <span class="nav__drawer-link-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2c0 0-4 4-4 8a4 4 0 008 0c0-4-4-8-4-8z" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/></svg>
-            </span>
-            Аромапродукти
-          </a>
-        </label>
-      </div>
-
-      <div class="nav__drawer-section">
-        <p class="nav__drawer-section-title">Сторінка</p>
-        <label for="nav-toggle">
-          <a href="#reviews" class="nav__drawer-link">
-            <span class="nav__drawer-link-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/></svg>
-            </span>
-            Відгуки учнів
-          </a>
-        </label>
-        <label for="nav-toggle">
-          <a href="#faq" class="nav__drawer-link">
-            <span class="nav__drawer-link-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#38A30D" stroke-width="1.8"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" stroke="#38A30D" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="17" r=".5" fill="#38A30D" stroke="#38A30D"/></svg>
-            </span>
-            FAQ
-          </a>
-        </label>
-      </div>
-
-    </div>
-    <a href="#courses" class="nav__drawer-cta">Обрати курс →</a>
-  </nav>
-
-  <!-- Overlay для закриття -->
-  <label for="nav-toggle" class="nav__overlay"></label>
-</header>
 
 <section class="hero">
   <div class="petal" style="top: -40px; left: -40px; transform: rotate(20deg);"></div>
@@ -3765,6 +3725,57 @@ body:has(.modal:target) { overflow: hidden; }
     </nav>
   </div>
 </footer>
+
+<!-- Плаваючі кнопки на лендингу -->
+<div class="fab" aria-label="Швидкі дії">
+  <a href="#top" class="fab__secondary fab__secondary--top" aria-label="Нагору">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+  <a href="#" class="fab__secondary fab__secondary--tg" aria-label="Написати у Telegram">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path d="M21.8 3.2L2.6 10.7c-1.3.5-1.3 1.3-.2 1.6l4.9 1.5 11.3-7.1c.5-.3 1 .1.6.5l-9.2 8.3v3.4c0 .7.5.9.9.4l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.6c.3-1.2-.5-1.8-1.9-1.3z" fill="currentColor"/>
+    </svg>
+  </a>
+  <a href="#courses" class="fab__primary">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="white"/>
+    </svg>
+    <span>Обрати курс</span>
+  </a>
+</div>
+
+<span id="top" style="position:absolute;top:0;left:0;"></span>
+
+<script>
+(function() {
+  const ease = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+  document.addEventListener('click', function(e) {
+    const link = e.target.closest('a[href^="#"]');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    if (!href || href === '#') return;
+    const target = document.getElementById(href.slice(1));
+    if (!target) return;
+    if (window.getComputedStyle(target).position === 'fixed') return;
+    e.preventDefault();
+    const startY = window.scrollY;
+    const targetY = target.getBoundingClientRect().top + window.scrollY;
+    const distance = targetY - startY;
+    if (Math.abs(distance) < 4) return;
+    const duration = 700;
+    const startTime = performance.now();
+    function step(now) {
+      const t = Math.min((now - startTime) / duration, 1);
+      window.scrollTo(0, startY + distance * ease(t));
+      if (t < 1) requestAnimationFrame(step);
+      else history.replaceState(null, '', href);
+    }
+    requestAnimationFrame(step);
+  });
+})();
+</script>
 
 </body>
 </html>
