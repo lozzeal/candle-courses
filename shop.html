@@ -232,51 +232,53 @@ a { color: inherit; }
   border: 1px solid rgba(255,255,255,0.18);
 }
 
-/* ===== Категорії-картки (під hero) ===== */
+/* ===== Категорії-картки (на фоні hero) ===== */
 .shop-cats {
-  max-width: 1280px;
-  margin: -36px auto 0;
-  padding: 0 32px;
-  position: relative;
-  z-index: 2;
+  margin-top: 32px;
 }
 .shop-cats__grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 14px;
 }
 .shop-cat-tile {
-  background: #fff;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
   border-radius: 14px;
-  padding: 18px 16px;
+  padding: 18px 18px;
   text-decoration: none;
   color: inherit;
   display: flex;
   align-items: center;
-  gap: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
+  gap: 14px;
+  transition: background 0.2s, transform 0.2s, border-color 0.2s;
 }
 .shop-cat-tile:hover {
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.35);
   transform: translateY(-3px);
-  box-shadow: 0 14px 32px rgba(0,0,0,0.12);
 }
 .shop-cat-tile__icon {
-  width: 40px; height: 40px;
-  border-radius: 10px;
-  background: rgba(56,163,13,0.1);
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  background: rgba(158,232,106,0.2);
+  border: 1px solid rgba(158,232,106,0.35);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.shop-cat-tile__text { display: flex; flex-direction: column; }
+.shop-cat-tile__text { display: flex; flex-direction: column; gap: 3px; }
 .shop-cat-tile__name {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-weight: 600;
-  font-size: 15px;
-  color: #262626;
+  font-size: 17px;
+  color: #fff;
   line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
-.shop-cat-tile__count { font-size: 11px; color: #999; }
+.shop-cat-tile__count { font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 500; }
 
 /* ===== Trust badges ===== */
 .shop-trust {
@@ -527,10 +529,12 @@ a { color: inherit; }
 }
 
 @media (max-width: 900px) {
-  .shop-hero { padding: 48px 16px 36px; }
-  .shop-cats, .shop-trust { padding: 0 16px; }
-  .shop-cats__grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .shop-cat-tile { padding: 14px; }
+  .shop-hero { padding: 48px 16px 48px; }
+  .shop-trust { padding: 0 16px; }
+  .shop-cats { margin-top: 24px; }
+  .shop-cats__grid { grid-template-columns: 1fr; gap: 10px; }
+  .shop-cat-tile { padding: 14px 16px; }
+  .shop-cat-tile__name { font-size: 15px; }
   .shop-trust { grid-template-columns: 1fr 1fr; margin-top: 24px; }
 
   .shop-layout { grid-template-columns: 1fr; gap: 0; padding: 28px 16px 60px; }
@@ -577,7 +581,6 @@ a { color: inherit; }
   .sidebar__section { margin-top: 28px; }
 
   .shop-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .shop-cats { margin-top: -24px; }
 }
 
 @media (max-width: 480px) {
@@ -750,9 +753,6 @@ body:has(.modal:target) { overflow: hidden; }
   <!-- Hero з картинкою -->
   <div class="shop-hero">
     <div class="shop-hero__inner">
-      <nav class="shop-hero__crumbs">
-        <a href="index.html">Головна</a> · Магазин
-      </nav>
       <h1 class="shop-hero__title">Свічки ручної роботи <span>з душею</span></h1>
       <p class="shop-hero__subtitle">Соєві свічки, подарункові набори та індивідуальні замовлення. Створено вручну в Україні.</p>
       <div class="shop-hero__badges">
@@ -769,24 +769,25 @@ body:has(.modal:target) { overflow: hidden; }
           Індивідуальні замовлення
         </span>
       </div>
-    </div>
-  </div>
 
-  <!-- Категорії-картки -->
-  <div class="shop-cats">
-    <div class="shop-cats__grid">
-      <a href="#cat-gift-sets" class="shop-cat-tile">
-        <span class="shop-cat-tile__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
-        <span class="shop-cat-tile__text"><span class="shop-cat-tile__name">Подарункові набори</span><span class="shop-cat-tile__count">від 850 ₴</span></span>
-      </a>
-      <a href="#cat-figured" class="shop-cat-tile">
-        <span class="shop-cat-tile__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2c0 0-5 4-5 9a5 5 0 0010 0c0-5-5-9-5-9zM7 16v4a2 2 0 002 2h6a2 2 0 002-2v-4" stroke="#38A30D" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
-        <span class="shop-cat-tile__text"><span class="shop-cat-tile__name">Фігурні свічки</span><span class="shop-cat-tile__count">від 270 ₴</span></span>
-      </a>
-      <a href="#cat-aroma-candles" class="shop-cat-tile">
-        <span class="shop-cat-tile__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v10M9 6c0-1.657 1.343-3 3-3s3 1.343 3 3" stroke="#38A30D" stroke-width="1.8" stroke-linecap="round"/><rect x="7" y="13" width="10" height="8" rx="2" stroke="#38A30D" stroke-width="1.8"/></svg></span>
-        <span class="shop-cat-tile__text"><span class="shop-cat-tile__name">Аромасвічки</span><span class="shop-cat-tile__count">від 220 ₴</span></span>
-      </a>
+      <!-- Категорії-картки (на фоні hero) -->
+      <div class="shop-cats">
+        <div class="shop-cats__grid">
+          <a href="#cat-gift-sets" class="shop-cat-tile">
+            <span class="shop-cat-tile__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z" stroke="#9EE86A" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
+            <span class="shop-cat-tile__text"><span class="shop-cat-tile__name">Подарункові набори</span><span class="shop-cat-tile__count">від 850 ₴</span></span>
+          </a>
+          <a href="#cat-figured" class="shop-cat-tile">
+            <span class="shop-cat-tile__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2c0 0-5 4-5 9a5 5 0 0010 0c0-5-5-9-5-9zM7 16v4a2 2 0 002 2h6a2 2 0 002-2v-4" stroke="#9EE86A" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
+            <span class="shop-cat-tile__text"><span class="shop-cat-tile__name">Фігурні свічки</span><span class="shop-cat-tile__count">від 270 ₴</span></span>
+          </a>
+          <a href="#cat-aroma-candles" class="shop-cat-tile">
+            <span class="shop-cat-tile__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v10M9 6c0-1.657 1.343-3 3-3s3 1.343 3 3" stroke="#9EE86A" stroke-width="1.8" stroke-linecap="round"/><rect x="7" y="13" width="10" height="8" rx="2" stroke="#9EE86A" stroke-width="1.8"/></svg></span>
+            <span class="shop-cat-tile__text"><span class="shop-cat-tile__name">Аромасвічки</span><span class="shop-cat-tile__count">від 220 ₴</span></span>
+          </a>
+        </div>
+      </div>
+
     </div>
   </div>
 
