@@ -383,6 +383,20 @@ body:has(.modal:target) { overflow: hidden; }
 </head>
 <body>
 
+<style>
+.top-nav { background: #fff; padding: 12px 24px; display: flex; gap: 8px; border-bottom: 1px solid rgba(0,0,0,0.06); }
+.top-nav__link { padding: 9px 22px; background: #f3eee9; color: #555; text-decoration: none; border-radius: 999px; font-size: 14px; font-weight: 600; transition: background 0.18s, color 0.18s, transform 0.15s; letter-spacing: 0.02em; }
+.top-nav__link:hover { background: #e8e0d8; color: #262626; transform: translateY(-1px); }
+.top-nav__link--active { background: linear-gradient(180deg, #49C318, #38A30D); color: #fff; box-shadow: 0 4px 12px rgba(56,163,13,0.3); }
+.top-nav__link--active:hover { color: #fff; }
+@media (max-width: 600px) { .top-nav { padding: 8px 14px; gap: 6px; } .top-nav__link { padding: 7px 16px; font-size: 13px; } }
+</style>
+
+<nav class="top-nav">
+  <a href="index.html" class="top-nav__link">Курси</a>
+  <a href="shop.html" class="top-nav__link top-nav__link--active">Товари</a>
+</nav>
+
 <!-- ============================================================
      ХЛІБНІ КРИХТИ
      ============================================================ -->
@@ -611,8 +625,9 @@ body:has(.modal:target) { overflow: hidden; }
     <div>
       <p class="footer__col-title">Контакти</p>
       <ul class="footer__nav">
-        <li><a href="#">Telegram</a></li>
-        <li><a href="mailto:YOUR@EMAIL.COM">Email</a></li>
+        <li><a href="https://t.me/GalunaSpeak" target="_blank" rel="noopener">@GalunaSpeak</a></li>
+        <li><a href="tel:+380981314535">+380 98 131 45 35</a></li>
+        <li><a href="mailto:okvozuk@gmail.com">okvozuk@gmail.com</a></li>
       </ul>
     </div>
   </div>
@@ -628,7 +643,7 @@ body:has(.modal:target) { overflow: hidden; }
     <a href="#" class="modal__close" aria-label="Закрити">×</a>
     <p class="modal__title">Замовити букет «Полуничний рай»</p>
     <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові, решту уточнимо по телефону</p>
-    <form class="modal__grid" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+    <form class="modal__grid" action="mailto:okvozuk@gmail.com" method="post" enctype="text/plain">
       <input type="hidden" name="Товар" value="Букет «Полуничний рай» — 980 ₴">
       <div class="field field--wide">
         <label>Телефон <span style="color:#D14A3F">*</span></label>
@@ -664,7 +679,7 @@ body:has(.modal:target) { overflow: hidden; }
     <a href="#" class="modal__close" aria-label="Закрити">×</a>
     <p class="modal__title">Запитати про товар</p>
     <p class="modal__sub">Напишіть запитання — відповімо у Telegram або на email</p>
-    <form class="modal__grid" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
+    <form class="modal__grid" action="mailto:okvozuk@gmail.com" method="post" enctype="text/plain">
       <div class="field field--wide">
         <label>Контакт (телефон або Telegram) <span style="color:#D14A3F">*</span></label>
         <input type="text" name="Контакт" placeholder="+380... або @username" required>
