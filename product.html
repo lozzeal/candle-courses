@@ -627,24 +627,24 @@ body:has(.modal:target) { overflow: hidden; }
   <div class="modal__box">
     <a href="#" class="modal__close" aria-label="Закрити">×</a>
     <p class="modal__title">Замовити букет «Полуничний рай»</p>
-    <p class="modal__sub">Вкажіть деталі — ми зв'яжемось для підтвердження</p>
+    <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові, решту уточнимо по телефону</p>
     <form class="modal__grid" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
       <input type="hidden" name="Товар" value="Букет «Полуничний рай» — 980 ₴">
-      <div class="field">
-        <label>Ім'я та прізвище</label>
-        <input type="text" name="Імʼя" placeholder="Ім'я Прізвище" required>
-      </div>
-      <div class="field">
-        <label>Телефон</label>
+      <div class="field field--wide">
+        <label>Телефон <span style="color:#D14A3F">*</span></label>
         <input type="tel" name="Телефон" placeholder="+380..." required>
       </div>
       <div class="field field--wide">
-        <label>Email</label>
-        <input type="email" name="Email" placeholder="email@...">
+        <label>Email <span style="color:#D14A3F">*</span></label>
+        <input type="email" name="Email" placeholder="email@..." required>
+      </div>
+      <div class="field field--wide">
+        <label>Ім'я та прізвище</label>
+        <input type="text" name="Імʼя" placeholder="Ім'я Прізвище">
       </div>
       <div class="field field--wide">
         <label>Адреса (Нова Пошта)</label>
-        <input type="text" name="Адреса" placeholder="Місто, № відділення" required>
+        <input type="text" name="Адреса" placeholder="Місто, № відділення">
       </div>
       <div class="field field--wide">
         <label>Колір коробки / побажання</label>
@@ -666,16 +666,16 @@ body:has(.modal:target) { overflow: hidden; }
     <p class="modal__sub">Напишіть запитання — відповімо у Telegram або на email</p>
     <form class="modal__grid" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
       <div class="field field--wide">
-        <label>Ім'я</label>
-        <input type="text" name="Імʼя" placeholder="Як до вас звертатися" required>
-      </div>
-      <div class="field field--wide">
-        <label>Контакт (телефон або Telegram)</label>
+        <label>Контакт (телефон або Telegram) <span style="color:#D14A3F">*</span></label>
         <input type="text" name="Контакт" placeholder="+380... або @username" required>
       </div>
       <div class="field field--wide">
+        <label>Ім'я</label>
+        <input type="text" name="Імʼя" placeholder="Як до вас звертатися">
+      </div>
+      <div class="field field--wide">
         <label>Ваше запитання</label>
-        <textarea name="Запитання" rows="3" placeholder="Що цікавить?" required></textarea>
+        <textarea name="Запитання" rows="3" placeholder="Що цікавить?"></textarea>
       </div>
       <button class="submit" type="submit">Надіслати</button>
     </form>

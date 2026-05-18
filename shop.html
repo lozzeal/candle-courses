@@ -1021,27 +1021,27 @@ body:has(.modal:target) { overflow: hidden; }
   <div class="modal__box">
     <a href="#" class="modal__close" aria-label="Закрити">×</a>
     <p class="modal__title">Оформити замовлення</p>
-    <p class="modal__sub">Вкажіть деталі та адресу — ми зв'яжемось для підтвердження</p>
+    <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові, решту уточнимо по телефону</p>
     <form class="modal__grid" action="mailto:YOUR@EMAIL.COM" method="post" enctype="text/plain">
       <div class="field field--wide">
-        <label>Який товар замовляєте?</label>
-        <input type="text" name="Товар" placeholder="Назва товару з каталогу" required>
-      </div>
-      <div class="field">
-        <label>Ім'я та прізвище</label>
-        <input type="text" name="Імʼя" placeholder="Ім'я Прізвище" required>
-      </div>
-      <div class="field">
-        <label>Телефон</label>
+        <label>Телефон <span style="color:#D14A3F">*</span></label>
         <input type="tel" name="Телефон" placeholder="+380..." required>
       </div>
       <div class="field field--wide">
-        <label>Email</label>
-        <input type="email" name="Email" placeholder="email@...">
+        <label>Email <span style="color:#D14A3F">*</span></label>
+        <input type="email" name="Email" placeholder="email@..." required>
+      </div>
+      <div class="field field--wide">
+        <label>Який товар замовляєте?</label>
+        <input type="text" name="Товар" placeholder="Назва товару з каталогу">
+      </div>
+      <div class="field field--wide">
+        <label>Ім'я та прізвище</label>
+        <input type="text" name="Імʼя" placeholder="Ім'я Прізвище">
       </div>
       <div class="field field--wide">
         <label>Адреса (Нова Пошта або кур'єр)</label>
-        <input type="text" name="Адреса" placeholder="Місто, відділення НП або адреса" required>
+        <input type="text" name="Адреса" placeholder="Місто, відділення НП або адреса">
       </div>
       <div class="field field--wide">
         <label>Колір / побажання</label>
