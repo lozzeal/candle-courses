@@ -1591,8 +1591,25 @@ section[id] { scroll-margin-top: 72px; }
 .top-nav__link--active { background: linear-gradient(180deg, #49C318, #38A30D); color: #fff; box-shadow: 0 6px 18px rgba(56,163,13,0.45); }
 .top-nav__link--active:hover { color: #fff; background: linear-gradient(180deg, #49C318, #38A30D); }
 @media (max-width: 600px) {
-  .top-nav { top: 12px; gap: 6px; }
-  .top-nav__link { padding: 7px 16px; font-size: 13px; }
+  /* На мобільному — статичні кнопки на коричневому фоні body, прямокутні */
+  .top-nav {
+    position: static;
+    transform: none;
+    left: auto;
+    top: auto;
+    background: var(--color-bg);
+    padding: 14px 16px;
+    justify-content: center;
+    gap: 10px;
+  }
+  .top-nav__link {
+    padding: 11px 28px;
+    font-size: 14px;
+    border-radius: 10px;
+    flex: 0 1 auto;
+    min-width: 120px;
+    text-align: center;
+  }
 }
 </style>
 
