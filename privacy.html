@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Політика конфіденційності — Крафт-свічки та арома-професія</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --accent: #38A30D; --accent-light: #49C318; }
+html { scroll-behavior: smooth; }
+html, body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: #262626;
+  background: #fbf7f4;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+
+/* Top nav */
+.top-nav { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; gap: 8px; }
+.top-nav__link { padding: 11px 28px; background: rgba(255,255,255,0.92); color: #262626; text-decoration: none; border-radius: 10px; font-size: 14px; font-weight: 600; transition: all 0.18s; letter-spacing: 0.02em; box-shadow: 0 4px 16px rgba(0,0,0,0.08); min-width: 120px; text-align: center; }
+.top-nav__link:hover { background: #fff; transform: translateY(-1px); }
+.top-nav__link--active { background: linear-gradient(180deg, var(--accent-light), var(--accent)); color: #fff; }
+.top-nav__link--active:hover { color: #fff; background: linear-gradient(180deg, var(--accent-light), var(--accent)); }
+@media (max-width: 600px) { .top-nav { top: 12px; gap: 8px; } }
+
+/* Doc hero */
+.doc-hero {
+  background: linear-gradient(135deg, #2A1F1C 0%, #4A3830 100%);
+  padding: 90px 24px 60px;
+  color: #fff;
+  text-align: center;
+}
+.doc-hero h1 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(30px, 5vw, 46px);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.doc-hero p { color: rgba(255,255,255,0.7); font-size: 14px; }
+
+/* Doc body */
+.doc {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px 60px;
+}
+.doc h2 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: 22px;
+  color: #262626;
+  margin-top: 36px;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(38,38,38,0.08);
+}
+.doc h2:first-of-type { margin-top: 0; }
+.doc p { margin-bottom: 12px; font-size: 15px; color: #444; }
+.doc ul { margin: 0 0 16px 22px; }
+.doc li { margin-bottom: 6px; font-size: 15px; color: #444; }
+.doc strong { color: #262626; }
+.doc__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 32px;
+  padding: 12px 22px;
+  background: linear-gradient(180deg, var(--accent-light), var(--accent));
+  color: #fff;
+  text-decoration: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.doc__back:hover { transform: translateY(-1px); }
+
+/* Footer */
+.footer { background: #2A1F1C; color: rgba(255,255,255,0.7); padding: 40px 32px; text-align: center; }
+.footer__copy { font-size: 12px; color: rgba(255,255,255,0.4); }
+.footer__copy a { color: rgba(255,255,255,0.6); text-decoration: none; }
+.footer__copy a:hover { color: #fff; }
+
+@media (max-width: 600px) {
+  .doc-hero { padding: 80px 16px 40px; }
+  .doc { padding: 32px 16px 50px; }
+  .doc h2 { font-size: 19px; margin-top: 28px; }
+  .doc p, .doc li { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="index.html" class="top-nav__link">Курси</a>
+  <a href="shop.html" class="top-nav__link">Товари</a>
+</nav>
+
+<section class="doc-hero">
+  <h1>Політика конфіденційності</h1>
+  <p>Дата останнього оновлення: 21.05.2026</p>
+</section>
+
+<main class="doc">
+
+  <p>Ця Політика конфіденційності описує, як ми збираємо, використовуємо та захищаємо особисту інформацію користувачів сайту <strong>candle-courses.vercel.app</strong> (далі — «Сайт»).</p>
+
+  <h2>1. Збір особистої інформації</h2>
+  <p>Ми збираємо особисту інформацію користувачів при оформленні замовлень на курси, мінікурси та товари ручної роботи, а також при оплаті послуг, включаючи:</p>
+  <ul>
+    <li>Ім'я, прізвище;</li>
+    <li>Електронну адресу (актуальну пошту);</li>
+    <li>Контактний телефон;</li>
+    <li>Адресу доставки (для замовлення товарів);</li>
+    <li>Дані для оплати (через захищений шлюз WayForPay — на наших серверах не зберігаються);</li>
+    <li>Інші дані, необхідні для надання послуг.</li>
+  </ul>
+
+  <h2>2. Мета використання даних</h2>
+  <p>Зібрані дані використовуються для:</p>
+  <ul>
+    <li>Обробки замовлень на курси, мінікурси та товари;</li>
+    <li>Надання доступу до онлайн-курсів через Telegram;</li>
+    <li>Підготовки і відправки замовлених товарів Новою Поштою;</li>
+    <li>Підтримки зв'язку щодо навчання, технічної підтримки та статусу замовлення;</li>
+    <li>Поліпшення якості наших онлайн-послуг та продуктів;</li>
+    <li>Надання оновлень та пропозицій щодо нових курсів і товарів (за вашою згодою).</li>
+  </ul>
+
+  <h2>3. Обробка платежів</h2>
+  <p>Для обробки платежів ми використовуємо захищений сервіс <strong>WayForPay</strong>. Ми <strong>не зберігаємо</strong> дані ваших платіжних карток або інших конфіденційних фінансових даних на наших серверах. Усі транзакції обробляються через захищений платіжний шлюз WayForPay згідно зі стандартами PCI DSS.</p>
+
+  <h2>4. Конфіденційність і захист даних</h2>
+  <p>Ми використовуємо відповідні технічні та організаційні заходи для захисту ваших особистих даних від несанкціонованого доступу, зміни або видалення. Особиста інформація передається через захищене HTTPS-зʼєднання та зберігається у захищених сервісах з обмеженим доступом.</p>
+
+  <h2>5. Файли cookie</h2>
+  <p>Ми можемо використовувати файли cookie для персоналізації вашого користувацького досвіду на нашому Сайті. Cookie допомагають відслідковувати використання сайту та полегшують процеси оформлення замовлень. Ви можете відключити використання файлів cookie через налаштування браузера, проте це може обмежити функціональність сайту.</p>
+
+  <h2>6. Передача даних третім особам</h2>
+  <p>Ми не передаємо особисту інформацію користувачів третім особам, за винятком:</p>
+  <ul>
+    <li>Сервісу обробки платежів <strong>WayForPay</strong> — у мінімально необхідному обсязі для проведення оплати;</li>
+    <li>Сервісу доставки <strong>Нова Пошта</strong> — імʼя, телефон і адреса доставки для відправки товарів;</li>
+    <li>Випадків, передбачених чинним законодавством України.</li>
+  </ul>
+
+  <h2>7. Ваші права</h2>
+  <p>Ви маєте право:</p>
+  <ul>
+    <li>Запитувати доступ до вашої особистої інформації;</li>
+    <li>Вимагати виправлення неточних даних;</li>
+    <li>Вимагати видалення ваших даних (у межах, дозволених законодавством);</li>
+    <li>Відкликати згоду на маркетингові розсилки в будь-який момент.</li>
+  </ul>
+  <p>Для реалізації цих прав напишіть нам на <a href="mailto:okvozuk@gmail.com">okvozuk@gmail.com</a> або у Telegram <a href="https://t.me/GalunaSpeak" target="_blank" rel="noopener">@GalunaSpeak</a>.</p>
+
+  <h2>8. Зміни до Політики конфіденційності</h2>
+  <p>Ми залишаємо за собою право час від часу оновлювати цю Політику конфіденційності. Про зміни ми повідомлятимемо шляхом оновлення цієї сторінки. Рекомендуємо періодично переглядати цю політику, щоб залишатися в курсі актуальних умов.</p>
+
+  <h2>9. Контакти</h2>
+  <p>З питань, повʼязаних з цією Політикою, звертайтесь:</p>
+  <ul>
+    <li>Telegram: <a href="https://t.me/GalunaSpeak" target="_blank" rel="noopener">@GalunaSpeak</a></li>
+    <li>Телефон: <a href="tel:+380981314535">+380 98 131 45 35</a></li>
+    <li>Email: <a href="mailto:okvozuk@gmail.com">okvozuk@gmail.com</a></li>
+  </ul>
+
+  <a href="index.html" class="doc__back">← Повернутися на головну</a>
+
+</main>
+
+<footer class="footer">
+  <p class="footer__copy">© 2026 Крафт-свічки та арома-професія · <a href="offer.html">Договір оферти</a></p>
+</footer>
+
+</body>
+</html>
