@@ -654,7 +654,9 @@ body:has(.modal:target) { overflow: hidden; }
     <a href="#" class="modal__close" aria-label="Закрити">×</a>
     <p class="modal__title">Замовити букет «Полуничний рай»</p>
     <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові, решту уточнимо по телефону</p>
-    <form class="modal__grid" action="mailto:okvozuk@gmail.com" method="post" enctype="text/plain">
+    <form class="modal__grid" action="https://formsubmit.co/okvozuk@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="Замовлення: Букет «Полуничний рай»">
+      <input type="hidden" name="_captcha" value="false">
       <input type="hidden" name="Товар" value="Букет «Полуничний рай» — 980 ₴">
       <div class="field field--wide">
         <label>Телефон <span style="color:#D14A3F">*</span></label>
@@ -690,7 +692,9 @@ body:has(.modal:target) { overflow: hidden; }
     <a href="#" class="modal__close" aria-label="Закрити">×</a>
     <p class="modal__title">Запитати про товар</p>
     <p class="modal__sub">Напишіть запитання — відповімо у Telegram або на email</p>
-    <form class="modal__grid" action="mailto:okvozuk@gmail.com" method="post" enctype="text/plain">
+    <form class="modal__grid" action="https://formsubmit.co/okvozuk@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="Питання про товар">
+      <input type="hidden" name="_captcha" value="false">
       <div class="field field--wide">
         <label>Контакт (телефон або Telegram) <span style="color:#D14A3F">*</span></label>
         <input type="text" name="Контакт" placeholder="+380... або @username" required>
