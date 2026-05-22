@@ -1,7 +1,30 @@
 // Vercel serverless function — приймає форму, шле у Telegram, опційно редиректить
-// Env vars (треба додати у Vercel Settings):
-//   TELEGRAM_BOT_TOKEN
-//   TELEGRAM_CHAT_ID
+// Env vars: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+
+// Вимикаємо автопарсинг — самі читаємо у UTF-8 (інакше кирилиця ламається)
+export const config = {
+  api: { bodyParser: false }
+};
+
+async function readRawBody(req) {
+  const chunks = [];
+  for await (const chunk of req) chunks.push(chunk);
+  return Buffer.concat(chunks).toString('utf8');
+}
+
+function parseBody(rawBody, contentType = '') {
+  const ct = (contentType || '').toLowerCase();
+  if (ct.includes('application/json')) {
+    try { return JSON.parse(rawBody); } catch { return {}; }
+  }
+  if (ct.includes('application/x-www-form-urlencoded') || rawBody.includes('=')) {
+    const params = new URLSearchParams(rawBody);
+    const obj = {};
+    for (const [k, v] of params) obj[k] = v;
+    return obj;
+  }
+  return {};
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -15,7 +38,16 @@ export default async function handler(req, res) {
     return res.status(500).send('Bot is not configured: missing env vars');
   }
 
-  const body = req.body || {};
+  // Читаємо тіло у UTF-8 і парсимо
+  let body = {};
+  try {
+    const rawBody = await readRawBody(req);
+    body = parseBody(rawBody, req.headers['content-type']);
+  } catch (err) {
+    console.error('Body read/parse error:', err);
+    return res.status(400).send('Bad request: cannot read body');
+  }
+
   const subject = (body._subject || 'Нова заявка з сайту').toString();
   const next = body._next ? body._next.toString() : null;
 
@@ -27,7 +59,6 @@ export default async function handler(req, res) {
   else if (subjLower.includes('питання')) icon = '❓';
   else if (subjLower.includes('доступ')) icon = '🔑';
 
-  // Формуємо повідомлення
   const lines = [`${icon} ${subject}`, '━━━━━━━━━━━━━━━━'];
   const skipKeys = new Set(['_subject', '_next', '_captcha', '_template', '_honey']);
   const fieldEmoji = {
@@ -35,7 +66,6 @@ export default async function handler(req, res) {
     'Товар': '🎁',
     'Імʼя': '👤',
     "Ім'я": '👤',
-    'Імʼя': '👤',
     'Телефон': '📞',
     'Контакт': '📞',
     'Email': '✉️',
@@ -68,7 +98,7 @@ export default async function handler(req, res) {
   try {
     const tgRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
       body: JSON.stringify({
         chat_id: CHAT_ID,
         text: message,
@@ -81,7 +111,7 @@ export default async function handler(req, res) {
       return res.status(500).send('Failed to send Telegram message: ' + (tgData.description || 'unknown'));
     }
   } catch (err) {
-    console.error('Fetch error:', err);
+    console.error('Telegram fetch error:', err);
     return res.status(500).send('Network error: ' + err.message);
   }
 
