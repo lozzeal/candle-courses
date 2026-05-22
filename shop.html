@@ -1073,7 +1073,7 @@ body:has(.modal:target) { overflow: hidden; }
     <a href="#" class="modal__close" aria-label="Закрити">×</a>
     <p class="modal__title">Оформити замовлення</p>
     <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові, решту уточнимо по телефону</p>
-    <form class="modal__grid" action="https://formsubmit.co/okvozuk@gmail.com" method="POST">
+    <form class="modal__grid" action="/api/send-form" method="POST">
       <input type="hidden" name="_subject" value="Замовлення товару з магазину">
       <input type="hidden" name="_captcha" value="false">
       <div class="field field--wide">
