@@ -50,6 +50,11 @@ export default async function handler(req, res) {
 
   const subject = (body._subject || 'Нова заявка з сайту').toString();
   const next = body._next ? body._next.toString() : null;
+  const returnUrl = (body._return_url || '/').toString();
+  // Підпис кнопки «Повернутись» залежно від сторінки
+  let returnLabel = '← Повернутись на сайт';
+  if (returnUrl.includes('shop')) returnLabel = '← Повернутись до магазину';
+  else if (returnUrl.includes('product')) returnLabel = '← Повернутись до товару';
 
   // Іконка залежно від типу заявки
   let icon = '🆕';
@@ -60,7 +65,7 @@ export default async function handler(req, res) {
   else if (subjLower.includes('доступ')) icon = '🔑';
 
   const lines = [`${icon} ${subject}`, '━━━━━━━━━━━━━━━━'];
-  const skipKeys = new Set(['_subject', '_next', '_captcha', '_template', '_honey']);
+  const skipKeys = new Set(['_subject', '_next', '_captcha', '_template', '_honey', '_return_url']);
   const fieldEmoji = {
     'Курс': '🎯',
     'Товар': '🎁',
@@ -148,7 +153,7 @@ a:hover{transform:translateY(-2px)}
     <div class="icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <h1>Дякуємо!</h1>
     <p>Ваша заявка прийнята.<br>Ми зв'яжемось з вами найближчим часом для уточнення деталей.</p>
-    <a href="/">← Повернутися на сайт</a>
+    <a href="${returnUrl.replace(/"/g, '%22')}">${returnLabel}</a>
   </div>
 </body>
 </html>`);

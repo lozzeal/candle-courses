@@ -1076,6 +1076,7 @@ body:has(.modal:target) { overflow: hidden; }
     <form class="modal__grid" action="/api/send-form" method="POST">
       <input type="hidden" name="_subject" value="Замовлення товару з магазину">
       <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_return_url" value="/shop.html">
       <div class="field field--wide">
         <label>Телефон <span style="color:#D14A3F">*</span></label>
         <input type="tel" name="Телефон" placeholder="+380..." required>

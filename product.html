@@ -657,6 +657,7 @@ body:has(.modal:target) { overflow: hidden; }
     <form class="modal__grid" action="/api/send-form" method="POST">
       <input type="hidden" name="_subject" value="Замовлення: Букет «Полуничний рай»">
       <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_return_url" value="/product.html">
       <input type="hidden" name="Товар" value="Букет «Полуничний рай» — 980 ₴">
       <div class="field field--wide">
         <label>Телефон <span style="color:#D14A3F">*</span></label>
@@ -695,6 +696,7 @@ body:has(.modal:target) { overflow: hidden; }
     <form class="modal__grid" action="/api/send-form" method="POST">
       <input type="hidden" name="_subject" value="Питання про товар">
       <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_return_url" value="/product.html">
       <div class="field field--wide">
         <label>Контакт (телефон або Telegram) <span style="color:#D14A3F">*</span></label>
         <input type="text" name="Контакт" placeholder="+380... або @username" required>
