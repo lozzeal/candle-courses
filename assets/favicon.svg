@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#49C318"/>
+      <stop offset="100%" stop-color="#38A30D"/>
+    </linearGradient>
+    <linearGradient id="flame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFD93D"/>
+      <stop offset="100%" stop-color="#FF8C00"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Зелений фон з округленими кутами -->
+  <rect width="32" height="32" rx="7" fill="url(#bg)"/>
+
+  <!-- Полумʼя -->
+  <path d="M16 4 C 13 8, 12 11, 12 13.5 C 12 16, 14 17.5, 16 17.5 C 18 17.5, 20 16, 20 13.5 C 20 11, 19 8, 16 4 Z" fill="url(#flame)"/>
+
+  <!-- Ґніт -->
+  <line x1="16" y1="14" x2="16" y2="18" stroke="#333" stroke-width="1" stroke-linecap="round"/>
+
+  <!-- Тіло свічки -->
+  <rect x="11" y="18" width="10" height="11" rx="1.5" fill="white"/>
+
+  <!-- Тонка тінь під свічкою -->
+  <rect x="11" y="27" width="10" height="2" rx="1" fill="#F0F0F0"/>
+</svg>
