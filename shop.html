@@ -779,18 +779,18 @@ body:has(.modal:target) { overflow: hidden; }
       <!-- Категорії-картки (на фоні hero) -->
       <div class="shop-cats">
         <div class="shop-cats__grid">
-          <a href="#cat-gift-sets" class="shop-cat-tile">
+          <label for="cat-gift-sets" class="shop-cat-tile">
             <span class="shop-cat-tile__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z" stroke="#9EE86A" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
             <span class="shop-cat-tile__text"><span class="shop-cat-tile__name">Подарункові набори</span><span class="shop-cat-tile__count">від 850 ₴</span></span>
-          </a>
-          <a href="#cat-figured" class="shop-cat-tile">
+          </label>
+          <label for="cat-figured" class="shop-cat-tile">
             <span class="shop-cat-tile__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2c0 0-5 4-5 9a5 5 0 0010 0c0-5-5-9-5-9zM7 16v4a2 2 0 002 2h6a2 2 0 002-2v-4" stroke="#9EE86A" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
             <span class="shop-cat-tile__text"><span class="shop-cat-tile__name">Фігурні свічки</span><span class="shop-cat-tile__count">від 270 ₴</span></span>
-          </a>
-          <a href="#cat-aroma-candles" class="shop-cat-tile">
+          </label>
+          <label for="cat-aroma-candles" class="shop-cat-tile">
             <span class="shop-cat-tile__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v10M9 6c0-1.657 1.343-3 3-3s3 1.343 3 3" stroke="#9EE86A" stroke-width="1.8" stroke-linecap="round"/><rect x="7" y="13" width="10" height="8" rx="2" stroke="#9EE86A" stroke-width="1.8"/></svg></span>
             <span class="shop-cat-tile__text"><span class="shop-cat-tile__name">Аромасвічки</span><span class="shop-cat-tile__count">від 220 ₴</span></span>
-          </a>
+          </label>
         </div>
       </div>
 
@@ -1137,6 +1137,31 @@ body:has(.modal:target) { overflow: hidden; }
       else history.replaceState(null, '', href);
     }
     requestAnimationFrame(step);
+  });
+})();
+
+// Скрол до сітки товарів після кліку на плитку категорії в hero
+(function() {
+  document.querySelectorAll('label.shop-cat-tile').forEach(label => {
+    label.addEventListener('click', () => {
+      setTimeout(() => {
+        const main = document.querySelector('.shop-main');
+        if (!main) return;
+        const startY = window.scrollY;
+        const targetY = main.getBoundingClientRect().top + window.scrollY - 12;
+        const distance = targetY - startY;
+        if (Math.abs(distance) < 4) return;
+        const duration = 600;
+        const startTime = performance.now();
+        const ease = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+        function step(now) {
+          const t = Math.min((now - startTime) / duration, 1);
+          window.scrollTo(0, startY + distance * ease(t));
+          if (t < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }, 60);
+    });
   });
 })();
 </script>
