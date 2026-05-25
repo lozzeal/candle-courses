@@ -1150,6 +1150,19 @@ section[id] { scroll-margin-top: 72px; }
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
   border: 1.5px solid rgba(56, 163, 13, 0.15);
   overflow: hidden;
+  scroll-margin-top: 24px;
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+}
+.course-card:target,
+.course-card.is-highlighted {
+  animation: card-highlight 2.6s ease-out;
+  border-color: rgba(56, 163, 13, 0.9);
+}
+@keyframes card-highlight {
+  0%   { transform: scale(1); box-shadow: 0 12px 32px rgba(0,0,0,0.1); }
+  20%  { transform: scale(1.03); box-shadow: 0 0 0 6px rgba(56,163,13,0.35), 0 20px 50px rgba(56,163,13,0.35); }
+  60%  { transform: scale(1.02); box-shadow: 0 0 0 4px rgba(56,163,13,0.25), 0 16px 40px rgba(56,163,13,0.25); }
+  100% { transform: scale(1); box-shadow: 0 12px 32px rgba(0,0,0,0.1); }
 }
 .course-card__photo {
   display: block;
@@ -2014,6 +2027,19 @@ section[id] { scroll-margin-top: 72px; }
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
   border: 1.5px solid rgba(56, 163, 13, 0.15);
   overflow: hidden;
+  scroll-margin-top: 24px;
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+}
+.course-card:target,
+.course-card.is-highlighted {
+  animation: card-highlight 2.6s ease-out;
+  border-color: rgba(56, 163, 13, 0.9);
+}
+@keyframes card-highlight {
+  0%   { transform: scale(1); box-shadow: 0 12px 32px rgba(0,0,0,0.1); }
+  20%  { transform: scale(1.03); box-shadow: 0 0 0 6px rgba(56,163,13,0.35), 0 20px 50px rgba(56,163,13,0.35); }
+  60%  { transform: scale(1.02); box-shadow: 0 0 0 4px rgba(56,163,13,0.25), 0 16px 40px rgba(56,163,13,0.25); }
+  100% { transform: scale(1); box-shadow: 0 12px 32px rgba(0,0,0,0.1); }
 }
 .course-card__photo {
   display: block;
@@ -2167,7 +2193,7 @@ section[id] { scroll-margin-top: 72px; }
 
     <div class="courses__grid">
 
-      <div class="course-card">
+      <div class="course-card" id="course-svichkovarinnia">
         <img class="course-card__photo" src="assets/course-04a0c0ad.jpg" alt="">
         <h3 class="course-card__title">Свічковаріння базовий + професійний</h3>
         <span class="course-card__badge">30 відеоуроків</span>
@@ -2192,7 +2218,7 @@ section[id] { scroll-margin-top: 72px; }
         <a href="#modal-course-1" class="course-card__cta">Обрати цей курс</a>
       </div>
 
-      <div class="course-card">
+      <div class="course-card" id="course-desertna">
         <img class="course-card__photo" src="assets/course-2-6793c76e.jpg" alt="">
         <h3 class="course-card__title">Десертна свічка</h3>
         <span class="course-card__badge">17 відеоуроків</span>
@@ -2214,7 +2240,7 @@ section[id] { scroll-margin-top: 72px; }
         <a href="#modal-course-2" class="course-card__cta">Обрати цей курс</a>
       </div>
 
-      <div class="course-card">
+      <div class="course-card" id="course-hips-beton">
         <img class="course-card__photo" src="assets/course-3-7b7b4a75.jpg" alt="">
         <h3 class="course-card__title">Гіпсові та бетонні вироби</h3>
         <span class="course-card__badge">20 відеоуроків</span>
@@ -2244,7 +2270,7 @@ section[id] { scroll-margin-top: 72px; }
         <a href="#modal-course-3" class="course-card__cta">Обрати цей курс</a>
       </div>
 
-      <div class="course-card">
+      <div class="course-card" id="course-betonna">
         <img class="course-card__photo" src="assets/course-4-2d5142c3.jpg" alt="">
         <h3 class="course-card__title">Бетонна свічка</h3>
         <span class="course-card__badge">14 відеоуроків</span>
@@ -2266,7 +2292,7 @@ section[id] { scroll-margin-top: 72px; }
         <a href="#modal-course-4" class="course-card__cta">Обрати цей курс</a>
       </div>
 
-      <div class="course-card">
+      <div class="course-card" id="course-reklama">
         <img class="course-card__photo" src="assets/course-5-7c05264b.jpg" alt="">
         <h3 class="course-card__title">Реклама для своїх виробів</h3>
         <span class="course-card__badge">мінікурс</span>
@@ -3788,11 +3814,11 @@ body:has(.modal:target) { overflow: hidden; }
       <p class="footer__col-title">Навчання</p>
       <ul class="footer__nav">
         <li><a href="#courses">Усі курси</a></li>
-        <li><a href="#courses">Свічковаріння</a></li>
-        <li><a href="#courses">Десертні свічки</a></li>
-        <li><a href="#courses">Гіпс та бетон</a></li>
-        <li><a href="#courses">Бетонна свічка</a></li>
-        <li><a href="#courses">Реклама виробів</a></li>
+        <li><a href="#course-svichkovarinnia">Свічковаріння</a></li>
+        <li><a href="#course-desertna">Десертна свічка</a></li>
+        <li><a href="#course-hips-beton">Гіпсові та бетонні</a></li>
+        <li><a href="#course-betonna">Бетонна свічка</a></li>
+        <li><a href="#course-reklama">Реклама виробів</a></li>
       </ul>
     </div>
 
@@ -3899,7 +3925,14 @@ body:has(.modal:target) { overflow: hidden; }
       const t = Math.min((now - startTime) / duration, 1);
       window.scrollTo(0, startY + distance * ease(t));
       if (t < 1) requestAnimationFrame(step);
-      else history.replaceState(null, '', href);
+      else {
+        history.replaceState(null, '', href);
+        // Підсвічування цільового елемента (якщо це картка курсу)
+        if (target.classList) {
+          target.classList.add('is-highlighted');
+          setTimeout(() => target.classList.remove('is-highlighted'), 2600);
+        }
+      }
     }
     requestAnimationFrame(step);
   });
