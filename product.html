@@ -598,8 +598,7 @@ body:has(.modal:target) { overflow: hidden; }
   <a href="#" class="modal__overlay" aria-label="Закрити"></a>
   <div class="modal__box">
     <a href="#" class="modal__close" aria-label="Закрити">×</a>
-    <p class="modal__title">Запитати про товар</p>
-    <p class="modal__sub">Напишіть запитання</p>
+    <p class="modal__title" style="margin-bottom:20px">Запитати про товар</p>
     <form class="modal__grid" action="/api/send-form" method="POST">
       <input type="hidden" name="_subject" value="Питання про товар">
       <input type="hidden" name="_captcha" value="false">
