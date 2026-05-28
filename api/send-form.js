@@ -163,25 +163,60 @@ export default async function handler(req, res) {
 
   const message = lines.join('\n');
 
-  // ====================== TELEGRAM ======================
+  // ====================== TELEGRAM + БД ======================
+
+  // Зберігаємо у БД (Supabase orders)
+  const SUPA_URL = process.env.SUPABASE_URL;
+  const SUPA_KEY = process.env.SUPABASE_SERVICE_KEY;
+  let dbPromise = Promise.resolve();
+  if (SUPA_URL && SUPA_KEY) {
+    const orderRow = {
+      subject,
+      customer_name: body['Імʼя'] || body["Ім'я"] || body['Імя'] || null,
+      customer_phone: body['Телефон'] || body['Контакт'] || null,
+      customer_email: body['Email'] || null,
+      customer_address: body['Адреса'] || body['Місто'] || null,
+      product_or_course: body['Товар'] || body['Курс'] || null,
+      comment: body['Побажання'] || body['Запитання'] || null,
+      source_page: returnUrl,
+      raw_data: body,
+      ip: ip,
+      user_agent: req.headers['user-agent'] || null,
+      status: 'new'
+    };
+    dbPromise = fetch(`${SUPA_URL}/rest/v1/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPA_KEY,
+        'Authorization': `Bearer ${SUPA_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(orderRow)
+    }).then(r => {
+      if (!r.ok) console.warn('DB insert returned', r.status);
+    }).catch(e => console.warn('DB insert failed:', e.message));
+  }
+
+  // Відправляємо у Telegram паралельно з БД
+  const telegramPromise = fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json; charset=utf-8' },
+    body: JSON.stringify({
+      chat_id: CHAT_ID,
+      text: message,
+      disable_web_page_preview: true
+    })
+  }).then(r => r.json());
 
   try {
-    const tgRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body: JSON.stringify({
-        chat_id: CHAT_ID,
-        text: message,
-        disable_web_page_preview: true
-      })
-    });
-    const tgData = await tgRes.json();
+    const [tgData] = await Promise.all([telegramPromise, dbPromise]);
     if (!tgData.ok) {
       console.error('Telegram API error:', tgData);
       return res.status(500).send('Failed to send Telegram message');
     }
   } catch (err) {
-    console.error('Telegram fetch error:', err);
+    console.error('Send error:', err);
     return res.status(500).send('Network error');
   }
 
