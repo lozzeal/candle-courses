@@ -580,8 +580,12 @@ html, body {
       <div class="page-header">
         <div>
           <h1 class="page-title">Категорії</h1>
-          <p class="page-subtitle">Структура каталогу</p>
+          <p class="page-subtitle">Структура каталогу — основні і підкатегорії</p>
         </div>
+        <button class="btn-add" id="btn-add-category">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+          Додати категорію
+        </button>
       </div>
       <div id="categories-container">
         <div class="loader"><div class="loader-spinner"></div>Завантаження…</div>
@@ -593,33 +597,91 @@ html, body {
       <div class="page-header">
         <div>
           <h1 class="page-title">Статистика</h1>
-          <p class="page-subtitle">Огляд активності магазину</p>
+          <p class="page-subtitle">Активність та конверсії</p>
+        </div>
+        <select class="select" id="stats-period">
+          <option value="7">Останні 7 днів</option>
+          <option value="30" selected>Останні 30 днів</option>
+          <option value="90">Останні 90 днів</option>
+          <option value="all">Весь час</option>
+        </select>
+      </div>
+
+      <!-- Картки з ростом -->
+      <div class="stats-bar" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+        <div class="stat-card">
+          <div class="stat-label">Сесії</div>
+          <div class="stat-value" id="ms-sessions" style="color:#3B82F6">—</div>
+          <div id="ms-sessions-grow" style="font-size:11px;color:var(--text-muted);margin-top:4px">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Перегляди сторінок</div>
+          <div class="stat-value" id="ms-pageviews" style="color:#3B82F6">—</div>
+          <div id="ms-pageviews-grow" style="font-size:11px;color:var(--text-muted);margin-top:4px">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Унікальні відвідувачі</div>
+          <div class="stat-value" id="ms-uniques" style="color:#3B82F6">—</div>
+          <div id="ms-uniques-grow" style="font-size:11px;color:var(--text-muted);margin-top:4px">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Заявок з форм</div>
+          <div class="stat-value" id="ms-orders" style="color:var(--accent)">—</div>
+          <div id="ms-orders-grow" style="font-size:11px;color:var(--text-muted);margin-top:4px">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Виторг (оплачено)</div>
+          <div class="stat-value" id="ms-revenue" style="color:var(--accent)">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px">₴ за період</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Конверсія</div>
+          <div class="stat-value" id="ms-conv">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px">заявка / сесія</div>
         </div>
       </div>
 
-      <div class="stats-bar" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
-        <div class="stat-card"><div class="stat-label">Сьогодні</div><div class="stat-value" id="s-today" style="color:#3B82F6">—</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">заявок</div></div>
-        <div class="stat-card"><div class="stat-label">Цей тиждень</div><div class="stat-value" id="s-week" style="color:#3B82F6">—</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">заявок</div></div>
-        <div class="stat-card"><div class="stat-label">Цей місяць</div><div class="stat-value" id="s-month" style="color:#3B82F6">—</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">заявок</div></div>
-        <div class="stat-card"><div class="stat-label">Усього</div><div class="stat-value" id="s-all">—</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">заявок</div></div>
-        <div class="stat-card"><div class="stat-label">Виторг (оплачено)</div><div class="stat-value" id="s-revenue" style="color:var(--accent)">—</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">₴ за весь час</div></div>
-        <div class="stat-card"><div class="stat-label">Конверсія</div><div class="stat-value" id="s-conv">—</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">оплачено / нові</div></div>
+      <!-- Графік сесій -->
+      <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;margin-top:8px">
+        <p style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:14px;font-weight:700">Сесії та перегляди</p>
+        <svg id="ms-chart" viewBox="0 0 800 240" preserveAspectRatio="none" style="width:100%;height:240px"></svg>
+        <div id="ms-chart-labels" style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--text-muted)"></div>
+        <div style="display:flex;gap:18px;margin-top:14px;font-size:12px">
+          <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:3px;background:#3B82F6;border-radius:2px"></span>Сесії</span>
+          <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:3px;background:var(--accent)"></span>Перегляди</span>
+        </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">
+      <!-- Джерела трафіку + Топ-5 країн + Топ-5 сторінок -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:16px">
         <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px">
-          <p style="font-size:13px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:14px;font-weight:600">Заявки за останні 30 днів</p>
-          <div id="s-chart" style="height:160px;display:flex;align-items:flex-end;gap:3px"></div>
-          <div id="s-chart-labels" style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--text-muted)"></div>
+          <p style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:14px;font-weight:700">Джерела трафіку</p>
+          <div id="ms-sources"></div>
         </div>
         <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px">
-          <p style="font-size:13px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:14px;font-weight:600">Розподіл за статусами</p>
-          <div id="s-statuses" style="display:flex;flex-direction:column;gap:8px"></div>
+          <p style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:14px;font-weight:700">Топ-5 країн</p>
+          <div id="ms-countries"></div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px">
+          <p style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:14px;font-weight:700">Пристрої</p>
+          <div id="ms-devices"></div>
+        </div>
+      </div>
+
+      <!-- Топ-5 сторінок + Розподіл статусів -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+        <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px">
+          <p style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:14px;font-weight:700">Топ-5 популярних сторінок</p>
+          <div id="ms-top-pages"></div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px">
+          <p style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:14px;font-weight:700">Розподіл заявок за статусами</p>
+          <div id="s-statuses"></div>
         </div>
       </div>
 
       <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;margin-top:16px">
-        <p style="font-size:13px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:14px;font-weight:600">Топ товарів / курсів</p>
+        <p style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:14px;font-weight:700">Топ товарів / курсів за заявками</p>
         <div id="s-top-products"></div>
       </div>
     </div>
@@ -839,6 +901,55 @@ html, body {
   </div>
 </aside>
 
+<!-- ====================== DRAWER: КАТЕГОРІЯ ====================== -->
+<aside class="drawer" id="drawer-category">
+  <div class="drawer-header">
+    <div class="drawer-title" id="cat-drawer-title">Нова категорія</div>
+    <button class="drawer-close" id="cat-drawer-close" type="button">&times;</button>
+  </div>
+  <div class="drawer-body">
+    <p class="form-section-title">Дані категорії</p>
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <label>Назва <span class="req">*</span></label>
+        <input id="cat-name" type="text" placeholder="Подарункові набори">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Slug у URL</label>
+        <input id="cat-slug" type="text" placeholder="auto">
+      </div>
+      <div class="form-group">
+        <label>Порядок (нижче = вище)</label>
+        <input id="cat-sort" type="number" value="0">
+      </div>
+    </div>
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <label>Батьківська категорія</label>
+        <select id="cat-parent">
+          <option value="">— основна (без батька) —</option>
+        </select>
+        <p class="form-help">Якщо це підкатегорія, виберіть основну. Якщо це сама основна — залиште порожньо.</p>
+      </div>
+    </div>
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <label>SVG-іконка (HTML)</label>
+        <textarea id="cat-icon" rows="3" placeholder='<svg viewBox="0 0 24 24" fill="none">...</svg>' style="font-family:monospace;font-size:12px"></textarea>
+        <p class="form-help">Опційно. Якщо вказано — буде відображатись у hero магазину.</p>
+      </div>
+    </div>
+  </div>
+  <div class="drawer-footer">
+    <button class="btn-secondary" id="btn-cat-delete" style="color:#D14A3F;border-color:#FCA5A5;display:none">Видалити</button>
+    <div style="flex:1"></div>
+    <button class="btn-secondary" id="btn-cat-cancel" type="button">Скасувати</button>
+    <button class="btn-save" id="btn-cat-save" type="button">Зберегти</button>
+  </div>
+</aside>
+
 <!-- ====================== DRAWER: ДЕТАЛІ ЗАЯВКИ ====================== -->
 <aside class="drawer" id="drawer-order">
   <div class="drawer-header">
@@ -1030,28 +1141,149 @@ function renderProducts() {
   $('#' + id).addEventListener('input', renderProducts);
 });
 
-// ====== Categories tab ======
+// ====== Categories tab — з редагуванням ======
 function renderCategories() {
   const container = $('#categories-container');
   const roots = allCategories.filter(c => !c.parent_id);
   if (roots.length === 0) {
-    container.innerHTML = '<div class="empty-state">Категорій немає</div>';
+    container.innerHTML = '<div class="empty-state">Категорій немає. Натисніть «Додати категорію»</div>';
     return;
   }
   container.innerHTML = roots.map(root => {
-    const subs = allCategories.filter(c => c.parent_id === root.id);
+    const subs = allCategories.filter(c => c.parent_id === root.id).sort((a, b) => (a.sort_order||0) - (b.sort_order||0));
+    const rootCount = allProducts.filter(p => p.category_id === root.id).length;
     return `
-      <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:12px">
-        <div style="font-weight:700;font-size:16px;margin-bottom:8px">${escapeHtml(root.name)}</div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="width:32px;height:32px;border-radius:8px;background:rgba(56,163,13,0.1);display:flex;align-items:center;justify-content:center;color:var(--accent)">${root.icon_svg || '📁'}</span>
+            <div>
+              <div style="font-weight:700;font-size:16px">${escapeHtml(root.name)}</div>
+              <div style="font-size:11px;color:var(--text-muted)">${subs.length} підкатегорій · slug: ${escapeHtml(root.slug)}</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn-action" onclick="editCategory(${root.id})">✏️ Редагувати</button>
+            <button class="btn-action btn-action--danger" onclick="deleteCategory(${root.id})">🗑️</button>
+          </div>
+        </div>
         ${subs.length > 0 ? `
-          <ul style="list-style:none;padding-left:0;margin-top:8px">
-            ${subs.map(s => `<li style="padding:6px 0;color:#555;font-size:14px">└ ${escapeHtml(s.name)} <span style="color:#999;font-size:12px">(${allProducts.filter(p => p.category_id === s.id).length} тов.)</span></li>`).join('')}
+          <ul style="list-style:none;padding-left:42px;margin-top:12px;border-top:1px solid var(--border);padding-top:10px">
+            ${subs.map(s => {
+              const sCount = allProducts.filter(p => p.category_id === s.id).length;
+              return `
+                <li style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;gap:10px">
+                  <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:#444">
+                    <span style="color:#999">└</span>
+                    ${escapeHtml(s.name)}
+                    <span style="color:#999;font-size:12px">(${sCount} ${sCount === 1 ? 'товар' : 'тов.'})</span>
+                  </div>
+                  <div style="display:flex;gap:4px">
+                    <button class="btn-action" style="padding:5px 8px" onclick="editCategory(${s.id})">✏️</button>
+                    <button class="btn-action btn-action--danger" style="padding:5px 8px" onclick="deleteCategory(${s.id})">🗑️</button>
+                  </div>
+                </li>`;
+            }).join('')}
           </ul>
-        ` : '<div style="color:#999;font-size:13px">підкатегорій немає</div>'}
+        ` : ''}
       </div>
     `;
   }).join('');
 }
+
+// ====== Category drawer (Add/Edit) ======
+const catDrawer = $('#drawer-category');
+let editingCategoryId = null;
+
+function openCategoryDrawer(cat = null) {
+  editingCategoryId = cat ? cat.id : null;
+  $('#cat-drawer-title').textContent = cat ? 'Редагувати категорію' : 'Нова категорія';
+  $('#cat-name').value = cat ? cat.name : '';
+  $('#cat-slug').value = cat ? cat.slug : '';
+  $('#cat-slug').dataset.touched = cat ? '1' : '';
+  $('#cat-sort').value = cat ? (cat.sort_order || 0) : 0;
+  $('#cat-icon').value = cat ? (cat.icon_svg || '') : '';
+  // Заповнюємо parent (тільки root-категорії можуть бути батьком)
+  const parentSel = $('#cat-parent');
+  parentSel.innerHTML = '<option value="">— основна (без батька) —</option>';
+  allCategories.filter(c => !c.parent_id && c.id !== (cat ? cat.id : null)).forEach(c => {
+    const o = document.createElement('option');
+    o.value = c.id; o.textContent = c.name;
+    if (cat && cat.parent_id === c.id) o.selected = true;
+    parentSel.appendChild(o);
+  });
+  $('#btn-cat-delete').style.display = cat ? 'block' : 'none';
+  catDrawer.classList.add('is-open');
+  $('#drawer-overlay').classList.add('is-open');
+}
+
+function closeCategoryDrawer() {
+  catDrawer.classList.remove('is-open');
+  $('#drawer-overlay').classList.remove('is-open');
+}
+
+$('#cat-drawer-close').addEventListener('click', closeCategoryDrawer);
+$('#btn-cat-cancel').addEventListener('click', closeCategoryDrawer);
+$('#btn-add-category').addEventListener('click', () => openCategoryDrawer(null));
+
+// Auto-slug for category
+$('#cat-name').addEventListener('input', e => {
+  if (!$('#cat-slug').dataset.touched) $('#cat-slug').value = slugify(e.target.value);
+});
+$('#cat-slug').addEventListener('input', e => { e.target.dataset.touched = '1'; });
+
+window.editCategory = id => {
+  const cat = allCategories.find(c => c.id === id);
+  if (cat) openCategoryDrawer(cat);
+};
+
+window.deleteCategory = async id => {
+  const cat = allCategories.find(c => c.id === id);
+  if (!cat) return;
+  const subs = allCategories.filter(c => c.parent_id === id);
+  const prods = allProducts.filter(p => p.category_id === id);
+  let msg = `Видалити категорію «${cat.name}»?`;
+  if (subs.length > 0) msg += `\n\nУвага: ${subs.length} підкатегорій залишаться без батька.`;
+  if (prods.length > 0) msg += `\n\nУвага: ${prods.length} товарів залишаться без категорії.`;
+  if (!confirm(msg)) return;
+  const { error } = await supa.from('categories').delete().eq('id', id);
+  if (error) return alert('Помилка: ' + error.message);
+  await loadCategories();
+  await loadProducts();
+};
+
+$('#btn-cat-delete').addEventListener('click', () => { if (editingCategoryId) deleteCategory(editingCategoryId).then(closeCategoryDrawer); });
+
+$('#btn-cat-save').addEventListener('click', async () => {
+  const btn = $('#btn-cat-save');
+  btn.disabled = true; btn.textContent = 'Зберігаю…';
+  try {
+    const name = $('#cat-name').value.trim();
+    if (!name) throw new Error('Назва обовʼязкова');
+    const slug = $('#cat-slug').value.trim() || slugify(name);
+    const parentVal = $('#cat-parent').value;
+    const payload = {
+      name,
+      slug,
+      parent_id: parentVal ? Number(parentVal) : null,
+      sort_order: parseInt($('#cat-sort').value || 0),
+      icon_svg: $('#cat-icon').value.trim() || null
+    };
+    if (editingCategoryId) {
+      const { error } = await supa.from('categories').update(payload).eq('id', editingCategoryId);
+      if (error) throw error;
+    } else {
+      const { error } = await supa.from('categories').insert(payload);
+      if (error) throw error;
+    }
+    closeCategoryDrawer();
+    await loadCategories();
+  } catch (err) {
+    alert('Помилка: ' + err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Зберегти';
+  }
+});
 
 // ====== Orders ======
 let allOrders = [];
@@ -1542,110 +1774,266 @@ renderProducts = function() {
 };
 
 // ====== STATISTICS ======
+let allPageViews = [];
+let statsPeriod = 30; // днів
+
+async function loadPageViews() {
+  // Завантажуємо за 6 місяців максимум — пагінація не нужна для початку
+  const since = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString();
+  const { data, error } = await supa.from('page_views')
+    .select('session_id,page_path,referrer_source,country,device_type,created_at')
+    .gte('created_at', since)
+    .order('created_at', { ascending: false })
+    .limit(10000);
+  if (!error) allPageViews = data || [];
+  renderStats();
+}
+
+function getPeriodRange(daysOrAll) {
+  const end = new Date();
+  if (daysOrAll === 'all') return { start: new Date(0), end, days: 365 };
+  const days = Number(daysOrAll);
+  const start = new Date(end.getTime() - days * 24 * 60 * 60 * 1000);
+  return { start, end, days };
+}
+
+function growthBadge(curr, prev) {
+  if (prev === 0 && curr === 0) return '<span style="color:var(--text-muted)">—</span>';
+  if (prev === 0) return `<span style="color:#10B981">▲ нове</span>`;
+  const pct = Math.round(((curr - prev) / prev) * 100);
+  const color = pct > 0 ? '#10B981' : pct < 0 ? '#D14A3F' : 'var(--text-muted)';
+  const arrow = pct > 0 ? '▲' : pct < 0 ? '▼' : '—';
+  return `<span style="color:${color}">${arrow} ${pct > 0 ? '+' : ''}${pct}%</span>`;
+}
+
 function renderStats() {
-  const now = new Date();
-  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  const weekAgo = now.getTime() - 7 * 24 * 60 * 60 * 1000;
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+  const periodVal = $('#stats-period') ? $('#stats-period').value : '30';
+  statsPeriod = periodVal;
+  const { start, end, days } = getPeriodRange(periodVal);
+  const prevStart = new Date(start.getTime() - (end.getTime() - start.getTime()));
 
-  const today = allOrders.filter(o => new Date(o.created_at).getTime() >= startOfDay).length;
-  const week = allOrders.filter(o => new Date(o.created_at).getTime() >= weekAgo).length;
-  const month = allOrders.filter(o => new Date(o.created_at).getTime() >= startOfMonth).length;
+  // Поточний період
+  const curPVs = allPageViews.filter(p => new Date(p.created_at) >= start);
+  const prevPVs = allPageViews.filter(p => new Date(p.created_at) >= prevStart && new Date(p.created_at) < start);
+  const curOrders = allOrders.filter(o => new Date(o.created_at) >= start);
+  const prevOrders = allOrders.filter(o => new Date(o.created_at) >= prevStart && new Date(o.created_at) < start);
 
-  $('#s-today').textContent = today;
-  $('#s-week').textContent = week;
-  $('#s-month').textContent = month;
-  $('#s-all').textContent = allOrders.length;
+  const curSessions = new Set(curPVs.map(p => p.session_id)).size;
+  const prevSessions = new Set(prevPVs.map(p => p.session_id)).size;
+  $('#ms-sessions').textContent = curSessions.toLocaleString('uk-UA');
+  $('#ms-sessions-grow').innerHTML = growthBadge(curSessions, prevSessions);
 
-  // Виторг — сума цін з замовлень зі статусом 'paid'
-  const paidOrders = allOrders.filter(o => o.status === 'paid');
+  $('#ms-pageviews').textContent = curPVs.length.toLocaleString('uk-UA');
+  $('#ms-pageviews-grow').innerHTML = growthBadge(curPVs.length, prevPVs.length);
+
+  // Унікальні відвідувачі — рахуємо як sessions поки що (без ip_hash в select)
+  $('#ms-uniques').textContent = curSessions.toLocaleString('uk-UA');
+  $('#ms-uniques-grow').innerHTML = growthBadge(curSessions, prevSessions);
+
+  $('#ms-orders').textContent = curOrders.length;
+  $('#ms-orders-grow').innerHTML = growthBadge(curOrders.length, prevOrders.length);
+
+  // Виторг
+  const paidOrders = curOrders.filter(o => o.status === 'paid');
   const revenue = paidOrders.reduce((sum, o) => {
     const match = (o.product_or_course || '').match(/(\d[\d\s]*)\s*₴/);
     if (match) sum += parseInt(match[1].replace(/\s/g, ''));
     return sum;
   }, 0);
-  $('#s-revenue').textContent = revenue.toLocaleString('uk-UA');
+  $('#ms-revenue').textContent = revenue.toLocaleString('uk-UA');
 
-  // Конверсія: paid / (paid+new+contacted)
-  const fundamentalSet = allOrders.filter(o => ['paid','new','contacted','confirmed'].includes(o.status));
-  const conv = fundamentalSet.length > 0
-    ? Math.round((paidOrders.length / fundamentalSet.length) * 100)
-    : 0;
-  $('#s-conv').textContent = conv + '%';
+  // Конверсія: заявки / сесії
+  const conv = curSessions > 0 ? ((curOrders.length / curSessions) * 100).toFixed(1) + '%' : '—';
+  $('#ms-conv').textContent = conv;
 
-  // Графік по днях за останні 30 днів
-  const days = [];
-  for (let i = 29; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
-    const start = d.getTime();
-    const end = start + 24 * 60 * 60 * 1000;
-    const count = allOrders.filter(o => {
-      const ts = new Date(o.created_at).getTime();
-      return ts >= start && ts < end;
-    }).length;
-    days.push({ date: d, count });
+  // Графік сесій + переглядів за днями
+  const dayCount = Math.min(days, 60);
+  const dayBuckets = [];
+  for (let i = dayCount - 1; i >= 0; i--) {
+    const d = new Date(end.getFullYear(), end.getMonth(), end.getDate() - i);
+    const dStart = d.getTime();
+    const dEnd = dStart + 86400000;
+    const sessionsSet = new Set();
+    let pvCount = 0;
+    curPVs.forEach(p => {
+      const ts = new Date(p.created_at).getTime();
+      if (ts >= dStart && ts < dEnd) {
+        sessionsSet.add(p.session_id);
+        pvCount++;
+      }
+    });
+    dayBuckets.push({ date: d, sessions: sessionsSet.size, pageviews: pvCount });
   }
-  const maxCount = Math.max(...days.map(d => d.count), 1);
-  const chart = $('#s-chart');
-  if (chart) {
-    chart.innerHTML = days.map(d => {
-      const h = (d.count / maxCount) * 100;
-      return `<div style="flex:1;background:${d.count > 0 ? 'linear-gradient(180deg,var(--accent-light),var(--accent))' : '#e8e8e8'};border-radius:3px 3px 0 0;height:${Math.max(h, 2)}%;min-height:2px;position:relative" title="${d.date.toLocaleDateString('uk-UA')}: ${d.count} заявок"></div>`;
-    }).join('');
-    $('#s-chart-labels').innerHTML = `<span>${days[0].date.toLocaleDateString('uk-UA', {day:'2-digit',month:'2-digit'})}</span><span>${days[15].date.toLocaleDateString('uk-UA', {day:'2-digit',month:'2-digit'})}</span><span>${days[29].date.toLocaleDateString('uk-UA', {day:'2-digit',month:'2-digit'})}</span>`;
-  }
+  renderLineChart(dayBuckets);
 
-  // Розподіл за статусами
+  // Джерела трафіку
+  renderSources(curPVs);
+  renderCountries(curPVs);
+  renderDevices(curPVs);
+  renderTopPages(curPVs);
+  renderStatuses();
+  renderTopProducts(curOrders);
+}
+
+function renderLineChart(buckets) {
+  const svg = $('#ms-chart');
+  if (!svg) return;
+  const W = 800, H = 240, PAD_L = 36, PAD_R = 8, PAD_T = 12, PAD_B = 24;
+  const maxVal = Math.max(...buckets.map(b => Math.max(b.sessions, b.pageviews)), 5);
+  const xStep = (W - PAD_L - PAD_R) / Math.max(buckets.length - 1, 1);
+  const yScale = v => H - PAD_B - (v / maxVal) * (H - PAD_T - PAD_B);
+  const xPos = i => PAD_L + i * xStep;
+
+  function path(key, color) {
+    const d = buckets.map((b, i) => `${i === 0 ? 'M' : 'L'} ${xPos(i)} ${yScale(b[key])}`).join(' ');
+    return `<path d="${d}" stroke="${color}" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>` +
+           `<path d="${d} L ${xPos(buckets.length - 1)} ${H - PAD_B} L ${xPos(0)} ${H - PAD_B} Z" fill="${color}" opacity="0.08"/>`;
+  }
+  function dots(key, color) {
+    return buckets.map((b, i) => `<circle cx="${xPos(i)}" cy="${yScale(b[key])}" r="3" fill="${color}"/>`).join('');
+  }
+  // Y-axis grid
+  const grid = [0, 0.25, 0.5, 0.75, 1].map(t => {
+    const y = H - PAD_B - t * (H - PAD_T - PAD_B);
+    const val = Math.round(maxVal * t);
+    return `<line x1="${PAD_L}" y1="${y}" x2="${W - PAD_R}" y2="${y}" stroke="#eee" stroke-width="1"/><text x="${PAD_L - 6}" y="${y + 4}" text-anchor="end" font-size="11" fill="#999">${val}</text>`;
+  }).join('');
+
+  svg.innerHTML = grid + path('pageviews', '#38A30D') + path('sessions', '#3B82F6') + dots('pageviews', '#38A30D') + dots('sessions', '#3B82F6');
+
+  // X labels — кожні N днів
+  const labelsEl = $('#ms-chart-labels');
+  const step = Math.max(1, Math.floor(buckets.length / 7));
+  labelsEl.innerHTML = buckets.map((b, i) => i % step === 0 || i === buckets.length - 1 ? `<span>${b.date.toLocaleDateString('uk-UA', {day:'2-digit', month:'short'})}</span>` : '').filter(Boolean).join('');
+}
+
+function renderSources(pvs) {
+  const total = pvs.length || 1;
+  const counts = { direct: 0, search: 0, social: 0, email: 0, other: 0 };
+  pvs.forEach(p => { counts[p.referrer_source || 'direct'] = (counts[p.referrer_source || 'direct'] || 0) + 1; });
+  const labels = { direct: 'Прямий', search: 'Пошукові системи', social: 'Соцмережі', email: 'Пошта', other: 'Інше' };
+  $('#ms-sources').innerHTML = Object.entries(labels).map(([k, label]) => {
+    const c = counts[k] || 0;
+    const pct = ((c / total) * 100).toFixed(1);
+    return `
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span>${label}</span><span style="font-weight:600">${pct}%</span></div>
+        <div style="height:5px;background:#f0f0f0;border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:#3B82F6"></div></div>
+      </div>`;
+  }).join('');
+}
+
+const COUNTRY_NAMES = { UA:'Україна', US:'США', DE:'Німеччина', PL:'Польща', GB:'Велика Британія', FR:'Франція', IT:'Італія', ES:'Іспанія', NL:'Нідерланди', CA:'Канада', CZ:'Чехія', SK:'Словаччина', RO:'Румунія', BG:'Болгарія', LT:'Литва', LV:'Латвія', EE:'Естонія', AT:'Австрія', BE:'Бельгія', DK:'Данія', SE:'Швеція', NO:'Норвегія', FI:'Фінляндія', HU:'Угорщина', GR:'Греція', PT:'Португалія', IE:'Ірландія', CH:'Швейцарія', IL:'Ізраїль', TR:'Туреччина', RU:'Росія' };
+function renderCountries(pvs) {
+  const counts = {};
+  pvs.forEach(p => { const c = p.country || 'XX'; counts[c] = (counts[c] || 0) + 1; });
+  const total = pvs.length || 1;
+  const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  $('#ms-countries').innerHTML = top.length === 0
+    ? '<div style="color:#999;font-size:13px">Поки немає даних</div>'
+    : top.map(([code, c]) => {
+        const pct = ((c / total) * 100).toFixed(1);
+        const flag = code === 'XX' ? '🌍' : String.fromCodePoint(...[...code.toUpperCase()].map(ch => 127397 + ch.charCodeAt(0)));
+        return `
+          <div style="margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span>${flag} ${COUNTRY_NAMES[code] || code}</span><span style="font-weight:600">${pct}%</span></div>
+            <div style="height:5px;background:#f0f0f0;border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:var(--accent)"></div></div>
+          </div>`;
+      }).join('');
+}
+
+function renderDevices(pvs) {
+  const counts = { desktop: 0, mobile: 0, tablet: 0 };
+  pvs.forEach(p => { if (counts[p.device_type] !== undefined) counts[p.device_type]++; });
+  const total = pvs.length || 1;
+  const labels = { desktop: '🖥️ Десктоп', mobile: '📱 Смартфон', tablet: '📱 Планшет' };
+  $('#ms-devices').innerHTML = Object.entries(labels).map(([k, label]) => {
+    const c = counts[k];
+    const pct = ((c / total) * 100).toFixed(1);
+    return `
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span>${label}</span><span style="font-weight:600">${pct}%</span></div>
+        <div style="height:5px;background:#f0f0f0;border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:#F59E0B"></div></div>
+      </div>`;
+  }).join('');
+}
+
+function renderTopPages(pvs) {
+  const counts = {};
+  pvs.forEach(p => { counts[p.page_path] = (counts[p.page_path] || 0) + 1; });
+  const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const max = top[0] ? top[0][1] : 1;
+  $('#ms-top-pages').innerHTML = top.length === 0
+    ? '<div style="color:#999;font-size:13px">Поки немає даних</div>'
+    : top.map(([path, c]) => {
+        const pct = (c / max) * 100;
+        return `
+          <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-family:monospace;color:#3B82F6;margin-bottom:3px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap">${escapeHtml(path)}</div>
+              <div style="height:4px;background:#f0f0f0;border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:#3B82F6"></div></div>
+            </div>
+            <div style="font-weight:700;font-size:14px">${c}</div>
+          </div>`;
+      }).join('');
+}
+
+function renderStatuses() {
   const statusCounts = {};
   Object.keys(STATUS_LABELS_FULL).forEach(k => statusCounts[k] = 0);
   allOrders.forEach(o => { if (statusCounts[o.status] !== undefined) statusCounts[o.status]++; });
   const total = allOrders.length || 1;
   const statusColors = { new:'#3B82F6', contacted:'#F59E0B', confirmed:'#10B981', paid:'#38A30D', shipped:'#06B6D4', cancelled:'#D14A3F' };
-  $('#s-statuses').innerHTML = Object.entries(statusCounts).map(([k, count]) => {
+  const el = $('#s-statuses');
+  if (!el) return;
+  el.innerHTML = Object.entries(statusCounts).map(([k, count]) => {
     const pct = Math.round((count / total) * 100);
     return `
-      <div>
-        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px">
-          <span>${STATUS_LABELS_FULL[k]}</span>
-          <span style="font-weight:600">${count} <span style="color:#999">(${pct}%)</span></span>
-        </div>
-        <div style="height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden">
-          <div style="height:100%;width:${pct}%;background:${statusColors[k]};transition:width 0.4s"></div>
-        </div>
-      </div>
-    `;
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span>${STATUS_LABELS_FULL[k]}</span><span style="font-weight:600">${count} <span style="color:#999">(${pct}%)</span></span></div>
+        <div style="height:5px;background:#f0f0f0;border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${statusColors[k]}"></div></div>
+      </div>`;
   }).join('');
+}
 
-  // Топ товарів
+function renderTopProducts(orders) {
   const productCounts = {};
-  allOrders.forEach(o => {
+  orders.forEach(o => {
     const p = (o.product_or_course || '—').split('—')[0].trim();
     productCounts[p] = (productCounts[p] || 0) + 1;
   });
   const top = Object.entries(productCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
   const topEl = $('#s-top-products');
+  if (!topEl) return;
   if (top.length === 0) {
-    topEl.innerHTML = '<div style="color:var(--text-muted);font-size:14px">Поки немає заявок</div>';
-  } else {
-    const maxOrders = top[0][1];
-    topEl.innerHTML = top.map(([name, count], idx) => {
-      const pct = Math.round((count / maxOrders) * 100);
-      return `
-        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
-          <div style="width:24px;height:24px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:var(--text-muted)">${idx + 1}</div>
-          <div style="flex:1">
-            <div style="font-size:13px;font-weight:500;margin-bottom:4px">${escapeHtml(name)}</div>
-            <div style="height:5px;background:#f0f0f0;border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent-light),var(--accent))"></div></div>
-          </div>
-          <div style="font-weight:700;font-size:14px;color:var(--accent)">${count}</div>
-        </div>
-      `;
-    }).join('');
+    topEl.innerHTML = '<div style="color:#999;font-size:14px">Поки немає заявок</div>';
+    return;
   }
+  const maxOrders = top[0][1];
+  topEl.innerHTML = top.map(([name, count], idx) => {
+    const pct = Math.round((count / maxOrders) * 100);
+    return `
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+        <div style="width:24px;height:24px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:var(--text-muted)">${idx + 1}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:500;margin-bottom:4px">${escapeHtml(name)}</div>
+          <div style="height:5px;background:#f0f0f0;border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent-light),var(--accent))"></div></div>
+        </div>
+        <div style="font-weight:700;font-size:14px;color:var(--accent)">${count}</div>
+      </div>
+    `;
+  }).join('');
 }
 
-// Перерендер статистики при кліку на вкладку
-$$('.nav-link[data-tab="stats"]').forEach(link => link.addEventListener('click', () => setTimeout(renderStats, 0)));
+// Перерахунок при зміні періоду
+$('#stats-period').addEventListener('change', renderStats);
+
+// Перерендер статистики при кліку на вкладку (і завантажуємо page_views при першому показі)
+let pvLoaded = false;
+$$('.nav-link[data-tab="stats"]').forEach(link => link.addEventListener('click', () => {
+  if (!pvLoaded) { pvLoaded = true; loadPageViews(); }
+  else setTimeout(renderStats, 0);
+}));
 
 // ====== SETTINGS / ANALYTICS ======
 let siteSettings = {};

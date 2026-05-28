@@ -1,5 +1,45 @@
-// Завантажувач трекінг-кодів з Supabase site_settings
+// Завантажувач трекінг-кодів + власна аналітика
 // Включається у <head> усіх публічних сторінок
+(function() {
+  // ====== Власна аналітика — pageview tracking ======
+  function getSessionId() {
+    let sid = sessionStorage.getItem('_sid');
+    if (!sid) {
+      sid = 's_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 8);
+      sessionStorage.setItem('_sid', sid);
+    }
+    return sid;
+  }
+  function trackPageView() {
+    const params = new URLSearchParams(window.location.search);
+    const payload = {
+      session_id: getSessionId(),
+      path: window.location.pathname + window.location.search,
+      title: document.title,
+      referrer: document.referrer || null,
+      utm_source: params.get('utm_source') || null,
+      utm_medium: params.get('utm_medium') || null,
+      utm_campaign: params.get('utm_campaign') || null
+    };
+    // Не блокуємо рендер — sendBeacon якщо доступний
+    try {
+      if (navigator.sendBeacon) {
+        const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+        navigator.sendBeacon('/api/track', blob);
+      } else {
+        fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), keepalive: true }).catch(() => {});
+      }
+    } catch {}
+  }
+  // Дочекатись DOM щоб title був заповнений
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', trackPageView);
+  } else {
+    setTimeout(trackPageView, 50);
+  }
+})();
+
+// ====== Завантаження трекінг-кодів з налаштувань ======
 (function() {
   const SUPABASE_URL = 'https://jmfudjhembgeaztowcoe.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptZnVkamhlbWJnZWF6dG93Y29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDEyODMsImV4cCI6MjA5NTM3NzI4M30.AQC4uLLBE6lsbdRorypc6gKkZQU4n6yg4gGG_rG55iM';
