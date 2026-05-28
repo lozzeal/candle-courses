@@ -87,29 +87,53 @@
     !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=['page','track','identify','instances','debug','on','off','once','ready','alias','group','enableCookie','disableCookie'];ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e};ttq.load=function(e,n){var i='https://analytics.tiktok.com/i18n/pixel/events.js';ttq._i=ttq._i||{};ttq._i[e]=[];ttq._i[e]._u=i;ttq._t=ttq._t||{};ttq._t[e]=+new Date;ttq._o=ttq._o||{};ttq._o[e]=n||{};var o=document.createElement('script');o.type='text/javascript';o.async=!0;o.src=i+'?sdkid='+e+'&lib='+t;var a=document.getElementsByTagName('script')[0];a.parentNode.insertBefore(o,a)};ttq.load(id);ttq.page();}(window,document,'ttq');
   }
 
-  function injectCustomHTML(html) {
+  // Універсальне додавання HTML/JS у заданий контейнер
+  function injectHTML(html, target, position) {
     if (!html || !html.trim()) return;
     const container = document.createElement('div');
     container.innerHTML = html;
-    // Виконати скрипти
-    Array.from(container.children).forEach(node => {
-      if (node.tagName === 'SCRIPT') {
+    const nodes = Array.from(container.childNodes);
+    nodes.forEach(node => {
+      // Якщо це <script> — створюємо новий script-елемент, бо innerHTML не виконує
+      if (node.nodeType === 1 && node.tagName === 'SCRIPT') {
         const s = document.createElement('script');
         Array.from(node.attributes).forEach(a => s.setAttribute(a.name, a.value));
         s.text = node.text;
-        document.head.appendChild(s);
+        if (position === 'prepend' && target.firstChild) target.insertBefore(s, target.firstChild);
+        else target.appendChild(s);
       } else {
-        document.head.appendChild(node);
+        if (position === 'prepend' && target.firstChild) target.insertBefore(node, target.firstChild);
+        else target.appendChild(node);
       }
     });
   }
 
+  function injectCustomCSS(css) {
+    if (!css || !css.trim()) return;
+    const style = document.createElement('style');
+    style.setAttribute('data-source', 'admin-custom');
+    style.textContent = css;
+    document.head.appendChild(style);
+  }
+
   function applySettings(settings) {
+    // 1. Пікселі / трекінг
     if (settings.gtm_id) injectGTM(settings.gtm_id);
     if (settings.ga4_id) injectGA4(settings.ga4_id);
     if (settings.meta_pixel_id) injectMetaPixel(settings.meta_pixel_id);
     if (settings.tiktok_pixel_id) injectTikTok(settings.tiktok_pixel_id);
-    if (settings.custom_head_html) injectCustomHTML(settings.custom_head_html);
+
+    // 2. Сторонній код
+    if (settings.custom_head_html) injectHTML(settings.custom_head_html, document.head);
+    if (settings.custom_css) injectCustomCSS(settings.custom_css);
+
+    // 3. body_start і body_end — якщо body вже доступний
+    const applyBody = () => {
+      if (settings.custom_body_start) injectHTML(settings.custom_body_start, document.body, 'prepend');
+      if (settings.custom_body_end) injectHTML(settings.custom_body_end, document.body);
+    };
+    if (document.body) applyBody();
+    else document.addEventListener('DOMContentLoaded', applyBody);
   }
 
   // Кеш — миттєво з local, потім свіжі дані з БД

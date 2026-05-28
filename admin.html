@@ -421,6 +421,15 @@ html, body {
 @media (max-width: 600px) {
   .form-row { grid-template-columns: 1fr; }
 }
+
+/* ===== Code tabs (Сторонній код) ===== */
+.code-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 0; }
+.code-tab { background: none; border: none; padding: 12px 18px; font-size: 14px; font-weight: 500; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; font-family: inherit; }
+.code-tab:hover { color: var(--text); }
+.code-tab.is-active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+.code-pane { display: none; width: 100%; padding: 14px; border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; font-family: 'Courier New', Consolas, monospace; font-size: 12px; line-height: 1.6; outline: none; background: #fafafa; resize: vertical; min-height: 200px; }
+.code-pane.is-active { display: block; }
+.code-pane:focus { background: #fff; border-color: var(--accent); }
 </style>
 </head>
 <body>
@@ -754,9 +763,20 @@ html, body {
       </div>
 
       <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px;margin-top:14px">
-        <div style="font-weight:700;font-size:16px;margin-bottom:8px">Кастомний код у &lt;head&gt;</div>
-        <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Будь-який HTML/JS код що буде доданий у &lt;head&gt; усіх сторінок (Hotjar, Clarity, інший snippet)</p>
-        <textarea id="set-custom-head" rows="6" style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Courier New',monospace;font-size:12px;outline:none;background:#fafafa" placeholder="&lt;!-- Наприклад, Hotjar tracking code --&gt;"></textarea>
+        <div style="font-weight:700;font-size:18px;margin-bottom:4px">Сторонній код</div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">Вдосконалюйте сайт за допомогою власного коду. Ви можете додавати фрагменти, CSS-стилі і навіть писати блоки з нуля.</p>
+
+        <div class="code-tabs" id="code-tabs">
+          <button type="button" class="code-tab is-active" data-code-tab="head">&lt;HEAD&gt;</button>
+          <button type="button" class="code-tab" data-code-tab="body_start">After &lt;BODY&gt;</button>
+          <button type="button" class="code-tab" data-code-tab="body_end">Before &lt;/BODY&gt;</button>
+          <button type="button" class="code-tab" data-code-tab="css">CSS</button>
+        </div>
+
+        <textarea id="set-custom-head" data-code-pane="head" rows="10" class="code-pane is-active" placeholder="<!-- Код буде доданий у <head>. Наприклад, Hotjar, Clarity, Search Console verification -->"></textarea>
+        <textarea id="set-custom-body-start" data-code-pane="body_start" rows="10" class="code-pane" placeholder="<!-- Код одразу після <body>. Наприклад, noscript-фолбеки, ад-баннери -->"></textarea>
+        <textarea id="set-custom-body-end" data-code-pane="body_end" rows="10" class="code-pane" placeholder="<!-- Код перед </body>. Наприклад, чат-боти, віджети, скрипти що виконуються після рендеру -->"></textarea>
+        <textarea id="set-custom-css" data-code-pane="css" rows="10" class="code-pane" placeholder=".my-custom-class { color: red; }&#10;&#10;/* Тут можна написати власний CSS — буде доданий у <style> на всіх сторінках */"></textarea>
       </div>
     </div>
 
@@ -2048,6 +2068,9 @@ async function loadSettings() {
   $('#set-gtm').value = siteSettings.gtm_id || '';
   $('#set-tiktok-pixel').value = siteSettings.tiktok_pixel_id || '';
   $('#set-custom-head').value = siteSettings.custom_head_html || '';
+  $('#set-custom-body-start').value = siteSettings.custom_body_start || '';
+  $('#set-custom-body-end').value = siteSettings.custom_body_end || '';
+  $('#set-custom-css').value = siteSettings.custom_css || '';
   $('#set-telegram').value = siteSettings.contact_telegram || '';
   $('#set-phone').value = siteSettings.contact_phone || '';
   $('#set-email').value = siteSettings.contact_email || '';
@@ -2076,8 +2099,20 @@ $('#btn-save-analytics').addEventListener('click', async () => {
     meta_pixel_id: $('#set-meta-pixel').value.trim(),
     gtm_id: $('#set-gtm').value.trim(),
     tiktok_pixel_id: $('#set-tiktok-pixel').value.trim(),
-    custom_head_html: $('#set-custom-head').value
+    custom_head_html: $('#set-custom-head').value,
+    custom_body_start: $('#set-custom-body-start').value,
+    custom_body_end: $('#set-custom-body-end').value,
+    custom_css: $('#set-custom-css').value
   }, '#analytics-status');
+});
+
+// Перемикання вкладок Сторонній код
+$$('.code-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.codeTab;
+    $$('.code-tab').forEach(b => b.classList.toggle('is-active', b === btn));
+    $$('.code-pane').forEach(p => p.classList.toggle('is-active', p.dataset.codePane === tab));
+  });
 });
 
 $('#btn-save-settings').addEventListener('click', async () => {
