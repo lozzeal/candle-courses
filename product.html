@@ -599,19 +599,19 @@ body:has(.modal:target) { overflow: hidden; }
   <div class="modal__box">
     <a href="#" class="modal__close" aria-label="Закрити">×</a>
     <p class="modal__title">Запитати про товар</p>
-    <p class="modal__sub">Напишіть запитання — відповімо у Telegram або на email</p>
+    <p class="modal__sub">Напишіть запитання</p>
     <form class="modal__grid" action="/api/send-form" method="POST">
       <input type="hidden" name="_subject" value="Питання про товар">
       <input type="hidden" name="_captcha" value="false">
       <input type="text" name="_honey" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none" aria-hidden="true">
       <input type="hidden" name="_return_url" value="/product.html">
       <div class="field field--wide">
-        <label>Контакт (телефон або Telegram) <span style="color:#D14A3F">*</span></label>
-        <input type="text" name="Контакт" placeholder="+380... або @username" required>
+        <label>Телефон <span style="color:#D14A3F">*</span></label>
+        <input type="tel" name="Телефон" placeholder="+380..." required>
       </div>
       <div class="field field--wide">
-        <label>Ім'я</label>
-        <input type="text" name="Імʼя" placeholder="Як до вас звертатися">
+        <label>Email <span style="color:#D14A3F">*</span></label>
+        <input type="email" name="Email" placeholder="email@..." required>
       </div>
       <div class="field field--wide">
         <label>Ваше запитання</label>
