@@ -473,6 +473,14 @@ html, body {
         <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         Категорії
       </a>
+      <a class="nav-link" data-tab="stats">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 3v18h18M7 14l3-4 4 3 5-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Статистика
+      </a>
+      <a class="nav-link" data-tab="analytics">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Аналітика
+      </a>
       <a class="nav-link" data-tab="settings">
         <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         Налаштування
@@ -580,15 +588,156 @@ html, body {
       </div>
     </div>
 
+    <!-- ===== TAB: STATS ===== -->
+    <div class="tab-content" data-tab-content="stats">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Статистика</h1>
+          <p class="page-subtitle">Огляд активності магазину</p>
+        </div>
+      </div>
+
+      <div class="stats-bar" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
+        <div class="stat-card"><div class="stat-label">Сьогодні</div><div class="stat-value" id="s-today" style="color:#3B82F6">—</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">заявок</div></div>
+        <div class="stat-card"><div class="stat-label">Цей тиждень</div><div class="stat-value" id="s-week" style="color:#3B82F6">—</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">заявок</div></div>
+        <div class="stat-card"><div class="stat-label">Цей місяць</div><div class="stat-value" id="s-month" style="color:#3B82F6">—</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">заявок</div></div>
+        <div class="stat-card"><div class="stat-label">Усього</div><div class="stat-value" id="s-all">—</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">заявок</div></div>
+        <div class="stat-card"><div class="stat-label">Виторг (оплачено)</div><div class="stat-value" id="s-revenue" style="color:var(--accent)">—</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">₴ за весь час</div></div>
+        <div class="stat-card"><div class="stat-label">Конверсія</div><div class="stat-value" id="s-conv">—</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">оплачено / нові</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">
+        <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px">
+          <p style="font-size:13px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:14px;font-weight:600">Заявки за останні 30 днів</p>
+          <div id="s-chart" style="height:160px;display:flex;align-items:flex-end;gap:3px"></div>
+          <div id="s-chart-labels" style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--text-muted)"></div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px">
+          <p style="font-size:13px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:14px;font-weight:600">Розподіл за статусами</p>
+          <div id="s-statuses" style="display:flex;flex-direction:column;gap:8px"></div>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;margin-top:16px">
+        <p style="font-size:13px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:14px;font-weight:600">Топ товарів / курсів</p>
+        <div id="s-top-products"></div>
+      </div>
+    </div>
+
+    <!-- ===== TAB: ANALYTICS ===== -->
+    <div class="tab-content" data-tab-content="analytics">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Аналітика та маркетинг</h1>
+          <p class="page-subtitle">Підключення інструментів відстеження</p>
+        </div>
+        <button class="btn-add" id="btn-save-analytics">Зберегти</button>
+      </div>
+
+      <div id="analytics-status" class="alert alert--success" style="display:none">Налаштування збережено. Зміни видно на сайті після оновлення сторінки (F5).</div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px">
+
+        <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:36px;height:36px;border-radius:8px;background:#F59E0B;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px">GA</div>
+            <div style="font-weight:700;font-size:16px">Google Analytics 4</div>
+          </div>
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">Відстежує відвідувачів, поведінку, конверсії</p>
+          <div class="form-group">
+            <label>Measurement ID</label>
+            <input id="set-ga4" type="text" placeholder="G-XXXXXXXXXX">
+          </div>
+          <p class="form-help" style="margin-top:6px">Отримати: <a href="https://analytics.google.com" target="_blank" style="color:var(--accent)">analytics.google.com</a> → Admin → Data streams → Web → Measurement ID</p>
+        </div>
+
+        <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:36px;height:36px;border-radius:8px;background:#1877F2;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:18px">f</div>
+            <div style="font-weight:700;font-size:16px">Meta Pixel</div>
+          </div>
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">Для реклами в Facebook/Instagram, ретаргетинг</p>
+          <div class="form-group">
+            <label>Pixel ID</label>
+            <input id="set-meta-pixel" type="text" placeholder="1234567890123456">
+          </div>
+          <p class="form-help" style="margin-top:6px">Отримати: <a href="https://business.facebook.com/events_manager" target="_blank" style="color:var(--accent)">Events Manager</a> → Data Sources → ваш Pixel → Settings → Pixel ID</p>
+        </div>
+
+        <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:36px;height:36px;border-radius:8px;background:#246FDB;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:11px">GTM</div>
+            <div style="font-weight:700;font-size:16px">Google Tag Manager</div>
+          </div>
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">Один контейнер — всі пікселі через UI</p>
+          <div class="form-group">
+            <label>Container ID</label>
+            <input id="set-gtm" type="text" placeholder="GTM-XXXXXXX">
+          </div>
+          <p class="form-help" style="margin-top:6px">Отримати: <a href="https://tagmanager.google.com" target="_blank" style="color:var(--accent)">tagmanager.google.com</a> → ваш контейнер → код угорі сторінки</p>
+        </div>
+
+        <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:36px;height:36px;border-radius:8px;background:#000;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:11px">TT</div>
+            <div style="font-weight:700;font-size:16px">TikTok Pixel</div>
+          </div>
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">Для реклами у TikTok</p>
+          <div class="form-group">
+            <label>Pixel ID</label>
+            <input id="set-tiktok-pixel" type="text" placeholder="CXXXXXXXXXXXXXXXXX">
+          </div>
+        </div>
+
+      </div>
+
+      <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px;margin-top:14px">
+        <div style="font-weight:700;font-size:16px;margin-bottom:8px">Кастомний код у &lt;head&gt;</div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Будь-який HTML/JS код що буде доданий у &lt;head&gt; усіх сторінок (Hotjar, Clarity, інший snippet)</p>
+        <textarea id="set-custom-head" rows="6" style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Courier New',monospace;font-size:12px;outline:none;background:#fafafa" placeholder="&lt;!-- Наприклад, Hotjar tracking code --&gt;"></textarea>
+      </div>
+    </div>
+
     <!-- ===== TAB: SETTINGS ===== -->
     <div class="tab-content" data-tab-content="settings">
       <div class="page-header">
         <div>
           <h1 class="page-title">Налаштування</h1>
-          <p class="page-subtitle">Контакти, аналітика</p>
+          <p class="page-subtitle">Контакти та реквізити</p>
+        </div>
+        <button class="btn-add" id="btn-save-settings">Зберегти</button>
+      </div>
+
+      <div id="settings-status" class="alert alert--success" style="display:none">Налаштування збережено.</div>
+
+      <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Telegram (username з @)</label>
+            <input id="set-telegram" type="text" placeholder="@GalunaSpeak">
+          </div>
+          <div class="form-group">
+            <label>Телефон</label>
+            <input id="set-phone" type="text" placeholder="+380...">
+          </div>
+        </div>
+        <div class="form-row form-row--single">
+          <div class="form-group">
+            <label>Email</label>
+            <input id="set-email" type="email" placeholder="email@example.com">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>ФОП (повна назва)</label>
+            <input id="set-company" type="text" placeholder="ФОП ...">
+          </div>
+          <div class="form-group">
+            <label>ІПН</label>
+            <input id="set-tax-id" type="text" placeholder="3052920946">
+          </div>
         </div>
       </div>
-      <p style="color:var(--text-muted)">Скоро…</p>
     </div>
 
   </main>
@@ -745,6 +894,7 @@ function showApp(user) {
   loadProducts();
   loadOrders();
   loadCategories();
+  loadSettings();
 }
 
 // ====== Login form ======
@@ -931,6 +1081,7 @@ async function loadOrders() {
     $('#orders-count-badge').style.display = 'none';
   }
   renderOrders();
+  renderStats();
 }
 
 function renderOrders() {
@@ -1389,6 +1540,167 @@ renderProducts = function() {
   __origRender();
   enrichCardsWithPhotos();
 };
+
+// ====== STATISTICS ======
+function renderStats() {
+  const now = new Date();
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const weekAgo = now.getTime() - 7 * 24 * 60 * 60 * 1000;
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+
+  const today = allOrders.filter(o => new Date(o.created_at).getTime() >= startOfDay).length;
+  const week = allOrders.filter(o => new Date(o.created_at).getTime() >= weekAgo).length;
+  const month = allOrders.filter(o => new Date(o.created_at).getTime() >= startOfMonth).length;
+
+  $('#s-today').textContent = today;
+  $('#s-week').textContent = week;
+  $('#s-month').textContent = month;
+  $('#s-all').textContent = allOrders.length;
+
+  // Виторг — сума цін з замовлень зі статусом 'paid'
+  const paidOrders = allOrders.filter(o => o.status === 'paid');
+  const revenue = paidOrders.reduce((sum, o) => {
+    const match = (o.product_or_course || '').match(/(\d[\d\s]*)\s*₴/);
+    if (match) sum += parseInt(match[1].replace(/\s/g, ''));
+    return sum;
+  }, 0);
+  $('#s-revenue').textContent = revenue.toLocaleString('uk-UA');
+
+  // Конверсія: paid / (paid+new+contacted)
+  const fundamentalSet = allOrders.filter(o => ['paid','new','contacted','confirmed'].includes(o.status));
+  const conv = fundamentalSet.length > 0
+    ? Math.round((paidOrders.length / fundamentalSet.length) * 100)
+    : 0;
+  $('#s-conv').textContent = conv + '%';
+
+  // Графік по днях за останні 30 днів
+  const days = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    const start = d.getTime();
+    const end = start + 24 * 60 * 60 * 1000;
+    const count = allOrders.filter(o => {
+      const ts = new Date(o.created_at).getTime();
+      return ts >= start && ts < end;
+    }).length;
+    days.push({ date: d, count });
+  }
+  const maxCount = Math.max(...days.map(d => d.count), 1);
+  const chart = $('#s-chart');
+  if (chart) {
+    chart.innerHTML = days.map(d => {
+      const h = (d.count / maxCount) * 100;
+      return `<div style="flex:1;background:${d.count > 0 ? 'linear-gradient(180deg,var(--accent-light),var(--accent))' : '#e8e8e8'};border-radius:3px 3px 0 0;height:${Math.max(h, 2)}%;min-height:2px;position:relative" title="${d.date.toLocaleDateString('uk-UA')}: ${d.count} заявок"></div>`;
+    }).join('');
+    $('#s-chart-labels').innerHTML = `<span>${days[0].date.toLocaleDateString('uk-UA', {day:'2-digit',month:'2-digit'})}</span><span>${days[15].date.toLocaleDateString('uk-UA', {day:'2-digit',month:'2-digit'})}</span><span>${days[29].date.toLocaleDateString('uk-UA', {day:'2-digit',month:'2-digit'})}</span>`;
+  }
+
+  // Розподіл за статусами
+  const statusCounts = {};
+  Object.keys(STATUS_LABELS_FULL).forEach(k => statusCounts[k] = 0);
+  allOrders.forEach(o => { if (statusCounts[o.status] !== undefined) statusCounts[o.status]++; });
+  const total = allOrders.length || 1;
+  const statusColors = { new:'#3B82F6', contacted:'#F59E0B', confirmed:'#10B981', paid:'#38A30D', shipped:'#06B6D4', cancelled:'#D14A3F' };
+  $('#s-statuses').innerHTML = Object.entries(statusCounts).map(([k, count]) => {
+    const pct = Math.round((count / total) * 100);
+    return `
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px">
+          <span>${STATUS_LABELS_FULL[k]}</span>
+          <span style="font-weight:600">${count} <span style="color:#999">(${pct}%)</span></span>
+        </div>
+        <div style="height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${statusColors[k]};transition:width 0.4s"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Топ товарів
+  const productCounts = {};
+  allOrders.forEach(o => {
+    const p = (o.product_or_course || '—').split('—')[0].trim();
+    productCounts[p] = (productCounts[p] || 0) + 1;
+  });
+  const top = Object.entries(productCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const topEl = $('#s-top-products');
+  if (top.length === 0) {
+    topEl.innerHTML = '<div style="color:var(--text-muted);font-size:14px">Поки немає заявок</div>';
+  } else {
+    const maxOrders = top[0][1];
+    topEl.innerHTML = top.map(([name, count], idx) => {
+      const pct = Math.round((count / maxOrders) * 100);
+      return `
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:var(--text-muted)">${idx + 1}</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:500;margin-bottom:4px">${escapeHtml(name)}</div>
+            <div style="height:5px;background:#f0f0f0;border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent-light),var(--accent))"></div></div>
+          </div>
+          <div style="font-weight:700;font-size:14px;color:var(--accent)">${count}</div>
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+// Перерендер статистики при кліку на вкладку
+$$('.nav-link[data-tab="stats"]').forEach(link => link.addEventListener('click', () => setTimeout(renderStats, 0)));
+
+// ====== SETTINGS / ANALYTICS ======
+let siteSettings = {};
+async function loadSettings() {
+  const { data, error } = await supa.from('site_settings').select('*');
+  if (error) { console.warn('settings load:', error); return; }
+  siteSettings = {};
+  (data || []).forEach(row => siteSettings[row.key] = row.value || '');
+  // Заповнюємо форми
+  $('#set-ga4').value = siteSettings.ga4_id || '';
+  $('#set-meta-pixel').value = siteSettings.meta_pixel_id || '';
+  $('#set-gtm').value = siteSettings.gtm_id || '';
+  $('#set-tiktok-pixel').value = siteSettings.tiktok_pixel_id || '';
+  $('#set-custom-head').value = siteSettings.custom_head_html || '';
+  $('#set-telegram').value = siteSettings.contact_telegram || '';
+  $('#set-phone').value = siteSettings.contact_phone || '';
+  $('#set-email').value = siteSettings.contact_email || '';
+  $('#set-company').value = siteSettings.company_name || '';
+  $('#set-tax-id').value = siteSettings.company_tax_id || '';
+}
+
+async function saveSettingsMap(updates, statusSelector) {
+  const rows = Object.entries(updates).map(([key, value]) => ({ key, value: value || '' }));
+  const { error } = await supa.from('site_settings').upsert(rows, { onConflict: 'key' });
+  const statusEl = $(statusSelector);
+  if (error) {
+    alert('Помилка: ' + error.message);
+    return;
+  }
+  Object.assign(siteSettings, updates);
+  if (statusEl) {
+    statusEl.style.display = 'block';
+    setTimeout(() => { statusEl.style.display = 'none'; }, 3500);
+  }
+}
+
+$('#btn-save-analytics').addEventListener('click', async () => {
+  await saveSettingsMap({
+    ga4_id: $('#set-ga4').value.trim(),
+    meta_pixel_id: $('#set-meta-pixel').value.trim(),
+    gtm_id: $('#set-gtm').value.trim(),
+    tiktok_pixel_id: $('#set-tiktok-pixel').value.trim(),
+    custom_head_html: $('#set-custom-head').value
+  }, '#analytics-status');
+});
+
+$('#btn-save-settings').addEventListener('click', async () => {
+  await saveSettingsMap({
+    contact_telegram: $('#set-telegram').value.trim(),
+    contact_phone: $('#set-phone').value.trim(),
+    contact_email: $('#set-email').value.trim(),
+    company_name: $('#set-company').value.trim(),
+    company_tax_id: $('#set-tax-id').value.trim()
+  }, '#settings-status');
+});
 
 // ====== Utils ======
 function escapeHtml(s) {
