@@ -3260,55 +3260,9 @@ body:has(.modal:target) { overflow: hidden; }
       </svg>
     </a>
 
-    <div class="shop__featured-grid">
-
-      <a href="shop.html" class="shop-featured">
-        <div class="shop-featured__photo-wrap">
-          <img class="shop-featured__photo" src="https://images.unsplash.com/photo-1561212856-44e9bae482aa?w=400&h=400&fit=crop&q=80" alt="">
-          <span class="shop-featured__tag">Хіт</span>
-        </div>
-        <div class="shop-featured__body">
-          <p class="shop-featured__cat">Подарунковий набір</p>
-          <p class="shop-featured__name">Набір «Затишок»</p>
-          <p class="shop-featured__price">850 ₴</p>
-        </div>
-      </a>
-
-      <a href="shop.html" class="shop-featured">
-        <div class="shop-featured__photo-wrap">
-          <img class="shop-featured__photo" src="https://images.unsplash.com/photo-1601922046210-41e129a3e64a?w=400&h=400&fit=crop&q=80" alt="">
-        </div>
-        <div class="shop-featured__body">
-          <p class="shop-featured__cat">Фігурна свічка</p>
-          <p class="shop-featured__name">Букет троянд</p>
-          <p class="shop-featured__price">380 ₴</p>
-        </div>
-      </a>
-
-      <a href="shop.html" class="shop-featured shop-featured--hide-mobile">
-        <div class="shop-featured__photo-wrap">
-          <img class="shop-featured__photo" src="https://images.unsplash.com/photo-1640095889747-2090ee12fa7d?w=400&h=400&fit=crop&q=80" alt="">
-          <span class="shop-featured__tag shop-featured__tag--new">Новинка</span>
-        </div>
-        <div class="shop-featured__body">
-          <p class="shop-featured__cat">Аромасвічка</p>
-          <p class="shop-featured__name">Соєва свічка «Лаванда»</p>
-          <p class="shop-featured__price">240 ₴</p>
-        </div>
-      </a>
-
-      <a href="shop.html" class="shop-featured shop-featured--hide-mobile">
-        <div class="shop-featured__photo-wrap">
-          <img class="shop-featured__photo" src="https://images.unsplash.com/photo-1612293905607-b003de9e54fb?w=400&h=400&fit=crop&q=80" alt="">
-          <span class="shop-featured__tag shop-featured__tag--sale">−15%</span>
-        </div>
-        <div class="shop-featured__body">
-          <p class="shop-featured__cat">Фігурна свічка</p>
-          <p class="shop-featured__name">Свічка-піон білий</p>
-          <p class="shop-featured__price">270 ₴</p>
-        </div>
-      </a>
-
+    <div class="shop__featured-grid" id="featured-products-grid">
+      <!-- генерується JS з Supabase -->
+      <div style="grid-column:1/-1;text-align:center;padding:40px;color:rgba(255,255,255,0.6)">Завантаження товарів…</div>
     </div>
 
   </div>
@@ -3937,6 +3891,81 @@ body:has(.modal:target) { overflow: hidden; }
     }
     requestAnimationFrame(step);
   });
+})();
+</script>
+
+<!-- ====================== Популярні товари з БД ====================== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function() {
+  const SUPABASE_URL = 'https://jmfudjhembgeaztowcoe.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptZnVkamhlbWJnZWF6dG93Y29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDEyODMsImV4cCI6MjA5NTM3NzI4M30.AQC4uLLBE6lsbdRorypc6gKkZQU4n6yg4gGG_rG55iM';
+  const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const grid = document.getElementById('featured-products-grid');
+  if (!grid) return;
+  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  (async function loadFeatured() {
+    try {
+      // Беремо 4 товари з тегами (Хіт/Новинка/Sale) перші, потім решту за sort_order
+      const [withTags, allRes, catsRes] = await Promise.all([
+        supa.from('products').select('*').eq('status', 'published').not('tag', 'is', null).order('sort_order').limit(4),
+        supa.from('products').select('*').eq('status', 'published').order('sort_order').limit(8),
+        supa.from('categories').select('id,name')
+      ]);
+      const tagged = withTags.data || [];
+      const all = allRes.data || [];
+      const cats = catsRes.data || [];
+      // Збираємо 4 — спочатку з тегом, потім інші
+      const ids = new Set();
+      const featured = [];
+      tagged.forEach(p => { if (featured.length < 4 && !ids.has(p.id)) { featured.push(p); ids.add(p.id); } });
+      all.forEach(p => { if (featured.length < 4 && !ids.has(p.id)) { featured.push(p); ids.add(p.id); } });
+
+      if (featured.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:rgba(255,255,255,0.6)">Поки немає товарів</div>`;
+        return;
+      }
+
+      // Завантажуємо перше фото для кожного
+      const productIds = featured.map(p => p.id);
+      const { data: media } = await supa.from('product_media')
+        .select('product_id,url')
+        .eq('type', 'photo')
+        .in('product_id', productIds)
+        .order('sort_order');
+      const photoByProduct = {};
+      (media || []).forEach(m => { if (!photoByProduct[m.product_id]) photoByProduct[m.product_id] = m.url; });
+
+      grid.innerHTML = featured.map((p, idx) => {
+        const cat = cats.find(c => c.id === p.category_id);
+        const photo = photoByProduct[p.id];
+        const tagLabel = { hit: 'Хіт', new: 'Новинка', sale: 'Sale' }[p.tag];
+        const tagClass = p.tag === 'sale' ? 'shop-featured__tag shop-featured__tag--sale'
+                        : p.tag === 'new' ? 'shop-featured__tag shop-featured__tag--new'
+                        : 'shop-featured__tag';
+        const hideMobile = idx >= 2 ? ' shop-featured--hide-mobile' : '';
+        return `
+          <a href="product.html?id=${p.id}" class="shop-featured${hideMobile}">
+            <div class="shop-featured__photo-wrap">
+              ${photo
+                ? `<img class="shop-featured__photo" src="${esc(photo)}" alt="${esc(p.name)}">`
+                : `<div class="shop-featured__photo" style="display:flex;align-items:center;justify-content:center;background:#f5f0ee;font-size:42px">🕯️</div>`}
+              ${tagLabel ? `<span class="${tagClass}">${tagLabel}</span>` : ''}
+            </div>
+            <div class="shop-featured__body">
+              <p class="shop-featured__cat">${esc(cat ? cat.name : '')}</p>
+              <p class="shop-featured__name">${esc(p.name)}</p>
+              <p class="shop-featured__price">${p.old_price ? `<span style="text-decoration:line-through;color:#aaa;font-size:13px;margin-right:6px">${p.old_price} ₴</span>` : ''}${p.price} ₴</p>
+            </div>
+          </a>
+        `;
+      }).join('');
+    } catch (err) {
+      console.warn('featured load failed:', err);
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:rgba(255,255,255,0.6)">Помилка завантаження товарів</div>`;
+    }
+  })();
 })();
 </script>
 
