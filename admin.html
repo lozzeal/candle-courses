@@ -774,7 +774,7 @@ html, body {
       <!-- Графік сесій -->
       <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;margin-top:8px">
         <p style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:14px;font-weight:700">Сесії та перегляди</p>
-        <svg id="ms-chart" viewBox="0 0 800 240" preserveAspectRatio="none" style="width:100%;height:240px"></svg>
+        <svg id="ms-chart" viewBox="0 0 800 240" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;display:block;max-height:280px"></svg>
         <div id="ms-chart-labels" style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--text-muted)"></div>
         <div style="display:flex;gap:18px;margin-top:14px;font-size:12px">
           <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:3px;background:#3B82F6;border-radius:2px"></span>Сесії</span>
@@ -2053,10 +2053,11 @@ function renderLineChart(buckets) {
   }
   function dots(key, color) {
     return buckets.map((b, i) => {
-      // Більший і яскравіший dot якщо є дані
-      const r = b[key] > 0 ? 4 : 2;
-      const op = b[key] > 0 ? 1 : 0.4;
-      return `<circle cx="${xPos(i)}" cy="${yScale(b[key])}" r="${r}" fill="${color}" opacity="${op}"><title>${b.date.toLocaleDateString('uk-UA')}: ${b[key]}</title></circle>`;
+      // Крапки тільки на днях з даними (на нульових — невидимі, але tooltip залишається)
+      if (b[key] === 0) {
+        return `<circle cx="${xPos(i)}" cy="${yScale(0)}" r="6" fill="transparent"><title>${b.date.toLocaleDateString('uk-UA')}: 0</title></circle>`;
+      }
+      return `<circle cx="${xPos(i)}" cy="${yScale(b[key])}" r="4" fill="${color}"><title>${b.date.toLocaleDateString('uk-UA')}: ${b[key]}</title></circle>`;
     }).join('');
   }
   // Y-axis grid
