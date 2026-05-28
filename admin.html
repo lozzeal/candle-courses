@@ -284,6 +284,143 @@ html, body {
   .main { padding: 16px; }
   .order-row { grid-template-columns: 1fr; gap: 4px; padding: 14px; }
 }
+
+/* ===== DRAWER (форма товару) ===== */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s, visibility 0.25s;
+}
+.drawer-overlay.is-open { opacity: 1; visibility: visible; }
+.drawer {
+  position: fixed;
+  top: 0; right: 0;
+  width: min(640px, 95vw);
+  height: 100vh;
+  background: #fff;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: -10px 0 40px rgba(0,0,0,0.15);
+}
+.drawer.is-open { transform: translateX(0); }
+.drawer-header { padding: 18px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.drawer-title { font-size: 18px; font-weight: 700; }
+.drawer-close { background: none; border: none; cursor: pointer; padding: 6px; border-radius: 8px; color: var(--text-muted); font-size: 22px; line-height: 1; transition: background 0.15s; }
+.drawer-close:hover { background: var(--bg); color: var(--text); }
+.drawer-body { flex: 1; overflow-y: auto; padding: 20px 24px 32px; }
+.drawer-footer { padding: 14px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; background: #fafafa; }
+.btn-secondary { padding: 11px 18px; background: #fff; border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; color: #555; font-family: inherit; transition: border-color 0.15s, color 0.15s; }
+.btn-secondary:hover { border-color: var(--text); color: var(--text); }
+.btn-save { padding: 11px 22px; background: linear-gradient(180deg, var(--accent-light), var(--accent)); color: #fff; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; font-family: inherit; transition: transform 0.15s, box-shadow 0.15s; }
+.btn-save:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(56,163,13,0.35); }
+.btn-save:disabled { opacity: 0.6; cursor: wait; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.form-row--single { grid-template-columns: 1fr; }
+.form-section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; margin: 20px 0 10px; padding-top: 12px; border-top: 1px solid var(--border); }
+.form-section-title:first-child { padding-top: 0; border-top: none; margin-top: 0; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group label { font-size: 12px; font-weight: 600; color: #555; }
+.form-group label .req { color: var(--danger); }
+.form-group input, .form-group select, .form-group textarea {
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+.form-group textarea { resize: vertical; min-height: 70px; }
+.form-help { font-size: 11px; color: var(--text-muted); }
+
+/* Media uploader */
+.media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-top: 10px; }
+.media-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+}
+.media-item img, .media-item video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.media-item .badge-video { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.7); color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+.media-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+}
+.media-remove:hover { background: var(--danger); }
+.media-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  aspect-ratio: 1;
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  background: #fafafa;
+  color: var(--text-muted);
+  font-size: 11px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.media-upload:hover { border-color: var(--accent); background: rgba(56,163,13,0.05); color: var(--accent); }
+.media-upload svg { width: 22px; height: 22px; }
+.media-upload input { display: none; }
+
+.uploader-progress { font-size: 12px; color: var(--accent); margin-top: 6px; display: none; }
+.uploader-progress.is-active { display: block; }
+
+/* Characteristics dynamic list */
+.specs-list { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.spec-row { display: grid; grid-template-columns: 1fr 1fr 32px; gap: 6px; }
+.spec-row input { padding: 8px 10px; font-size: 13px; }
+.spec-remove { background: var(--bg); border: 1.5px solid var(--border); border-radius: 6px; cursor: pointer; color: var(--text-muted); font-size: 14px; }
+.spec-remove:hover { background: #FEE2E2; color: var(--danger); border-color: #FCA5A5; }
+.spec-add {
+  margin-top: 6px;
+  padding: 7px 12px;
+  background: var(--bg);
+  border: 1.5px dashed var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: inherit;
+  width: 100%;
+  text-align: center;
+}
+.spec-add:hover { border-color: var(--accent); color: var(--accent); }
+
+@media (max-width: 600px) {
+  .form-row { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -431,6 +568,102 @@ html, body {
 
   </main>
 </div>
+
+<!-- ====================== DRAWER: ФОРМА ТОВАРУ ====================== -->
+<div class="drawer-overlay" id="drawer-overlay"></div>
+<aside class="drawer" id="drawer-product">
+  <div class="drawer-header">
+    <div class="drawer-title" id="drawer-title">Новий товар</div>
+    <button class="drawer-close" id="drawer-close" type="button">&times;</button>
+  </div>
+  <div class="drawer-body">
+    <form id="product-form">
+
+      <p class="form-section-title">Основне</p>
+      <div class="form-row form-row--single">
+        <div class="form-group">
+          <label>Назва товару <span class="req">*</span></label>
+          <input id="f-name" type="text" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Категорія <span class="req">*</span></label>
+          <select id="f-category" required>
+            <option value="">Виберіть категорію</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Статус</label>
+          <select id="f-status">
+            <option value="draft">Чернетка</option>
+            <option value="published">Опубліковано</option>
+            <option value="archived">Архів</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Ціна, ₴ <span class="req">*</span></label>
+          <input id="f-price" type="number" min="0" step="1" required>
+        </div>
+        <div class="form-group">
+          <label>Стара ціна, ₴ <span style="color:#aaa;font-weight:400">(для знижки)</span></label>
+          <input id="f-old-price" type="number" min="0" step="1">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Тег</label>
+          <select id="f-tag">
+            <option value="">— без тегу —</option>
+            <option value="hit">Хіт</option>
+            <option value="new">Новинка</option>
+            <option value="sale">Sale</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Slug у URL <span style="color:#aaa;font-weight:400">(генерується)</span></label>
+          <input id="f-slug" type="text" placeholder="auto">
+        </div>
+      </div>
+
+      <p class="form-section-title">Опис</p>
+      <div class="form-row form-row--single">
+        <div class="form-group">
+          <label>Короткий опис</label>
+          <textarea id="f-short-desc" rows="2" placeholder="1-2 речення для картки у каталозі"></textarea>
+        </div>
+      </div>
+      <div class="form-row form-row--single">
+        <div class="form-group">
+          <label>Повний опис</label>
+          <textarea id="f-desc" rows="5" placeholder="Детальний опис для сторінки товару"></textarea>
+        </div>
+      </div>
+
+      <p class="form-section-title">Фото</p>
+      <p class="form-help">Перетягніть або клікніть. Перше фото — головне (буде на картці у каталозі).</p>
+      <div class="media-grid" id="photos-grid"></div>
+      <div class="uploader-progress" id="photos-progress"></div>
+
+      <p class="form-section-title">Відео</p>
+      <p class="form-help">До 50 MB на файл. Формати: MP4, WebM, MOV.</p>
+      <div class="media-grid" id="videos-grid"></div>
+      <div class="uploader-progress" id="videos-progress"></div>
+
+      <p class="form-section-title">Характеристики</p>
+      <p class="form-help">Висота, аромат, час горіння тощо. Зʼявляться на сторінці товару.</p>
+      <div class="specs-list" id="specs-list"></div>
+      <button type="button" class="spec-add" id="spec-add">+ Додати характеристику</button>
+
+    </form>
+  </div>
+  <div class="drawer-footer">
+    <button class="btn-secondary" id="btn-cancel" type="button">Скасувати</button>
+    <button class="btn-save" id="btn-save" type="button">Зберегти товар</button>
+  </div>
+</aside>
 
 <!-- ====================== Supabase + scripts ====================== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -668,15 +901,310 @@ async function loadOrders() {
   </div>`;
 }
 
-// ====== Placeholders ======
-window.editProduct = id => alert('Редагування буде у наступній версії. ID товару: ' + id);
+// ====== Транслітерація для slug ======
+const translitMap = {
+  'а':'a','б':'b','в':'v','г':'h','ґ':'g','д':'d','е':'e','є':'ie','ж':'zh','з':'z',
+  'и':'y','і':'i','ї':'i','й':'i','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p',
+  'р':'r','с':'s','т':'t','у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'shch',
+  'ь':'','ю':'iu','я':'ia',"'":''
+};
+function slugify(str) {
+  if (!str) return '';
+  return str.toLowerCase()
+    .split('').map(ch => translitMap[ch] ?? ch).join('')
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/-{2,}/g, '-')
+    .substring(0, 60);
+}
+
+// ====== Drawer (форма) ======
+let editingId = null;
+let formMedia = { photos: [], videos: [] }; // {id?, url, storage_path, isNew?, file?}
+
+const drawer = $('#drawer-product');
+const overlay = $('#drawer-overlay');
+
+function openDrawer(product = null) {
+  editingId = product ? product.id : null;
+  $('#drawer-title').textContent = product ? 'Редагувати товар' : 'Новий товар';
+  resetForm();
+  if (product) fillForm(product);
+  populateCategorySelect();
+  drawer.classList.add('is-open');
+  overlay.classList.add('is-open');
+}
+function closeDrawer() {
+  drawer.classList.remove('is-open');
+  overlay.classList.remove('is-open');
+}
+overlay.addEventListener('click', closeDrawer);
+$('#drawer-close').addEventListener('click', closeDrawer);
+$('#btn-cancel').addEventListener('click', closeDrawer);
+
+function resetForm() {
+  ['f-name','f-slug','f-price','f-old-price','f-short-desc','f-desc'].forEach(id => $('#' + id).value = '');
+  $('#f-status').value = 'draft';
+  $('#f-tag').value = '';
+  $('#f-category').value = '';
+  formMedia = { photos: [], videos: [] };
+  renderMediaGrid('photo');
+  renderMediaGrid('video');
+  renderSpecs([]);
+}
+
+async function fillForm(p) {
+  $('#f-name').value = p.name || '';
+  $('#f-slug').value = p.slug || '';
+  $('#f-category').value = p.category_id || '';
+  $('#f-status').value = p.status || 'draft';
+  $('#f-price').value = p.price || '';
+  $('#f-old-price').value = p.old_price || '';
+  $('#f-tag').value = p.tag || '';
+  $('#f-short-desc').value = p.short_description || '';
+  $('#f-desc').value = p.description || '';
+  renderSpecs(Array.isArray(p.characteristics) ? p.characteristics : []);
+  // Завантажуємо медіа
+  const { data: media } = await supa.from('product_media').select('*').eq('product_id', p.id).order('sort_order');
+  formMedia.photos = (media || []).filter(m => m.type === 'photo');
+  formMedia.videos = (media || []).filter(m => m.type === 'video');
+  renderMediaGrid('photo');
+  renderMediaGrid('video');
+}
+
+function populateCategorySelect() {
+  const sel = $('#f-category');
+  sel.innerHTML = '<option value="">Виберіть категорію</option>';
+  const roots = allCategories.filter(c => !c.parent_id);
+  roots.forEach(root => {
+    const subs = allCategories.filter(c => c.parent_id === root.id);
+    if (subs.length === 0) {
+      const o = document.createElement('option');
+      o.value = root.id; o.textContent = root.name;
+      sel.appendChild(o);
+    } else {
+      const grp = document.createElement('optgroup');
+      grp.label = root.name;
+      subs.forEach(s => {
+        const o = document.createElement('option');
+        o.value = s.id; o.textContent = s.name;
+        grp.appendChild(o);
+      });
+      sel.appendChild(grp);
+    }
+  });
+}
+
+// Auto-slug from name
+$('#f-name').addEventListener('input', e => {
+  const slugField = $('#f-slug');
+  if (!slugField.dataset.touched) slugField.value = slugify(e.target.value);
+});
+$('#f-slug').addEventListener('input', e => { e.target.dataset.touched = '1'; });
+
+// ====== Media grid ======
+function renderMediaGrid(type) {
+  const gridId = type === 'photo' ? 'photos-grid' : 'videos-grid';
+  const grid = $('#' + gridId);
+  const items = type === 'photo' ? formMedia.photos : formMedia.videos;
+  grid.innerHTML = items.map((m, idx) => `
+    <div class="media-item">
+      ${type === 'photo'
+        ? `<img src="${m.url}" alt="">`
+        : `<video src="${m.url}" muted></video><span class="badge-video">▶ VIDEO</span>`}
+      <button type="button" class="media-remove" onclick="removeMedia('${type}', ${idx})">×</button>
+    </div>
+  `).join('') + `
+    <label class="media-upload">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Додати ${type === 'photo' ? 'фото' : 'відео'}</span>
+      <input type="file" accept="${type === 'photo' ? 'image/*' : 'video/*'}" multiple onchange="onMediaPick(event, '${type}')">
+    </label>
+  `;
+}
+
+window.removeMedia = (type, idx) => {
+  if (!confirm('Прибрати з товару?')) return;
+  const arr = type === 'photo' ? formMedia.photos : formMedia.videos;
+  arr.splice(idx, 1);
+  renderMediaGrid(type);
+};
+
+window.onMediaPick = async (e, type) => {
+  const files = Array.from(e.target.files || []);
+  e.target.value = '';
+  if (files.length === 0) return;
+  const bucket = type === 'photo' ? 'product-photos' : 'product-videos';
+  const progressEl = $('#' + (type === 'photo' ? 'photos-progress' : 'videos-progress'));
+  progressEl.classList.add('is-active');
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    progressEl.textContent = `Завантаження ${i + 1} з ${files.length}: ${file.name}`;
+    try {
+      const ext = file.name.split('.').pop().toLowerCase();
+      const path = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
+      const { error } = await supa.storage.from(bucket).upload(path, file, { cacheControl: '3600', upsert: false });
+      if (error) throw error;
+      const { data: { publicUrl } } = supa.storage.from(bucket).getPublicUrl(path);
+      const arr = type === 'photo' ? formMedia.photos : formMedia.videos;
+      arr.push({ url: publicUrl, storage_path: path, isNew: true });
+      renderMediaGrid(type);
+    } catch (err) {
+      alert('Помилка завантаження ' + file.name + ': ' + err.message);
+    }
+  }
+  progressEl.classList.remove('is-active');
+};
+
+// ====== Specs ======
+function renderSpecs(specs) {
+  const list = $('#specs-list');
+  list.innerHTML = specs.map((s, idx) => `
+    <div class="spec-row">
+      <input type="text" placeholder="Назва (Висота)" value="${escapeAttr(s.key || '')}" oninput="updateSpec(${idx}, 'key', this.value)">
+      <input type="text" placeholder="Значення (18 см)" value="${escapeAttr(s.value || '')}" oninput="updateSpec(${idx}, 'value', this.value)">
+      <button type="button" class="spec-remove" onclick="removeSpec(${idx})">×</button>
+    </div>
+  `).join('');
+  list.dataset.json = JSON.stringify(specs);
+}
+$('#spec-add').addEventListener('click', () => {
+  const cur = JSON.parse($('#specs-list').dataset.json || '[]');
+  cur.push({ key: '', value: '' });
+  renderSpecs(cur);
+});
+window.updateSpec = (idx, field, value) => {
+  const cur = JSON.parse($('#specs-list').dataset.json || '[]');
+  cur[idx][field] = value;
+  $('#specs-list').dataset.json = JSON.stringify(cur);
+};
+window.removeSpec = idx => {
+  const cur = JSON.parse($('#specs-list').dataset.json || '[]');
+  cur.splice(idx, 1);
+  renderSpecs(cur);
+};
+function escapeAttr(s) { return String(s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+
+// ====== Save ======
+$('#btn-save').addEventListener('click', async () => {
+  const btn = $('#btn-save');
+  btn.disabled = true;
+  btn.textContent = 'Зберігаю…';
+  try {
+    const name = $('#f-name').value.trim();
+    const price = parseFloat($('#f-price').value);
+    const category_id = parseInt($('#f-category').value);
+    if (!name || !price || !category_id) {
+      throw new Error('Заповніть назву, ціну та категорію');
+    }
+    const oldPrice = $('#f-old-price').value;
+    const tag = $('#f-tag').value;
+    const slug = $('#f-slug').value.trim() || slugify(name) || `prod-${Date.now()}`;
+    const specs = JSON.parse($('#specs-list').dataset.json || '[]').filter(s => s.key && s.value);
+
+    const payload = {
+      name,
+      slug,
+      short_description: $('#f-short-desc').value.trim() || null,
+      description: $('#f-desc').value.trim() || null,
+      price: price,
+      old_price: oldPrice ? parseFloat(oldPrice) : null,
+      category_id: category_id,
+      status: $('#f-status').value,
+      tag: tag || null,
+      characteristics: specs
+    };
+
+    let productId;
+    if (editingId) {
+      const { error } = await supa.from('products').update(payload).eq('id', editingId);
+      if (error) throw error;
+      productId = editingId;
+      // Видаляємо старі media для перезапису
+      await supa.from('product_media').delete().eq('product_id', editingId);
+    } else {
+      const { data, error } = await supa.from('products').insert(payload).select().single();
+      if (error) throw error;
+      productId = data.id;
+    }
+
+    // Записуємо media
+    const allMedia = [];
+    formMedia.photos.forEach((m, idx) => allMedia.push({
+      product_id: productId, type: 'photo', url: m.url, storage_path: m.storage_path, sort_order: idx
+    }));
+    formMedia.videos.forEach((m, idx) => allMedia.push({
+      product_id: productId, type: 'video', url: m.url, storage_path: m.storage_path, sort_order: idx
+    }));
+    if (allMedia.length > 0) {
+      const { error: mErr } = await supa.from('product_media').insert(allMedia);
+      if (mErr) throw mErr;
+    }
+
+    closeDrawer();
+    await loadProducts();
+  } catch (err) {
+    alert('Помилка збереження: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Зберегти товар';
+  }
+});
+
+// ====== Add / Edit / Delete actions ======
+$('#btn-add-product').addEventListener('click', () => openDrawer(null));
+
+window.editProduct = async id => {
+  const p = allProducts.find(x => x.id === id);
+  if (p) openDrawer(p);
+};
+
 window.deleteProduct = async id => {
-  if (!confirm('Видалити товар? Цю дію не можна скасувати.')) return;
+  if (!confirm('Видалити товар? Це безповоротно.')) return;
+  // Заберемо storage_path щоб видалити файли
+  const { data: media } = await supa.from('product_media').select('storage_path,type').eq('product_id', id);
   const { error } = await supa.from('products').delete().eq('id', id);
   if (error) return alert('Помилка: ' + error.message);
+  // Видаляємо файли зі сховища
+  if (media) {
+    const photos = media.filter(m => m.type === 'photo').map(m => m.storage_path).filter(Boolean);
+    const videos = media.filter(m => m.type === 'video').map(m => m.storage_path).filter(Boolean);
+    if (photos.length) await supa.storage.from('product-photos').remove(photos);
+    if (videos.length) await supa.storage.from('product-videos').remove(videos);
+  }
   await loadProducts();
 };
-$('#btn-add-product').addEventListener('click', () => alert('Форма «Додати товар» буде у наступному оновленні'));
+
+// ====== Підвантажуємо перші фото для карток у списку ======
+async function enrichCardsWithPhotos() {
+  const ids = allProducts.map(p => p.id);
+  if (ids.length === 0) return;
+  const { data: media } = await supa.from('product_media').select('product_id,url').eq('type', 'photo').in('product_id', ids).order('sort_order');
+  const photoByProduct = {};
+  (media || []).forEach(m => { if (!photoByProduct[m.product_id]) photoByProduct[m.product_id] = m.url; });
+  // Оновлюємо DOM
+  document.querySelectorAll('#products-container .product-card').forEach(card => {
+    const editBtn = card.querySelector('button[onclick*="editProduct"]');
+    if (!editBtn) return;
+    const idMatch = editBtn.getAttribute('onclick').match(/\d+/);
+    if (!idMatch) return;
+    const pid = Number(idMatch[0]);
+    const url = photoByProduct[pid];
+    if (url) {
+      const photoEl = card.querySelector('.product-card__photo');
+      const statusBadge = photoEl.querySelector('.product-card__status');
+      photoEl.innerHTML = `<img src="${url}" alt="">` + (statusBadge ? statusBadge.outerHTML : '');
+    }
+  });
+}
+
+// Patch renderProducts: після рендеру довантажуємо фото
+const __origRender = renderProducts;
+renderProducts = function() {
+  __origRender();
+  enrichCardsWithPhotos();
+};
 
 // ====== Utils ======
 function escapeHtml(s) {
