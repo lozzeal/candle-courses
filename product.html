@@ -410,8 +410,8 @@ body:has(.modal:target) { overflow: hidden; }
     <nav class="crumbs">
       <a href="index.html">Головна</a> ·
       <a href="shop.html">Магазин</a> ·
-      <a href="shop.html">Подарункові набори</a> ·
-      <span>Букет «Полуничний рай»</span>
+      <a href="shop.html" id="crumb-cat-link"><span id="crumb-cat-name">Категорія</span></a> ·
+      <span id="crumb-product-name">Завантаження…</span>
     </nav>
   </div>
 </section>
@@ -423,68 +423,23 @@ body:has(.modal:target) { overflow: hidden; }
   <div class="product__inner">
     <div class="product__layout">
 
-      <!-- ===== ГАЛЕРЕЯ ===== -->
-      <!-- Щоб додати фото:
-           1) Скиньте файл у assets/products/ (напр. photo-6.jpg)
-           2) Додайте <input> з id="gal-6" внизу
-           3) Додайте <img> з класом gallery__img--6
-           4) Додайте <label for="gal-6"> з thumb-зображенням
-           5) Допишіть #gal-6:checked правила у CSS вище -->
-      <div class="gallery">
-        <input type="radio" name="gal" id="gal-1" checked>
-        <input type="radio" name="gal" id="gal-2">
-        <input type="radio" name="gal" id="gal-3">
-        <input type="radio" name="gal" id="gal-4">
-        <input type="radio" name="gal" id="gal-5">
-
+      <!-- ===== ГАЛЕРЕЯ (буде заповнена JS) ===== -->
+      <div class="gallery" id="product-gallery">
         <div class="gallery__main">
-          <img class="gallery__img gallery__img--1" src="https://images.unsplash.com/photo-1601922046210-41e129a3e64a?w=800&h=800&fit=crop&q=85" alt="Фото 1">
-          <img class="gallery__img gallery__img--2" src="https://images.unsplash.com/photo-1561212856-44e9bae482aa?w=800&h=800&fit=crop&q=85" alt="Фото 2">
-          <img class="gallery__img gallery__img--3" src="https://images.unsplash.com/photo-1612293905607-b003de9e54fb?w=800&h=800&fit=crop&q=85" alt="Фото 3">
-          <img class="gallery__img gallery__img--4" src="https://images.unsplash.com/photo-1640095889747-2090ee12fa7d?w=800&h=800&fit=crop&q=85" alt="Фото 4">
-          <img class="gallery__img gallery__img--5" src="https://images.unsplash.com/photo-1537948756265-406a522f1a45?w=800&h=800&fit=crop&q=85" alt="Фото 5">
-        </div>
-
-        <div class="gallery__thumbs">
-          <label for="gal-1" class="gallery__thumb"><img src="https://images.unsplash.com/photo-1601922046210-41e129a3e64a?w=160&h=160&fit=crop&q=70" alt=""></label>
-          <label for="gal-2" class="gallery__thumb"><img src="https://images.unsplash.com/photo-1561212856-44e9bae482aa?w=160&h=160&fit=crop&q=70" alt=""></label>
-          <label for="gal-3" class="gallery__thumb"><img src="https://images.unsplash.com/photo-1612293905607-b003de9e54fb?w=160&h=160&fit=crop&q=70" alt=""></label>
-          <label for="gal-4" class="gallery__thumb"><img src="https://images.unsplash.com/photo-1640095889747-2090ee12fa7d?w=160&h=160&fit=crop&q=70" alt=""></label>
-          <label for="gal-5" class="gallery__thumb"><img src="https://images.unsplash.com/photo-1537948756265-406a522f1a45?w=160&h=160&fit=crop&q=70" alt=""></label>
+          <div style="aspect-ratio:1;background:#f0eae6;display:flex;align-items:center;justify-content:center;font-size:48px;color:#aaa">Завантаження…</div>
         </div>
       </div>
 
-      <!-- ===== ІНФОРМАЦІЯ ===== -->
+      <!-- ===== ІНФОРМАЦІЯ (буде заповнена JS) ===== -->
       <div class="product__info">
-        <p class="product__cat">Подарунковий набір</p>
-        <h1 class="product__title">Букет «Полуничний рай»</h1>
+        <p class="product__cat" id="product-cat">…</p>
+        <h1 class="product__title" id="product-title">Завантаження…</h1>
 
-        <div class="product__rating">
-          <span class="stars">★★★★★</span>
-          <span>4.9 · 23 відгуки</span>
+        <div class="product__price-row" id="product-price-row">
+          <!-- генерується JS -->
         </div>
 
-        <div class="product__price-row">
-          <span class="product__price">980 ₴</span>
-          <span class="product__price-old">1 150 ₴</span>
-          <span class="product__badge">−15%</span>
-        </div>
-
-        <p class="product__desc-short">
-          Ароматний букет із соєвих свічок у вигляді троянд, тюльпанів та полуниці.
-          Ідеальний подарунок дівчині, мамі, подрузі або собі — натуральний, ефектний і довговічний.
-        </p>
-
-        <!-- Колір коробки -->
-        <div class="product__variant">
-          <p class="product__variant-label">Колір коробки:</p>
-          <div class="product__variant-row">
-            <input type="radio" name="color" id="c-pink" checked><label for="c-pink" class="swatch swatch--pink" title="Рожевий"></label>
-            <input type="radio" name="color" id="c-white"><label for="c-white" class="swatch swatch--white" title="Білий"></label>
-            <input type="radio" name="color" id="c-cream"><label for="c-cream" class="swatch swatch--cream" title="Кремовий"></label>
-            <input type="radio" name="color" id="c-gray"><label for="c-gray" class="swatch swatch--gray" title="Сірий"></label>
-          </div>
-        </div>
+        <p class="product__desc-short" id="product-short-desc"></p>
 
         <div class="product__actions">
           <a href="#order" class="product__btn product__btn--primary">Замовити зараз</a>
@@ -492,10 +447,10 @@ body:has(.modal:target) { overflow: hidden; }
         </div>
 
         <ul class="product__features">
-          <li>Доставка Новою Поштою по всій Україні — 1-2 дні</li>
+          <li>Доставка Новою Поштою по всій Україні — 1-3 дні</li>
           <li>Безкоштовна подарункова упаковка</li>
           <li>100% натуральний соєвий віск, без шкідливих добавок</li>
-          <li>Час горіння однієї свічки — до 4 годин</li>
+          <li>Виготовлення під замовлення</li>
         </ul>
       </div>
 
@@ -504,60 +459,34 @@ body:has(.modal:target) { overflow: hidden; }
 </section>
 
 <!-- ============================================================
-     ВІДЕО-ОГЛЯД
+     ВІДЕО-ОГЛЯД (показується JS тільки якщо є відео)
      ============================================================ -->
-<section class="product-section product-section--alt">
+<section class="product-section product-section--alt" id="product-videos-section" style="display:none">
   <div class="product-section__inner">
     <h2 class="section-title">Відео-<span>огляд</span></h2>
-    <p class="section-sub">Як виглядає товар у реальному житті — обертання, текстура, упаковка</p>
-
-    <div class="videos-grid">
-      <video controls preload="metadata" playsinline>
-        <source src="assets/products/bouquet-video-1.mp4" type="video/mp4">
-        Ваш браузер не підтримує відео.
-      </video>
-      <video controls preload="metadata" playsinline>
-        <source src="assets/products/bouquet-video-2.mp4" type="video/mp4">
-        Ваш браузер не підтримує відео.
-      </video>
-    </div>
+    <p class="section-sub">Як виглядає товар у реальному житті</p>
+    <div class="videos-grid" id="product-videos-grid"></div>
   </div>
 </section>
 
 <!-- ============================================================
-     ОПИС
+     ОПИС (показується JS тільки якщо є description)
      ============================================================ -->
-<section class="product-section">
+<section class="product-section" id="product-desc-section" style="display:none">
   <div class="product-section__inner">
     <h2 class="section-title">Опис <span>товару</span></h2>
-    <div class="description__text">
-      <p>Букет «Полуничний рай» — справжній витвір ручного мистецтва. Кожна квітка та ягода у композиції — це окрема свічка з натурального соєвого воску, виконана вручну в нашій майстерні.</p>
-      <p>Композиція складається з: 3-х троянд, 2-х піонів, 4-х ягід полуниці та декоративних елементів — фатин, стрічка з атласу, флористична сітка. Усе зібрано у стильну круглу подарункову коробку з кришкою.</p>
-      <p>Свічки запалюються — горять без копоту і неприємного запаху. Можуть використовуватися як декор або як справжні аромасвічки. Час горіння однієї свічки-троянди — до 4 годин.</p>
-      <p>Цей букет ідеально підійде як подарунок на день народження, річницю, 8 березня, день матері або будь-яке інше особливе свято.</p>
-    </div>
+    <div class="description__text" id="product-description"></div>
   </div>
 </section>
 
 <!-- ============================================================
-     ХАРАКТЕРИСТИКИ
+     ХАРАКТЕРИСТИКИ (показується JS тільки якщо є хоча б одна)
      ============================================================ -->
-<section class="product-section product-section--alt">
+<section class="product-section product-section--alt" id="product-specs-section" style="display:none">
   <div class="product-section__inner">
     <h2 class="section-title">Характе<span>ристики</span></h2>
     <p class="section-sub">Технічні параметри товару</p>
-
-    <dl class="specs-list">
-      <div class="specs-row"><dt>Матеріал</dt><dd>100% натуральний соєвий віск</dd></div>
-      <div class="specs-row"><dt>Кількість свічок</dt><dd>9 штук (троянди, піони, полуниці)</dd></div>
-      <div class="specs-row"><dt>Висота композиції</dt><dd>18 см</dd></div>
-      <div class="specs-row"><dt>Діаметр коробки</dt><dd>15 см</dd></div>
-      <div class="specs-row"><dt>Вага</dt><dd>~ 600 г</dd></div>
-      <div class="specs-row"><dt>Аромат</dt><dd>Полуниця з ваніллю (легкий, ненав'язливий)</dd></div>
-      <div class="specs-row"><dt>Час горіння</dt><dd>До 4 годин на одну свічку</dd></div>
-      <div class="specs-row"><dt>Колір коробки</dt><dd>На вибір: рожевий, білий, кремовий, сірий</dd></div>
-      <div class="specs-row"><dt>Виготовлення</dt><dd>Під замовлення, 1-2 дні</dd></div>
-    </dl>
+    <dl class="specs-list" id="product-specs"></dl>
   </div>
 </section>
 
@@ -567,37 +496,10 @@ body:has(.modal:target) { overflow: hidden; }
 <section class="product-section">
   <div class="product-section__inner">
     <h2 class="section-title">Схожі <span>товари</span></h2>
-    <p class="section-sub">Інші подарункові букети-свічки</p>
+    <p class="section-sub">Інші товари з цієї категорії</p>
 
-    <div class="related-grid">
-      <a href="shop.html" class="related-card">
-        <img src="https://images.unsplash.com/photo-1561212856-44e9bae482aa?w=300&h=300&fit=crop&q=80" alt="">
-        <div class="related-card__body">
-          <p class="related-card__name">Набір «Затишок»</p>
-          <p class="related-card__price">850 ₴</p>
-        </div>
-      </a>
-      <a href="shop.html" class="related-card">
-        <img src="https://images.unsplash.com/photo-1528351655744-27cc30462816?w=300&h=300&fit=crop&q=80" alt="">
-        <div class="related-card__body">
-          <p class="related-card__name">«Романтичний вечір»</p>
-          <p class="related-card__price">1 200 ₴</p>
-        </div>
-      </a>
-      <a href="shop.html" class="related-card">
-        <img src="https://images.unsplash.com/photo-1601922046210-41e129a3e64a?w=300&h=300&fit=crop&q=80" alt="">
-        <div class="related-card__body">
-          <p class="related-card__name">Букет троянд</p>
-          <p class="related-card__price">380 ₴</p>
-        </div>
-      </a>
-      <a href="shop.html" class="related-card">
-        <img src="https://images.unsplash.com/photo-1612293905607-b003de9e54fb?w=300&h=300&fit=crop&q=80" alt="">
-        <div class="related-card__body">
-          <p class="related-card__name">Свічка-піон білий</p>
-          <p class="related-card__price">270 ₴</p>
-        </div>
-      </a>
+    <div class="related-grid" id="related-grid">
+      <!-- генерується JS -->
     </div>
   </div>
 </section>
@@ -655,14 +557,14 @@ body:has(.modal:target) { overflow: hidden; }
   <a href="#" class="modal__overlay" aria-label="Закрити"></a>
   <div class="modal__box">
     <a href="#" class="modal__close" aria-label="Закрити">×</a>
-    <p class="modal__title">Замовити букет «Полуничний рай»</p>
+    <p class="modal__title" id="order-modal-title">Замовити товар</p>
     <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові, решту уточнимо по телефону</p>
     <form class="modal__grid" action="/api/send-form" method="POST">
-      <input type="hidden" name="_subject" value="Замовлення: Букет «Полуничний рай»">
+      <input type="hidden" name="_subject" id="order-subject" value="Замовлення з сторінки товару">
       <input type="hidden" name="_captcha" value="false">
       <input type="text" name="_honey" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none" aria-hidden="true">
-      <input type="hidden" name="_return_url" value="/product.html">
-      <input type="hidden" name="Товар" value="Букет «Полуничний рай» — 980 ₴">
+      <input type="hidden" name="_return_url" id="order-return-url" value="/product.html">
+      <input type="hidden" name="Товар" id="order-product-value" value="">
       <div class="field field--wide">
         <label>Телефон <span style="color:#D14A3F">*</span></label>
         <input type="tel" name="Телефон" placeholder="+380..." required>
@@ -746,6 +648,184 @@ body:has(.modal:target) { overflow: hidden; }
     }
     requestAnimationFrame(step);
   });
+})();
+</script>
+
+<!-- ====================== PRODUCT — динамічне завантаження з Supabase ====================== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function() {
+  const SUPABASE_URL = 'https://jmfudjhembgeaztowcoe.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptZnVkamhlbWJnZWF6dG93Y29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDEyODMsImV4cCI6MjA5NTM3NzI4M30.AQC4uLLBE6lsbdRorypc6gKkZQU4n6yg4gGG_rG55iM';
+  const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const $ = sel => document.querySelector(sel);
+  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // Витягуємо ID з URL: ?id=N
+  const params = new URLSearchParams(window.location.search);
+  const productId = parseInt(params.get('id'));
+
+  async function init() {
+    if (!productId) {
+      show404('Не вказано ID товару');
+      return;
+    }
+    try {
+      // Завантажуємо все паралельно
+      const [prodRes, mediaRes, catsRes] = await Promise.all([
+        supa.from('products').select('*').eq('id', productId).eq('status', 'published').single(),
+        supa.from('product_media').select('*').eq('product_id', productId).order('sort_order'),
+        supa.from('categories').select('*')
+      ]);
+
+      if (prodRes.error || !prodRes.data) {
+        show404('Товар не знайдений або знятий з продажу');
+        return;
+      }
+      const product = prodRes.data;
+      const media = mediaRes.data || [];
+      const categories = catsRes.data || [];
+      const category = categories.find(c => c.id === product.category_id);
+
+      renderProduct(product, media, category);
+
+      // Завантажуємо схожі товари (та сама категорія, не цей самий)
+      const { data: related } = await supa.from('products')
+        .select('id,name,price,old_price,slug')
+        .eq('category_id', product.category_id)
+        .eq('status', 'published')
+        .neq('id', product.id)
+        .limit(4);
+      if (related && related.length > 0) {
+        const relatedIds = related.map(r => r.id);
+        const { data: relMedia } = await supa.from('product_media')
+          .select('product_id,url').eq('type', 'photo').in('product_id', relatedIds).order('sort_order');
+        const relPhotoMap = {};
+        (relMedia || []).forEach(m => { if (!relPhotoMap[m.product_id]) relPhotoMap[m.product_id] = m.url; });
+        renderRelated(related, relPhotoMap);
+      }
+
+      document.title = product.name + ' — 100candle.shop';
+    } catch (err) {
+      show404('Помилка завантаження: ' + err.message);
+    }
+  }
+
+  function show404(msg) {
+    $('#crumb-product-name').textContent = 'Не знайдено';
+    $('#product-title').textContent = msg;
+    $('#product-cat').textContent = '';
+    $('#product-short-desc').textContent = '';
+    $('#product-gallery').innerHTML = '<div style="aspect-ratio:1;background:#f0eae6;display:flex;align-items:center;justify-content:center;font-size:80px">🔍</div>';
+    document.title = 'Товар не знайдений — 100candle.shop';
+  }
+
+  function renderProduct(p, media, category) {
+    // Хлібні крихти
+    $('#crumb-cat-name').textContent = category ? category.name : 'Магазин';
+    $('#crumb-product-name').textContent = p.name;
+
+    // Заголовок і опис
+    $('#product-cat').textContent = category ? category.name : '';
+    $('#product-title').textContent = p.name;
+    $('#product-short-desc').textContent = p.short_description || '';
+
+    // Ціна + знижка
+    const priceRow = $('#product-price-row');
+    let priceHTML = `<span class="product__price">${p.price} ₴</span>`;
+    if (p.old_price && Number(p.old_price) > Number(p.price)) {
+      const discount = Math.round((1 - p.price / p.old_price) * 100);
+      priceHTML += `<span class="product__price-old">${p.old_price} ₴</span>`;
+      priceHTML += `<span class="product__badge">−${discount}%</span>`;
+    } else if (p.tag === 'hit') {
+      priceHTML += `<span class="product__badge" style="background:#38A30D">ХІТ</span>`;
+    } else if (p.tag === 'new') {
+      priceHTML += `<span class="product__badge" style="background:#3B82F6">НОВИНКА</span>`;
+    }
+    priceRow.innerHTML = priceHTML;
+
+    // Галерея фото
+    const photos = media.filter(m => m.type === 'photo');
+    renderGallery(photos);
+
+    // Відео
+    const videos = media.filter(m => m.type === 'video');
+    if (videos.length > 0) {
+      $('#product-videos-section').style.display = 'block';
+      $('#product-videos-grid').innerHTML = videos.map(v => `
+        <video controls preload="metadata" playsinline>
+          <source src="${esc(v.url)}" type="video/mp4">
+          Ваш браузер не підтримує відео.
+        </video>
+      `).join('');
+    }
+
+    // Повний опис
+    if (p.description) {
+      $('#product-desc-section').style.display = 'block';
+      $('#product-description').innerHTML = p.description
+        .split(/\n\n+/)
+        .filter(par => par.trim())
+        .map(par => `<p>${esc(par.trim())}</p>`)
+        .join('');
+    }
+
+    // Характеристики
+    const specs = Array.isArray(p.characteristics) ? p.characteristics : [];
+    const validSpecs = specs.filter(s => s.key && s.value);
+    if (validSpecs.length > 0) {
+      $('#product-specs-section').style.display = 'block';
+      $('#product-specs').innerHTML = validSpecs.map(s => `
+        <div class="specs-row"><dt>${esc(s.key)}</dt><dd>${esc(s.value)}</dd></div>
+      `).join('');
+    }
+
+    // Order form: prefill product name
+    $('#order-modal-title').textContent = 'Замовити: ' + p.name;
+    $('#order-subject').value = 'Замовлення: ' + p.name;
+    $('#order-product-value').value = p.name + ' — ' + p.price + ' ₴';
+    $('#order-return-url').value = '/product.html?id=' + p.id;
+  }
+
+  function renderGallery(photos) {
+    const gallery = $('#product-gallery');
+    if (photos.length === 0) {
+      gallery.innerHTML = `<div class="gallery__main"><div style="aspect-ratio:1;background:#f0eae6;display:flex;align-items:center;justify-content:center;font-size:80px;color:#aaa">🕯️</div></div>`;
+      return;
+    }
+
+    const radioInputs = photos.map((_, idx) => `<input type="radio" name="gal" id="gal-${idx + 1}"${idx === 0 ? ' checked' : ''}>`).join('');
+    const mainImages = photos.map((p, idx) => `<img class="gallery__img gallery__img--${idx + 1}" src="${esc(p.url)}" alt="Фото ${idx + 1}">`).join('');
+    const thumbs = photos.map((p, idx) => `<label for="gal-${idx + 1}" class="gallery__thumb"><img src="${esc(p.url)}" alt=""></label>`).join('');
+
+    gallery.innerHTML = `
+      ${radioInputs}
+      <div class="gallery__main">${mainImages}</div>
+      <div class="gallery__thumbs">${thumbs}</div>
+    `;
+  }
+
+  function renderRelated(related, photoMap) {
+    const grid = $('#related-grid');
+    if (!grid) return;
+    grid.innerHTML = related.map(r => {
+      const photo = photoMap[r.id];
+      return `
+        <a href="product.html?id=${r.id}" class="related-card">
+          ${photo
+            ? `<img src="${esc(photo)}" alt="">`
+            : `<div style="aspect-ratio:1;background:#f0eae6;display:flex;align-items:center;justify-content:center;font-size:32px">🕯️</div>`}
+          <div class="related-card__body">
+            <p class="related-card__name">${esc(r.name)}</p>
+            <p class="related-card__price">${r.price} ₴</p>
+          </div>
+        </a>
+      `;
+    }).join('');
+  }
+
+  init();
 })();
 </script>
 
