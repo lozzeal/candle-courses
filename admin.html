@@ -834,8 +834,7 @@ html, body {
       <!-- Графік сесій -->
       <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;margin-top:8px">
         <p style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:14px;font-weight:700">Сесії та перегляди</p>
-        <svg id="ms-chart" viewBox="0 0 800 240" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;display:block;max-height:280px"></svg>
-        <div id="ms-chart-labels" style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--text-muted)"></div>
+        <svg id="ms-chart" viewBox="0 0 800 260" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;display:block;max-height:300px"></svg>
         <div style="display:flex;gap:18px;margin-top:14px;font-size:12px">
           <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:3px;background:#3B82F6;border-radius:2px"></span>Сесії</span>
           <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:3px;background:var(--accent)"></span>Перегляди</span>
@@ -2082,7 +2081,7 @@ function renderStats() {
 function renderLineChart(buckets) {
   const svg = $('#ms-chart');
   if (!svg) return;
-  const W = 800, H = 240, PAD_L = 36, PAD_R = 12, PAD_T = 18, PAD_B = 26;
+  const W = 800, H = 260, PAD_L = 36, PAD_R = 16, PAD_T = 14, PAD_B = 30;
   const realMax = Math.max(...buckets.map(b => Math.max(b.sessions, b.pageviews)));
 
   // Якщо даних ще немає — показуємо повідомлення
@@ -2092,7 +2091,6 @@ function renderLineChart(buckets) {
       <text x="${W/2}" y="${H/2 - 10}" text-anchor="middle" font-size="14" fill="#999">Поки що недостатньо даних</text>
       <text x="${W/2}" y="${H/2 + 14}" text-anchor="middle" font-size="12" fill="#bbb">Графік зʼявиться щойно люди відкриють сайт</text>
     `;
-    $('#ms-chart-labels').innerHTML = '';
     return;
   }
 
@@ -2116,7 +2114,6 @@ function renderLineChart(buckets) {
   }
   function dots(key, color) {
     return buckets.map((b, i) => {
-      // Крапки тільки на днях з даними (на нульових — невидимі, але tooltip залишається)
       if (b[key] === 0) {
         return `<circle cx="${xPos(i)}" cy="${yScale(0)}" r="6" fill="transparent"><title>${b.date.toLocaleDateString('uk-UA')}: 0</title></circle>`;
       }
@@ -2132,12 +2129,24 @@ function renderLineChart(buckets) {
     grid.push(`<line x1="${PAD_L}" y1="${y}" x2="${W - PAD_R}" y2="${y}" stroke="#eee" stroke-width="1"/><text x="${PAD_L - 6}" y="${y + 4}" text-anchor="end" font-size="11" fill="#999">${val}</text>`);
   }
 
-  svg.innerHTML = grid.join('') + path('pageviews', '#38A30D') + path('sessions', '#3B82F6') + dots('pageviews', '#38A30D') + dots('sessions', '#3B82F6');
+  // X-axis labels (тепер всередині SVG для точного співпадання з крапками)
+  // Показуємо ~7 рівномірно розподілених підписів + обовʼязково останній
+  const labelEvery = Math.max(1, Math.ceil(buckets.length / 7));
+  const xLabels = buckets.map((b, i) => {
+    const isLast = i === buckets.length - 1;
+    const showThis = i % labelEvery === 0 || isLast;
+    if (!showThis) return '';
+    // Якщо передостанній і останній майже поруч — пропускаємо передостанній
+    const tooClose = !isLast && (buckets.length - 1 - i) < labelEvery / 2;
+    if (tooClose) return '';
+    const txt = b.date.toLocaleDateString('uk-UA', {day:'2-digit', month:'short'}).replace('.', '');
+    let anchor = 'middle';
+    if (i === 0) anchor = 'start';
+    if (isLast) anchor = 'end';
+    return `<text x="${xPos(i)}" y="${H - 10}" text-anchor="${anchor}" font-size="11" fill="#999">${txt}</text>`;
+  }).join('');
 
-  // X labels — кожні N днів
-  const labelsEl = $('#ms-chart-labels');
-  const step = Math.max(1, Math.floor(buckets.length / 7));
-  labelsEl.innerHTML = buckets.map((b, i) => i % step === 0 || i === buckets.length - 1 ? `<span>${b.date.toLocaleDateString('uk-UA', {day:'2-digit', month:'short'})}</span>` : '').filter(Boolean).join('');
+  svg.innerHTML = grid.join('') + path('pageviews', '#38A30D') + path('sessions', '#3B82F6') + dots('pageviews', '#38A30D') + dots('sessions', '#3B82F6') + xLabels;
 }
 
 function renderSources(pvs) {
