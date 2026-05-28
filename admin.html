@@ -1898,28 +1898,56 @@ function renderStats() {
 function renderLineChart(buckets) {
   const svg = $('#ms-chart');
   if (!svg) return;
-  const W = 800, H = 240, PAD_L = 36, PAD_R = 8, PAD_T = 12, PAD_B = 24;
-  const maxVal = Math.max(...buckets.map(b => Math.max(b.sessions, b.pageviews)), 5);
+  const W = 800, H = 240, PAD_L = 36, PAD_R = 12, PAD_T = 18, PAD_B = 26;
+  const realMax = Math.max(...buckets.map(b => Math.max(b.sessions, b.pageviews)));
+
+  // Якщо даних ще немає — показуємо повідомлення
+  if (realMax === 0) {
+    svg.innerHTML = `
+      <rect x="0" y="0" width="${W}" height="${H}" fill="#fafafa" rx="8"/>
+      <text x="${W/2}" y="${H/2 - 10}" text-anchor="middle" font-size="14" fill="#999">Поки що недостатньо даних</text>
+      <text x="${W/2}" y="${H/2 + 14}" text-anchor="middle" font-size="12" fill="#bbb">Графік зʼявиться щойно люди відкриють сайт</text>
+    `;
+    $('#ms-chart-labels').innerHTML = '';
+    return;
+  }
+
+  // Округлення шкали до приємних чисел
+  function niceMax(v) {
+    if (v <= 1) return 2;
+    if (v <= 5) return Math.ceil(v) + 1;
+    if (v <= 10) return Math.ceil(v / 2) * 2;
+    if (v <= 100) return Math.ceil(v / 10) * 10;
+    return Math.ceil(v / 100) * 100;
+  }
+  const maxVal = niceMax(realMax);
   const xStep = (W - PAD_L - PAD_R) / Math.max(buckets.length - 1, 1);
   const yScale = v => H - PAD_B - (v / maxVal) * (H - PAD_T - PAD_B);
   const xPos = i => PAD_L + i * xStep;
 
   function path(key, color) {
     const d = buckets.map((b, i) => `${i === 0 ? 'M' : 'L'} ${xPos(i)} ${yScale(b[key])}`).join(' ');
-    return `<path d="${d}" stroke="${color}" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>` +
-           `<path d="${d} L ${xPos(buckets.length - 1)} ${H - PAD_B} L ${xPos(0)} ${H - PAD_B} Z" fill="${color}" opacity="0.08"/>`;
+    return `<path d="${d} L ${xPos(buckets.length - 1)} ${H - PAD_B} L ${xPos(0)} ${H - PAD_B} Z" fill="${color}" opacity="0.1"/>` +
+           `<path d="${d}" stroke="${color}" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;
   }
   function dots(key, color) {
-    return buckets.map((b, i) => `<circle cx="${xPos(i)}" cy="${yScale(b[key])}" r="3" fill="${color}"/>`).join('');
+    return buckets.map((b, i) => {
+      // Більший і яскравіший dot якщо є дані
+      const r = b[key] > 0 ? 4 : 2;
+      const op = b[key] > 0 ? 1 : 0.4;
+      return `<circle cx="${xPos(i)}" cy="${yScale(b[key])}" r="${r}" fill="${color}" opacity="${op}"><title>${b.date.toLocaleDateString('uk-UA')}: ${b[key]}</title></circle>`;
+    }).join('');
   }
   // Y-axis grid
-  const grid = [0, 0.25, 0.5, 0.75, 1].map(t => {
-    const y = H - PAD_B - t * (H - PAD_T - PAD_B);
-    const val = Math.round(maxVal * t);
-    return `<line x1="${PAD_L}" y1="${y}" x2="${W - PAD_R}" y2="${y}" stroke="#eee" stroke-width="1"/><text x="${PAD_L - 6}" y="${y + 4}" text-anchor="end" font-size="11" fill="#999">${val}</text>`;
-  }).join('');
+  const steps = maxVal <= 4 ? maxVal : 4;
+  const grid = [];
+  for (let i = 0; i <= steps; i++) {
+    const val = Math.round((maxVal / steps) * i);
+    const y = H - PAD_B - (val / maxVal) * (H - PAD_T - PAD_B);
+    grid.push(`<line x1="${PAD_L}" y1="${y}" x2="${W - PAD_R}" y2="${y}" stroke="#eee" stroke-width="1"/><text x="${PAD_L - 6}" y="${y + 4}" text-anchor="end" font-size="11" fill="#999">${val}</text>`);
+  }
 
-  svg.innerHTML = grid + path('pageviews', '#38A30D') + path('sessions', '#3B82F6') + dots('pageviews', '#38A30D') + dots('sessions', '#3B82F6');
+  svg.innerHTML = grid.join('') + path('pageviews', '#38A30D') + path('sessions', '#3B82F6') + dots('pageviews', '#38A30D') + dots('sessions', '#3B82F6');
 
   // X labels — кожні N днів
   const labelsEl = $('#ms-chart-labels');
