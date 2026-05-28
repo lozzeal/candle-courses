@@ -776,21 +776,10 @@ body:has(.modal:target) { overflow: hidden; }
         </span>
       </div>
 
-      <!-- Категорії-картки (на фоні hero) -->
+      <!-- Категорії-картки (динамічно з БД) -->
       <div class="shop-cats">
-        <div class="shop-cats__grid">
-          <label for="cat-gift-sets" class="shop-cat-tile">
-            <span class="shop-cat-tile__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z" stroke="#9EE86A" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
-            <span class="shop-cat-tile__text"><span class="shop-cat-tile__name">Подарункові набори</span><span class="shop-cat-tile__count">від 850 ₴</span></span>
-          </label>
-          <label for="cat-figured" class="shop-cat-tile">
-            <span class="shop-cat-tile__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2c0 0-5 4-5 9a5 5 0 0010 0c0-5-5-9-5-9zM7 16v4a2 2 0 002 2h6a2 2 0 002-2v-4" stroke="#9EE86A" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
-            <span class="shop-cat-tile__text"><span class="shop-cat-tile__name">Фігурні свічки</span><span class="shop-cat-tile__count">від 270 ₴</span></span>
-          </label>
-          <label for="cat-aroma-candles" class="shop-cat-tile">
-            <span class="shop-cat-tile__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v10M9 6c0-1.657 1.343-3 3-3s3 1.343 3 3" stroke="#9EE86A" stroke-width="1.8" stroke-linecap="round"/><rect x="7" y="13" width="10" height="8" rx="2" stroke="#9EE86A" stroke-width="1.8"/></svg></span>
-            <span class="shop-cat-tile__text"><span class="shop-cat-tile__name">Аромасвічки</span><span class="shop-cat-tile__count">від 220 ₴</span></span>
-          </label>
+        <div class="shop-cats__grid" id="shop-cats-grid">
+          <!-- генерується JS -->
         </div>
       </div>
 
@@ -823,40 +812,13 @@ body:has(.modal:target) { overflow: hidden; }
     <!-- Toggle сайдбару на мобільному -->
     <input type="checkbox" id="filter-toggle" class="filter-toggle-cb">
 
-    <!-- Радіо для фільтра — мають бути в межах .shop-layout -->
-    <input type="radio" name="cat" id="cat-all" class="cat-radio" checked>
-    <input type="radio" name="cat" id="cat-gift-sets" class="cat-radio">
-    <input type="radio" name="cat" id="cat-figured" class="cat-radio">
-    <input type="radio" name="cat" id="cat-aroma-candles" class="cat-radio">
-    <input type="radio" name="cat" id="cat-wedding" class="cat-radio">
-    <input type="radio" name="cat" id="cat-secret" class="cat-radio">
-    <input type="radio" name="cat" id="cat-sprays" class="cat-radio">
-
-    <!-- Sidebar -->
+    <!-- Sidebar — генерується з БД -->
     <aside class="sidebar">
       <label for="filter-toggle" class="filter-close-btn" aria-label="Закрити фільтр">×</label>
       <div class="sidebar__section">
         <p class="sidebar__title">Категорії</p>
-        <ul class="sidebar__nav">
-          <li><label for="cat-all"><span class="sidebar__link">Усі товари</span></label></li>
-
-          <li>
-            <p class="sidebar__group-title">Свічки</p>
-            <ul class="sidebar__sub">
-              <li><label for="cat-gift-sets"><span class="sidebar__link">Подарункові набори</span></label></li>
-              <li><label for="cat-figured"><span class="sidebar__link">Фігурні свічки</span></label></li>
-              <li><label for="cat-aroma-candles"><span class="sidebar__link">Аромасвічки</span></label></li>
-              <li><label for="cat-wedding"><span class="sidebar__link">Весільні свічки</span></label></li>
-              <li><label for="cat-secret"><span class="sidebar__link">З таємним написом</span></label></li>
-            </ul>
-          </li>
-
-          <li>
-            <p class="sidebar__group-title">Аромапродукти</p>
-            <ul class="sidebar__sub">
-              <li><label for="cat-sprays"><span class="sidebar__link">Спреї для дому</span></label></li>
-            </ul>
-          </li>
+        <ul class="sidebar__nav" id="shop-sidebar-nav">
+          <!-- генерується JS -->
         </ul>
       </div>
     </aside>
@@ -869,13 +831,13 @@ body:has(.modal:target) { overflow: hidden; }
       </label>
 
       <div class="shop-toolbar">
-        <span class="shop-count">
-          <span class="shop-count-all">Усі товари · 11</span>
-          <span class="shop-count-current">Товари в категорії</span>
-        </span>
+        <span class="shop-count" id="shop-count">Завантаження…</span>
       </div>
 
-      <div class="shop-grid">
+      <div class="shop-grid" id="shop-grid">
+        <div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">Завантаження товарів…</div>
+      </div>
+      <div style="display:none">
 
         <!-- Подарункові набори (2) -->
         <article class="product" data-cat="gift-sets">
@@ -1019,7 +981,7 @@ body:has(.modal:target) { overflow: hidden; }
           </div>
         </article>
 
-      </div>
+      </div><!-- /hidden hardcoded -->
     </main>
   </div>
 </section>
@@ -1163,6 +1125,224 @@ body:has(.modal:target) { overflow: hidden; }
       }, 60);
     });
   });
+})();
+</script>
+
+<!-- ====================== SHOP — динамічне завантаження з Supabase ====================== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function() {
+  const SUPABASE_URL = 'https://jmfudjhembgeaztowcoe.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptZnVkamhlbWJnZWF6dG93Y29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDEyODMsImV4cCI6MjA5NTM3NzI4M30.AQC4uLLBE6lsbdRorypc6gKkZQU4n6yg4gGG_rG55iM';
+  const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const $ = sel => document.querySelector(sel);
+  let allCategories = [];
+  let allProducts = [];
+  let allMedia = {}; // {productId: [{type, url, sort_order}]}
+  let currentCategoryId = null; // null = all
+  let currentRootId = null; // для batch-фільтра по основній категорії
+
+  // Іконки для топ-категорій (по slug)
+  const TOP_CAT_ICONS = {
+    'podarunkovi-nabory': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z" stroke="#9EE86A" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+    'figurni-svichky': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2c0 0-5 4-5 9a5 5 0 0010 0c0-5-5-9-5-9zM7 16v4a2 2 0 002 2h6a2 2 0 002-2v-4" stroke="#9EE86A" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+    'aromasvichky': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v10M9 6c0-1.657 1.343-3 3-3s3 1.343 3 3" stroke="#9EE86A" stroke-width="1.8" stroke-linecap="round"/><rect x="7" y="13" width="10" height="8" rx="2" stroke="#9EE86A" stroke-width="1.8"/></svg>',
+    'vesilni-svichky': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-5-7-12a4 4 0 017-2.5A4 4 0 0119 9c0 7-7 12-7 12z" stroke="#9EE86A" stroke-width="1.8"/></svg>',
+    'taemnyi-napys': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 19h16M6 15l4-10 4 10M8 12h4" stroke="#9EE86A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    'sprei-dlia-domu': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 2h6v4H9zM10 6h4l1 4H9zM7 10h10v12H7z" stroke="#9EE86A" stroke-width="1.8" stroke-linejoin="round"/></svg>'
+  };
+
+  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  async function init() {
+    try {
+      const [cats, prods] = await Promise.all([
+        supa.from('categories').select('*').order('sort_order'),
+        supa.from('products').select('*').eq('status', 'published').order('sort_order')
+      ]);
+      if (cats.error) throw cats.error;
+      if (prods.error) throw prods.error;
+      allCategories = cats.data || [];
+      allProducts = prods.data || [];
+
+      // Завантажуємо media для всіх товарів
+      const ids = allProducts.map(p => p.id);
+      if (ids.length > 0) {
+        const { data: media, error: mErr } = await supa.from('product_media')
+          .select('product_id,type,url,sort_order')
+          .in('product_id', ids)
+          .order('sort_order');
+        if (mErr) console.warn('media error:', mErr);
+        (media || []).forEach(m => {
+          if (!allMedia[m.product_id]) allMedia[m.product_id] = [];
+          allMedia[m.product_id].push(m);
+        });
+      }
+
+      renderTopCategories();
+      renderSidebar();
+      renderProducts();
+    } catch (err) {
+      $('#shop-grid').innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#D14A3F">Помилка завантаження: ${esc(err.message)}</div>`;
+    }
+  }
+
+  function getMinPriceInCategory(catId, includeChildren = false) {
+    let prods = allProducts;
+    if (catId !== null) {
+      if (includeChildren) {
+        const childIds = allCategories.filter(c => c.parent_id === catId).map(c => c.id);
+        prods = prods.filter(p => p.category_id === catId || childIds.includes(p.category_id));
+      } else {
+        prods = prods.filter(p => p.category_id === catId);
+      }
+    }
+    if (prods.length === 0) return null;
+    return Math.min(...prods.map(p => Number(p.price)));
+  }
+
+  function renderTopCategories() {
+    // Показуємо 3 топові підкатегорії з найбільшою кількістю товарів
+    const subcats = allCategories.filter(c => c.parent_id);
+    const withCounts = subcats.map(c => ({
+      cat: c,
+      count: allProducts.filter(p => p.category_id === c.id).length,
+      minPrice: getMinPriceInCategory(c.id)
+    })).filter(x => x.count > 0).sort((a, b) => b.count - a.count).slice(0, 3);
+
+    const grid = $('#shop-cats-grid');
+    if (!grid) return;
+    grid.innerHTML = withCounts.map(x => `
+      <a href="#shop-grid" data-cat-id="${x.cat.id}" class="shop-cat-tile js-cat-tile">
+        <span class="shop-cat-tile__icon">${TOP_CAT_ICONS[x.cat.slug] || '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#9EE86A" stroke-width="1.8"/></svg>'}</span>
+        <span class="shop-cat-tile__text">
+          <span class="shop-cat-tile__name">${esc(x.cat.name)}</span>
+          <span class="shop-cat-tile__count">${x.minPrice ? 'від ' + x.minPrice + ' ₴' : x.count + ' тов.'}</span>
+        </span>
+      </a>
+    `).join('');
+
+    // Обробник клікa на плитку — фільтр + скрол
+    grid.querySelectorAll('.js-cat-tile').forEach(tile => {
+      tile.addEventListener('click', e => {
+        e.preventDefault();
+        currentCategoryId = Number(tile.dataset.catId);
+        currentRootId = null;
+        renderProducts();
+        updateActiveLinks();
+        setTimeout(() => {
+          const main = document.querySelector('.shop-main');
+          if (main) main.scrollIntoView({ behavior: 'smooth' });
+        }, 60);
+      });
+    });
+  }
+
+  function renderSidebar() {
+    const nav = $('#shop-sidebar-nav');
+    if (!nav) return;
+    const roots = allCategories.filter(c => !c.parent_id);
+    let html = `<li><a href="#" class="js-cat-link sidebar__link" data-cat-id="all">Усі товари</a></li>`;
+    roots.forEach(root => {
+      const subs = allCategories.filter(c => c.parent_id === root.id);
+      // Показуємо тільки якщо є товари в підкатегоріях
+      const subsWithProducts = subs.filter(s => allProducts.some(p => p.category_id === s.id));
+      if (subsWithProducts.length === 0) return;
+
+      html += `<li>
+        <p class="sidebar__group-title">${esc(root.name)}</p>
+        <ul class="sidebar__sub">`;
+      subsWithProducts.forEach(s => {
+        html += `<li><a href="#" class="js-cat-link sidebar__link" data-cat-id="${s.id}">${esc(s.name)}</a></li>`;
+      });
+      html += `</ul></li>`;
+    });
+    nav.innerHTML = html;
+
+    nav.querySelectorAll('.js-cat-link').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const cid = link.dataset.catId;
+        currentCategoryId = cid === 'all' ? null : Number(cid);
+        currentRootId = null;
+        renderProducts();
+        updateActiveLinks();
+        // Закриваємо фільтр на мобільному
+        const toggle = document.getElementById('filter-toggle');
+        if (toggle) toggle.checked = false;
+      });
+    });
+    updateActiveLinks();
+  }
+
+  function updateActiveLinks() {
+    document.querySelectorAll('.js-cat-link').forEach(link => {
+      const cid = link.dataset.catId;
+      const isActive = (cid === 'all' && currentCategoryId === null) ||
+                       (currentCategoryId !== null && Number(cid) === currentCategoryId);
+      link.style.background = isActive ? 'var(--accent, #38A30D)' : '';
+      link.style.color = isActive ? '#fff' : '';
+      link.style.fontWeight = isActive ? '600' : '';
+    });
+  }
+
+  function renderProducts() {
+    const grid = $('#shop-grid');
+    const count = $('#shop-count');
+    let prods = allProducts;
+    if (currentCategoryId !== null) {
+      prods = prods.filter(p => p.category_id === currentCategoryId);
+    }
+
+    if (count) {
+      if (currentCategoryId === null) {
+        count.textContent = `Усі товари · ${prods.length}`;
+      } else {
+        const cat = allCategories.find(c => c.id === currentCategoryId);
+        count.textContent = `${cat ? cat.name : 'Категорія'} · ${prods.length} товарів`;
+      }
+    }
+
+    if (prods.length === 0) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#999">
+        <p style="font-size:16px;margin-bottom:8px">Товарів у цій категорії поки немає</p>
+        <p style="font-size:13px">Спробуйте іншу категорію</p>
+      </div>`;
+      return;
+    }
+
+    grid.innerHTML = prods.map(p => {
+      const media = allMedia[p.id] || [];
+      const photo = media.find(m => m.type === 'photo');
+      const cat = allCategories.find(c => c.id === p.category_id);
+      const tagClass = p.tag === 'sale' ? 'product__tag--sale' : 'product__tag--new';
+      const tagLabel = { hit: 'Хіт', new: 'Новинка', sale: 'Sale' }[p.tag];
+      return `
+        <article class="product">
+          <a href="product.html?id=${p.id}" class="product__photo-wrap">
+            ${photo
+              ? `<img class="product__photo" src="${esc(photo.url)}" alt="${esc(p.name)}">`
+              : `<div class="product__photo" style="display:flex;align-items:center;justify-content:center;background:#f0eae6;font-size:48px">🕯️</div>`}
+            ${tagLabel ? `<span class="product__tag ${tagClass}">${tagLabel}</span>` : ''}
+          </a>
+          <div class="product__body">
+            <p class="product__cat">${esc(cat ? cat.name : '')}</p>
+            <a href="product.html?id=${p.id}" style="text-decoration:none;color:inherit">
+              <p class="product__name">${esc(p.name)}</p>
+            </a>
+            <p class="product__price">
+              ${p.old_price ? `<span class="product__price-old">${p.old_price} ₴</span>` : ''}
+              ${p.price} ₴
+            </p>
+            <a href="product.html?id=${p.id}" class="product__btn">Детальніше →</a>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  init();
 })();
 </script>
 
