@@ -663,6 +663,10 @@ html, body {
         <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         Категорії
       </a>
+      <a class="nav-link" data-tab="landing">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 9l9-6 9 6v11a1 1 0 01-1 1H4a1 1 0 01-1-1V9z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 21V11h6v10" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        Лендинг
+      </a>
       <a class="nav-link" data-tab="stats">
         <svg viewBox="0 0 24 24" fill="none"><path d="M3 3v18h18M7 14l3-4 4 3 5-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Статистика
@@ -779,6 +783,38 @@ html, body {
       </div>
       <div id="categories-container">
         <div class="loader"><div class="loader-spinner"></div>Завантаження…</div>
+      </div>
+    </div>
+
+    <!-- ===== TAB: LANDING ===== -->
+    <div class="tab-content" data-tab-content="landing">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Лендинг</h1>
+          <p class="page-subtitle">Редагування блоків головної сторінки</p>
+        </div>
+      </div>
+
+      <!-- Sub-tabs -->
+      <div class="code-tabs" id="landing-subtabs" style="margin-bottom:18px">
+        <button type="button" class="code-tab is-active" data-landing-sub="courses">Курси</button>
+        <button type="button" class="code-tab" data-landing-sub="faq" style="opacity:0.5" disabled>FAQ <span style="font-size:10px">(скоро)</span></button>
+        <button type="button" class="code-tab" data-landing-sub="reviews" style="opacity:0.5" disabled>Відгуки <span style="font-size:10px">(скоро)</span></button>
+        <button type="button" class="code-tab" data-landing-sub="texts" style="opacity:0.5" disabled>Тексти <span style="font-size:10px">(скоро)</span></button>
+      </div>
+
+      <!-- Sub: Courses -->
+      <div class="landing-sub-content is-active" data-landing-content="courses">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px;flex-wrap:wrap">
+          <p style="color:var(--text-muted);font-size:13px;margin:0">Усі курси що показуються у блоці «Оберіть свій курс»</p>
+          <button class="btn-add" id="btn-add-landing-course">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+            Додати курс
+          </button>
+        </div>
+        <div id="landing-courses-list">
+          <div class="loader"><div class="loader-spinner"></div>Завантаження…</div>
+        </div>
       </div>
     </div>
 
@@ -1101,6 +1137,127 @@ html, body {
   </div>
 </aside>
 
+<!-- ====================== DRAWER: КУРС ЛЕНДИНГУ ====================== -->
+<aside class="drawer" id="drawer-landing-course">
+  <div class="drawer-header">
+    <div class="drawer-title" id="lc-drawer-title">Новий курс</div>
+    <button class="drawer-close" id="lc-drawer-close" type="button">&times;</button>
+  </div>
+  <div class="drawer-body">
+
+    <p class="form-section-title">Основне</p>
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <label>Назва курсу <span class="req">*</span></label>
+        <input id="lc-title" type="text" placeholder="Свічковаріння базовий + професійний">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Бейдж</label>
+        <input id="lc-badge" type="text" placeholder="30 відеоуроків">
+      </div>
+      <div class="form-group">
+        <label>Slug у HTML</label>
+        <input id="lc-slug" type="text" placeholder="course-svichkovarinnia">
+        <p class="form-help">Використовується для якоря з футера. Латиниця, дефіси.</p>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Ціна, ₴ <span class="req">*</span></label>
+        <input id="lc-price" type="number" min="0" step="1">
+      </div>
+      <div class="form-group">
+        <label>Стара ціна (для знижки)</label>
+        <input id="lc-old-price" type="number" min="0" step="1">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Статус</label>
+        <select id="lc-status">
+          <option value="published">Опубліковано</option>
+          <option value="draft">Чернетка</option>
+          <option value="archived">Архів</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Порядок (менше = вище)</label>
+        <input id="lc-sort" type="number" value="0">
+      </div>
+    </div>
+
+    <p class="form-section-title">Опис</p>
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <label>Вступний абзац (опційно)</label>
+        <textarea id="lc-intro" rows="3" placeholder="Навчитесь виготовляти..."></textarea>
+      </div>
+    </div>
+
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <label>Підзаголовок №1 (опційно)</label>
+        <input id="lc-subhead" type="text" placeholder="Освоїмо техніки:">
+      </div>
+    </div>
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <label>Список пунктів №1 <span class="req">*</span></label>
+        <textarea id="lc-items" rows="8" placeholder="Кожен пункт з нового рядка"></textarea>
+        <p class="form-help">Один пункт у рядку. Це з'явиться як буллет-список на картці курсу.</p>
+      </div>
+    </div>
+
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <label>Підзаголовок №2 (опційно)</label>
+        <input id="lc-subhead-2" type="text" placeholder="">
+      </div>
+    </div>
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <label>Список пунктів №2 (опційно)</label>
+        <textarea id="lc-items-2" rows="6" placeholder="Можна додати другий список — наприклад, переваги"></textarea>
+      </div>
+    </div>
+
+    <p class="form-section-title">Кнопка та оплата</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Текст кнопки</label>
+        <input id="lc-cta" type="text" value="Обрати цей курс">
+      </div>
+      <div class="form-group">
+        <label>URL оплати (WayForPay)</label>
+        <input id="lc-payment" type="url" placeholder="https://secure.wayforpay.com/...">
+      </div>
+    </div>
+
+    <p class="form-section-title">Фото обкладинки</p>
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <label>Шлях до файлу</label>
+        <input id="lc-photo" type="text" placeholder="assets/course-x.jpg">
+        <p class="form-help">Файл має існувати у папці <code>assets/</code> або повний URL зовнішнього зображення.</p>
+      </div>
+    </div>
+    <div id="lc-photo-preview" style="margin-top:8px;display:none">
+      <img id="lc-photo-img" src="" alt="" style="max-width:200px;height:auto;border-radius:8px;border:1px solid var(--border)">
+    </div>
+
+  </div>
+  <div class="drawer-footer">
+    <button class="btn-secondary" id="btn-lc-delete" style="color:#D14A3F;border-color:#FCA5A5;display:none">Видалити</button>
+    <div style="flex:1"></div>
+    <button class="btn-secondary" id="btn-lc-cancel" type="button">Скасувати</button>
+    <button class="btn-save" id="btn-lc-save" type="button">Зберегти</button>
+  </div>
+</aside>
+
 <!-- ====================== DRAWER: КАТЕГОРІЯ ====================== -->
 <aside class="drawer" id="drawer-category">
   <div class="drawer-header">
@@ -1206,6 +1363,7 @@ function showApp(user) {
   loadOrders();
   loadCategories();
   loadSettings();
+  loadLandingCourses();
 }
 
 // ====== Login form ======
@@ -2346,6 +2504,196 @@ $('#btn-save-settings').addEventListener('click', async () => {
     company_tax_id: $('#set-tax-id').value.trim()
   }, '#settings-status');
 });
+
+// ====== LANDING COURSES (CRUD) ======
+let allLandingCourses = [];
+let editingLandingCourseId = null;
+const lcDrawer = $('#drawer-landing-course');
+
+async function loadLandingCourses() {
+  const { data, error } = await supa.from('landing_courses').select('*').order('sort_order');
+  const container = $('#landing-courses-list');
+  if (error) {
+    container.innerHTML = `<div class="alert alert--error">Помилка: ${escapeHtml(error.message)}. Можливо потрібно запустити landing-schema.sql</div>`;
+    return;
+  }
+  allLandingCourses = data || [];
+  renderLandingCourses();
+}
+
+function renderLandingCourses() {
+  const container = $('#landing-courses-list');
+  if (allLandingCourses.length === 0) {
+    container.innerHTML = `<div class="empty-state">
+      <p>Курсів немає. Натисніть «Додати курс»</p>
+    </div>`;
+    return;
+  }
+  container.innerHTML = allLandingCourses.map(c => {
+    const statusLabel = { published: 'Опубл.', draft: 'Чернетка', archived: 'Архів' }[c.status];
+    const photoUrl = c.photo_path ? (c.photo_path.startsWith('http') ? c.photo_path : '/' + c.photo_path) : '';
+    return `
+      <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+        <div style="width:64px;height:64px;border-radius:8px;background:var(--bg);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center">
+          ${photoUrl ? `<img src="${escapeAttr(photoUrl)}" style="width:100%;height:100%;object-fit:cover" alt="">` : '<span style="font-size:24px">🎓</span>'}
+        </div>
+        <div style="flex:1;min-width:200px">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <strong style="font-size:15px">${escapeHtml(c.title)}</strong>
+            <span class="product-card__status status-${c.status}" style="font-size:10px">${statusLabel}</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:3px">
+            ${c.badge ? escapeHtml(c.badge) + ' · ' : ''}${c.items?.length || 0} пунктів${c.items_2?.length ? ' + ' + c.items_2.length : ''}
+          </div>
+        </div>
+        <div style="font-weight:700;color:var(--accent);font-size:18px;font-family:'Cormorant Garamond',serif">${c.price} ₴</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn-action" onclick="editLandingCourse(${c.id})">✏️ Редагувати</button>
+          <button class="btn-action btn-action--danger" onclick="deleteLandingCourse(${c.id})">🗑️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openLandingCourseDrawer(course = null) {
+  editingLandingCourseId = course ? course.id : null;
+  $('#lc-drawer-title').textContent = course ? 'Редагувати курс' : 'Новий курс';
+  $('#lc-title').value = course?.title || '';
+  $('#lc-slug').value = course?.slug || '';
+  $('#lc-slug').dataset.touched = course ? '1' : '';
+  $('#lc-badge').value = course?.badge || '';
+  $('#lc-intro').value = course?.intro || '';
+  $('#lc-subhead').value = course?.subhead || '';
+  $('#lc-items').value = (course?.items || []).join('\n');
+  $('#lc-subhead-2').value = course?.subhead_2 || '';
+  $('#lc-items-2').value = (course?.items_2 || []).join('\n');
+  $('#lc-price').value = course?.price || '';
+  $('#lc-old-price').value = course?.old_price || '';
+  $('#lc-payment').value = course?.payment_url || '';
+  $('#lc-photo').value = course?.photo_path || '';
+  $('#lc-cta').value = course?.cta_text || 'Обрати цей курс';
+  $('#lc-status').value = course?.status || 'published';
+  $('#lc-sort').value = course?.sort_order ?? 0;
+  $('#btn-lc-delete').style.display = course ? 'block' : 'none';
+  updatePhotoPreview();
+  lcDrawer.classList.add('is-open');
+  $('#drawer-overlay').classList.add('is-open');
+}
+
+function closeLandingCourseDrawer() {
+  lcDrawer.classList.remove('is-open');
+  $('#drawer-overlay').classList.remove('is-open');
+}
+
+function updatePhotoPreview() {
+  const path = $('#lc-photo').value.trim();
+  const preview = $('#lc-photo-preview');
+  const img = $('#lc-photo-img');
+  if (path) {
+    img.src = path.startsWith('http') ? path : '/' + path;
+    preview.style.display = 'block';
+    img.onerror = () => { preview.style.display = 'none'; };
+  } else {
+    preview.style.display = 'none';
+  }
+}
+
+$('#lc-photo').addEventListener('input', updatePhotoPreview);
+$('#lc-drawer-close').addEventListener('click', closeLandingCourseDrawer);
+$('#btn-lc-cancel').addEventListener('click', closeLandingCourseDrawer);
+$('#btn-add-landing-course').addEventListener('click', () => openLandingCourseDrawer(null));
+
+// Auto-slug
+$('#lc-title').addEventListener('input', e => {
+  if (!$('#lc-slug').dataset.touched) {
+    $('#lc-slug').value = 'course-' + slugify(e.target.value);
+  }
+});
+$('#lc-slug').addEventListener('input', e => { e.target.dataset.touched = '1'; });
+
+window.editLandingCourse = id => {
+  const c = allLandingCourses.find(x => x.id === id);
+  if (c) openLandingCourseDrawer(c);
+};
+
+window.deleteLandingCourse = async id => {
+  const c = allLandingCourses.find(x => x.id === id);
+  if (!c) return;
+  if (!confirm(`Видалити курс «${c.title}» з лендингу?`)) return;
+  const { error } = await supa.from('landing_courses').delete().eq('id', id);
+  if (error) return alert('Помилка: ' + error.message);
+  await loadLandingCourses();
+};
+
+$('#btn-lc-delete').addEventListener('click', () => {
+  if (editingLandingCourseId) deleteLandingCourse(editingLandingCourseId).then(closeLandingCourseDrawer);
+});
+
+$('#btn-lc-save').addEventListener('click', async () => {
+  const btn = $('#btn-lc-save');
+  btn.disabled = true;
+  btn.textContent = 'Зберігаю…';
+  try {
+    const title = $('#lc-title').value.trim();
+    const price = parseFloat($('#lc-price').value);
+    if (!title || !price) throw new Error('Назва і ціна обовʼязкові');
+    const slug = $('#lc-slug').value.trim() || ('course-' + slugify(title));
+    const items = $('#lc-items').value.split('\n').map(s => s.trim()).filter(Boolean);
+    const items_2 = $('#lc-items-2').value.split('\n').map(s => s.trim()).filter(Boolean);
+    if (items.length === 0) throw new Error('Додайте хоча б один пункт у списку');
+
+    const payload = {
+      slug,
+      title,
+      badge: $('#lc-badge').value.trim() || null,
+      intro: $('#lc-intro').value.trim() || null,
+      subhead: $('#lc-subhead').value.trim() || null,
+      items,
+      subhead_2: $('#lc-subhead-2').value.trim() || null,
+      items_2,
+      price,
+      old_price: $('#lc-old-price').value ? parseFloat($('#lc-old-price').value) : null,
+      payment_url: $('#lc-payment').value.trim() || null,
+      photo_path: $('#lc-photo').value.trim() || null,
+      cta_text: $('#lc-cta').value.trim() || 'Обрати цей курс',
+      status: $('#lc-status').value,
+      sort_order: parseInt($('#lc-sort').value || 0)
+    };
+
+    if (editingLandingCourseId) {
+      const { error } = await supa.from('landing_courses').update(payload).eq('id', editingLandingCourseId);
+      if (error) throw error;
+    } else {
+      const { error } = await supa.from('landing_courses').insert(payload);
+      if (error) throw error;
+    }
+    closeLandingCourseDrawer();
+    await loadLandingCourses();
+  } catch (err) {
+    alert('Помилка: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Зберегти';
+  }
+});
+
+// Sub-tabs всередині Лендинг
+$$('.code-tab[data-landing-sub]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.disabled) return;
+    const sub = btn.dataset.landingSub;
+    $$('.code-tab[data-landing-sub]').forEach(b => b.classList.toggle('is-active', b === btn));
+    $$('.landing-sub-content').forEach(c => c.classList.toggle('is-active', c.dataset.landingContent === sub));
+  });
+});
+
+// CSS for sub-tabs content (inline)
+const _lcStyle = document.createElement('style');
+_lcStyle.textContent = '.landing-sub-content{display:none}.landing-sub-content.is-active{display:block}';
+document.head.appendChild(_lcStyle);
+
+function escapeAttr(s) { return String(s ?? '').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
 
 // ====== Utils ======
 function escapeHtml(s) {
