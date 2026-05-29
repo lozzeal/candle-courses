@@ -1240,13 +1240,25 @@ html, body {
     <p class="form-section-title">Фото обкладинки</p>
     <div class="form-row form-row--single">
       <div class="form-group">
-        <label>Шлях до файлу</label>
-        <input id="lc-photo" type="text" placeholder="assets/course-x.jpg">
-        <p class="form-help">Файл має існувати у папці <code>assets/</code> або повний URL зовнішнього зображення.</p>
+        <label>Завантажити нове фото</label>
+        <label class="media-upload" style="aspect-ratio:auto;height:auto;padding:18px 24px;flex-direction:row;gap:10px">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span>Вибрати файл з компʼютера</span>
+          <input type="file" accept="image/*" onchange="uploadCoursePhoto(event)">
+        </label>
+        <div id="lc-upload-progress" class="uploader-progress" style="margin-top:8px"></div>
+      </div>
+    </div>
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <label>Або вкажіть шлях / URL вручну</label>
+        <input id="lc-photo" type="text" placeholder="assets/course-x.jpg або https://...">
+        <p class="form-help">Якщо завантажили файл вище — поле заповниться автоматично. Можна також вказати готовий URL зображення.</p>
       </div>
     </div>
     <div id="lc-photo-preview" style="margin-top:8px;display:none">
-      <img id="lc-photo-img" src="" alt="" style="max-width:200px;height:auto;border-radius:8px;border:1px solid var(--border)">
+      <p class="form-help" style="margin-bottom:6px">Превʼю:</p>
+      <img id="lc-photo-img" src="" alt="" style="max-width:240px;height:auto;border-radius:8px;border:1px solid var(--border)">
     </div>
 
   </div>
@@ -1733,31 +1745,60 @@ window.openOrderDetails = id => {
   const body = $('#order-details-body');
   const dt = new Date(o.created_at).toLocaleString('uk-UA', {day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
   body.innerHTML = `
-    <p class="form-section-title">Деталі</p>
-    <div style="display:flex;flex-direction:column;gap:8px;font-size:14px">
-      <div><strong>Дата:</strong> ${dt}</div>
-      <div><strong>Тема:</strong> ${escapeHtml(o.subject || '—')}</div>
-      <div><strong>Джерело:</strong> ${escapeHtml(o.source_page || '/')}</div>
+    <p class="form-section-title">Інформація (тільки для перегляду)</p>
+    <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;background:var(--bg);padding:12px;border-radius:8px;margin-bottom:4px">
+      <div><span style="color:var(--text-muted)">Дата:</span> ${dt}</div>
+      <div><span style="color:var(--text-muted)">Тема:</span> ${escapeHtml(o.subject || '—')}</div>
+      <div><span style="color:var(--text-muted)">Джерело:</span> <code style="font-size:11px">${escapeHtml(o.source_page || '/')}</code></div>
+      <div style="display:flex;gap:14px;margin-top:4px">
+        ${o.customer_phone ? `<a href="tel:${escapeAttrAdmin(o.customer_phone)}" style="color:var(--accent);font-size:13px">📞 Подзвонити</a>` : ''}
+        ${o.customer_email ? `<a href="mailto:${escapeAttrAdmin(o.customer_email)}" style="color:var(--accent);font-size:13px">✉️ Email</a>` : ''}
+      </div>
     </div>
 
-    <p class="form-section-title">Контакти</p>
-    <div style="display:flex;flex-direction:column;gap:8px;font-size:14px">
-      <div><strong>👤 Ім'я:</strong> ${escapeHtml(o.customer_name || '—')}</div>
-      <div><strong>📞 Телефон:</strong> ${o.customer_phone ? `<a href="tel:${escapeAttrAdmin(o.customer_phone)}" style="color:var(--accent)">${escapeHtml(o.customer_phone)}</a>` : '—'}</div>
-      <div><strong>✉️ Email:</strong> ${o.customer_email ? `<a href="mailto:${escapeAttrAdmin(o.customer_email)}" style="color:var(--accent)">${escapeHtml(o.customer_email)}</a>` : '—'}</div>
-      <div><strong>📍 Адреса:</strong> ${escapeHtml(o.customer_address || '—')}</div>
+    <p class="form-section-title">Контакти клієнта</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>👤 Імʼя</label>
+        <input id="order-name" type="text" value="${escapeAttrAdmin(o.customer_name)}">
+      </div>
+      <div class="form-group">
+        <label>📞 Телефон</label>
+        <input id="order-phone" type="tel" value="${escapeAttrAdmin(o.customer_phone)}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>✉️ Email</label>
+        <input id="order-email" type="email" value="${escapeAttrAdmin(o.customer_email)}">
+      </div>
+      <div class="form-group">
+        <label>📍 Адреса</label>
+        <input id="order-address" type="text" value="${escapeAttrAdmin(o.customer_address)}">
+      </div>
     </div>
 
     <p class="form-section-title">Товар / Курс</p>
-    <div style="font-size:14px">${escapeHtml(o.product_or_course || '—')}</div>
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <input id="order-product" type="text" value="${escapeAttrAdmin(o.product_or_course)}">
+      </div>
+    </div>
 
-    ${o.comment ? `<p class="form-section-title">Коментар клієнта</p><div style="font-size:14px;background:var(--bg);padding:12px;border-radius:8px;white-space:pre-wrap">${escapeHtml(o.comment)}</div>` : ''}
+    <p class="form-section-title">Коментар</p>
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <textarea id="order-comment" rows="3" placeholder="Коментар клієнта або внутрішні нотатки…">${escapeHtml(o.comment || '')}</textarea>
+      </div>
+    </div>
 
     <p class="form-section-title">Статус замовлення</p>
     <div class="form-row form-row--single">
-      <select class="form-group" id="order-status-select" style="padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit">
-        ${Object.entries(STATUS_LABELS_FULL).map(([v,l]) => `<option value="${v}"${o.status === v ? ' selected' : ''}>${l}</option>`).join('')}
-      </select>
+      <div class="form-group">
+        <select id="order-status-select" style="font-weight:600">
+          ${Object.entries(STATUS_LABELS_FULL).map(([v,l]) => `<option value="${v}"${o.status === v ? ' selected' : ''}>${l}</option>`).join('')}
+        </select>
+      </div>
     </div>
   `;
   orderDrawer.classList.add('is-open');
@@ -1775,17 +1816,29 @@ $('#btn-order-cancel').addEventListener('click', closeOrderDrawer);
 
 $('#btn-order-save').addEventListener('click', async () => {
   if (!currentOrder) return;
-  const newStatus = $('#order-status-select').value;
-  if (newStatus === currentOrder.status) { closeOrderDrawer(); return; }
   const btn = $('#btn-order-save');
   btn.disabled = true;
   btn.textContent = 'Зберігаю…';
-  const { error } = await supa.from('orders').update({ status: newStatus }).eq('id', currentOrder.id);
-  if (error) { alert('Помилка: ' + error.message); btn.disabled = false; btn.textContent = 'Зберегти зміни'; return; }
-  closeOrderDrawer();
-  await loadOrders();
-  btn.disabled = false;
-  btn.textContent = 'Зберегти зміни';
+  try {
+    const updates = {
+      customer_name: $('#order-name').value.trim() || null,
+      customer_phone: $('#order-phone').value.trim() || null,
+      customer_email: $('#order-email').value.trim() || null,
+      customer_address: $('#order-address').value.trim() || null,
+      product_or_course: $('#order-product').value.trim() || null,
+      comment: $('#order-comment').value.trim() || null,
+      status: $('#order-status-select').value
+    };
+    const { error } = await supa.from('orders').update(updates).eq('id', currentOrder.id);
+    if (error) throw error;
+    closeOrderDrawer();
+    await loadOrders();
+  } catch (err) {
+    alert('Помилка: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Зберегти зміни';
+  }
 });
 
 $('#btn-order-delete').addEventListener('click', async () => {
@@ -2600,6 +2653,31 @@ function updatePhotoPreview() {
 }
 
 $('#lc-photo').addEventListener('input', updatePhotoPreview);
+
+// Upload обкладинки курсу у Supabase Storage (reuse product-photos bucket, folder 'courses/')
+window.uploadCoursePhoto = async (e) => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  const progressEl = $('#lc-upload-progress');
+  progressEl.style.color = 'var(--accent)';
+  progressEl.classList.add('is-active');
+  progressEl.textContent = `Завантаження "${file.name}"…`;
+  try {
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    const path = `courses/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
+    const { error } = await supa.storage.from('product-photos').upload(path, file, { cacheControl: '3600', upsert: false });
+    if (error) throw error;
+    const { data: { publicUrl } } = supa.storage.from('product-photos').getPublicUrl(path);
+    $('#lc-photo').value = publicUrl;
+    updatePhotoPreview();
+    progressEl.textContent = '✓ Завантажено. Не забудьте натиснути «Зберегти».';
+    setTimeout(() => progressEl.classList.remove('is-active'), 3000);
+  } catch (err) {
+    progressEl.style.color = 'var(--danger)';
+    progressEl.textContent = 'Помилка: ' + err.message;
+  }
+};
 $('#lc-drawer-close').addEventListener('click', closeLandingCourseDrawer);
 $('#btn-lc-cancel').addEventListener('click', closeLandingCourseDrawer);
 $('#btn-add-landing-course').addEventListener('click', () => openLandingCourseDrawer(null));
