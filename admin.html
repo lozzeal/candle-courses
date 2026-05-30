@@ -799,8 +799,22 @@ html, body {
       <div class="code-tabs" id="landing-subtabs" style="margin-bottom:18px">
         <button type="button" class="code-tab is-active" data-landing-sub="courses">Курси</button>
         <button type="button" class="code-tab" data-landing-sub="faq">FAQ</button>
-        <button type="button" class="code-tab" data-landing-sub="reviews" style="opacity:0.5" disabled>Відгуки <span style="font-size:10px">(скоро)</span></button>
+        <button type="button" class="code-tab" data-landing-sub="reviews">Відгуки</button>
         <button type="button" class="code-tab" data-landing-sub="texts" style="opacity:0.5" disabled>Тексти <span style="font-size:10px">(скоро)</span></button>
+      </div>
+
+      <!-- Sub: Reviews -->
+      <div class="landing-sub-content" data-landing-content="reviews">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px;flex-wrap:wrap">
+          <p style="color:var(--text-muted);font-size:13px;margin:0">Скріншоти відгуків у блоці «Відгуки наших учнів» (стрічка що автоматично прокручується)</p>
+          <label class="btn-add" style="cursor:pointer" id="btn-add-review-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+            Додати скріншот
+            <input type="file" accept="image/*" multiple style="display:none" id="btn-add-review-input">
+          </label>
+        </div>
+        <div id="reviews-upload-progress" class="uploader-progress" style="margin-bottom:10px"></div>
+        <div id="reviews-grid"></div>
       </div>
 
       <!-- Sub: FAQ -->
@@ -1437,6 +1451,7 @@ function showApp(user) {
   loadSettings();
   loadLandingCourses();
   loadFAQ();
+  loadReviews();
 }
 
 // ====== Login form ======
@@ -2618,6 +2633,120 @@ $('#btn-save-settings').addEventListener('click', async () => {
     company_tax_id: $('#set-tax-id').value.trim()
   }, '#settings-status');
 });
+
+// ====== LANDING REVIEWS (CRUD) ======
+let allReviews = [];
+
+async function loadReviews() {
+  const { data, error } = await supa.from('landing_reviews').select('*').order('sort_order');
+  const container = $('#reviews-grid');
+  if (!container) return;
+  if (error) {
+    container.innerHTML = `<div class="alert alert--error">Помилка: ${escapeHtml(error.message)}. Запустіть landing-reviews-schema.sql у Supabase</div>`;
+    return;
+  }
+  allReviews = data || [];
+  renderReviews();
+}
+
+function renderReviews() {
+  const container = $('#reviews-grid');
+  if (allReviews.length === 0) {
+    container.innerHTML = '<div class="empty-state"><p>Відгуків немає. Натисніть «Додати скріншот»</p></div>';
+    return;
+  }
+  container.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px">
+    ${allReviews.map(r => {
+      const url = r.photo_url.startsWith('http') ? r.photo_url : '/' + r.photo_url;
+      return `
+        <div style="position:relative;aspect-ratio:9/16;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:var(--bg)">
+          <img src="${escapeAttr(url)}" style="width:100%;height:100%;object-fit:cover" alt="">
+          ${r.status === 'draft' ? '<span style="position:absolute;top:6px;left:6px;background:#FEF3C7;color:#92400E;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase">Чернетка</span>' : ''}
+          <div style="position:absolute;top:6px;right:6px;display:flex;flex-direction:column;gap:4px">
+            <button class="btn-action" onclick="toggleReviewStatus(${r.id})" style="padding:4px 6px;font-size:11px;background:rgba(255,255,255,0.95);border:none" title="${r.status === 'published' ? 'Приховати' : 'Опублікувати'}">${r.status === 'published' ? '👁️' : '🔒'}</button>
+            <button class="btn-action btn-action--danger" onclick="deleteReview(${r.id})" style="padding:4px 6px;font-size:11px;background:rgba(255,255,255,0.95);border:none" title="Видалити">🗑️</button>
+          </div>
+          <div style="position:absolute;bottom:0;left:0;right:0;padding:6px 8px;background:linear-gradient(transparent, rgba(0,0,0,0.7));color:#fff;font-size:11px;display:flex;justify-content:space-between;align-items:center">
+            <span>#${r.sort_order}</span>
+            <button onclick="changeReviewOrder(${r.id})" style="background:none;border:none;color:#fff;cursor:pointer;font-size:14px">≡</button>
+          </div>
+        </div>
+      `;
+    }).join('')}
+  </div>`;
+}
+
+// Upload reviews — кілька файлів одразу
+$('#btn-add-review-input').addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files || []);
+  e.target.value = '';
+  if (files.length === 0) return;
+  const progressEl = $('#reviews-upload-progress');
+  progressEl.style.color = 'var(--accent)';
+  progressEl.classList.add('is-active');
+  // Стартовий sort_order — після максимального
+  let nextSort = (allReviews.reduce((m, r) => Math.max(m, r.sort_order || 0), 0)) + 1;
+  let succeeded = 0;
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    progressEl.textContent = `Завантаження ${i + 1} з ${files.length}: ${file.name}`;
+    try {
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+      const path = `reviews/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
+      const { error: upErr } = await supa.storage.from('product-photos').upload(path, file, { cacheControl: '3600', upsert: false });
+      if (upErr) throw upErr;
+      const { data: { publicUrl } } = supa.storage.from('product-photos').getPublicUrl(path);
+      const { error: insErr } = await supa.from('landing_reviews').insert({
+        photo_url: publicUrl,
+        sort_order: nextSort++,
+        status: 'published'
+      });
+      if (insErr) throw insErr;
+      succeeded++;
+    } catch (err) {
+      console.warn('Review upload failed:', err);
+    }
+  }
+  progressEl.textContent = `✓ Завантажено ${succeeded} з ${files.length}`;
+  setTimeout(() => progressEl.classList.remove('is-active'), 2500);
+  await loadReviews();
+});
+
+window.deleteReview = async id => {
+  if (!confirm('Видалити цей відгук?')) return;
+  const r = allReviews.find(x => x.id === id);
+  // Видаляємо файл зі сховища якщо це наш upload
+  if (r?.photo_url?.includes('supabase.co/storage')) {
+    const pathMatch = r.photo_url.match(/product-photos\/(.+)$/);
+    if (pathMatch) {
+      await supa.storage.from('product-photos').remove([pathMatch[1]]).catch(() => {});
+    }
+  }
+  const { error } = await supa.from('landing_reviews').delete().eq('id', id);
+  if (error) return alert('Помилка: ' + error.message);
+  await loadReviews();
+};
+
+window.toggleReviewStatus = async id => {
+  const r = allReviews.find(x => x.id === id);
+  if (!r) return;
+  const newStatus = r.status === 'published' ? 'draft' : 'published';
+  const { error } = await supa.from('landing_reviews').update({ status: newStatus }).eq('id', id);
+  if (error) return alert('Помилка: ' + error.message);
+  await loadReviews();
+};
+
+window.changeReviewOrder = async id => {
+  const r = allReviews.find(x => x.id === id);
+  if (!r) return;
+  const newOrder = prompt(`Поточний порядок: ${r.sort_order}\nВведіть новий (менше = вище):`, r.sort_order);
+  if (newOrder === null) return;
+  const num = parseInt(newOrder);
+  if (isNaN(num)) return alert('Введіть число');
+  const { error } = await supa.from('landing_reviews').update({ sort_order: num }).eq('id', id);
+  if (error) return alert('Помилка: ' + error.message);
+  await loadReviews();
+};
 
 // ====== LANDING FAQ (CRUD) ======
 let allFAQ = [];

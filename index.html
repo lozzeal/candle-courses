@@ -2696,34 +2696,8 @@ section[id] { scroll-margin-top: 72px; }
   <div class="reviews__inner">
     <h2 class="reviews__title">Відгуки <span class="reviews__title--accent">наших учнів</span></h2>
     <div class="reviews__gallery-wrap">
-      <div class="reviews__gallery" aria-label="Відгуки учениць">
-        <div class="reviews__item"><img src="assets/review-01.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item"><img src="assets/review-02.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item"><img src="assets/review-03.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item"><img src="assets/review-04.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item"><img src="assets/review-05.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item"><img src="assets/review-06.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item"><img src="assets/review-07.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item"><img src="assets/review-08.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item"><img src="assets/review-09.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item"><img src="assets/review-10.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item"><img src="assets/review-11.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item"><img src="assets/review-12.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item"><img src="assets/review-13.jpg" alt="" loading="lazy"></div>
-        <!-- дублікат для безшовної петлі -->
-        <div class="reviews__item" aria-hidden="true"><img src="assets/review-01.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item" aria-hidden="true"><img src="assets/review-02.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item" aria-hidden="true"><img src="assets/review-03.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item" aria-hidden="true"><img src="assets/review-04.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item" aria-hidden="true"><img src="assets/review-05.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item" aria-hidden="true"><img src="assets/review-06.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item" aria-hidden="true"><img src="assets/review-07.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item" aria-hidden="true"><img src="assets/review-08.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item" aria-hidden="true"><img src="assets/review-09.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item" aria-hidden="true"><img src="assets/review-10.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item" aria-hidden="true"><img src="assets/review-11.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item" aria-hidden="true"><img src="assets/review-12.jpg" alt="" loading="lazy"></div>
-        <div class="reviews__item" aria-hidden="true"><img src="assets/review-13.jpg" alt="" loading="lazy"></div>
+      <div class="reviews__gallery" id="reviews-gallery-dynamic" aria-label="Відгуки учениць">
+        <!-- генерується JS з БД (з дублікатом для безшовної петлі) -->
       </div>
     </div>
   </div>
@@ -3671,6 +3645,33 @@ body:has(.modal:target) { overflow: hidden; }
     }
     requestAnimationFrame(step);
   });
+})();
+</script>
+
+<!-- ====================== Відгуки з БД ====================== -->
+<script>
+(function() {
+  const SUPABASE_URL = 'https://jmfudjhembgeaztowcoe.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptZnVkamhlbWJnZWF6dG93Y29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDEyODMsImV4cCI6MjA5NTM3NzI4M30.AQC4uLLBE6lsbdRorypc6gKkZQU4n6yg4gGG_rG55iM';
+  function escAttr(s) { return String(s ?? '').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+  const gallery = document.getElementById('reviews-gallery-dynamic');
+  if (!gallery) return;
+  fetch(`${SUPABASE_URL}/rest/v1/landing_reviews?select=*&status=eq.published&order=sort_order`, {
+    headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY }
+  })
+  .then(r => r.json())
+  .then(items => {
+    if (!Array.isArray(items) || items.length === 0) {
+      gallery.innerHTML = '';
+      return;
+    }
+    function urlOf(r) { return r.photo_url.startsWith('http') ? r.photo_url : r.photo_url; }
+    const main = items.map(r => `<div class="reviews__item"><img src="${escAttr(urlOf(r))}" alt="" loading="lazy"></div>`).join('');
+    // Дублікат для безшовної петлі
+    const dup = items.map(r => `<div class="reviews__item" aria-hidden="true"><img src="${escAttr(urlOf(r))}" alt="" loading="lazy"></div>`).join('');
+    gallery.innerHTML = main + dup;
+  })
+  .catch(err => { console.warn('Reviews load failed:', err); });
 })();
 </script>
 
