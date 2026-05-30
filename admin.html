@@ -798,9 +798,23 @@ html, body {
       <!-- Sub-tabs -->
       <div class="code-tabs" id="landing-subtabs" style="margin-bottom:18px">
         <button type="button" class="code-tab is-active" data-landing-sub="courses">Курси</button>
-        <button type="button" class="code-tab" data-landing-sub="faq" style="opacity:0.5" disabled>FAQ <span style="font-size:10px">(скоро)</span></button>
+        <button type="button" class="code-tab" data-landing-sub="faq">FAQ</button>
         <button type="button" class="code-tab" data-landing-sub="reviews" style="opacity:0.5" disabled>Відгуки <span style="font-size:10px">(скоро)</span></button>
         <button type="button" class="code-tab" data-landing-sub="texts" style="opacity:0.5" disabled>Тексти <span style="font-size:10px">(скоро)</span></button>
+      </div>
+
+      <!-- Sub: FAQ -->
+      <div class="landing-sub-content" data-landing-content="faq">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px;flex-wrap:wrap">
+          <p style="color:var(--text-muted);font-size:13px;margin:0">Питання та відповіді у блоці «Питання — відповіді»</p>
+          <button class="btn-add" id="btn-add-faq">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+            Додати питання
+          </button>
+        </div>
+        <div id="faq-list">
+          <div class="loader"><div class="loader-spinner"></div>Завантаження…</div>
+        </div>
       </div>
 
       <!-- Sub: Courses -->
@@ -1137,6 +1151,52 @@ html, body {
   </div>
 </aside>
 
+<!-- ====================== DRAWER: FAQ ====================== -->
+<aside class="drawer" id="drawer-faq">
+  <div class="drawer-header">
+    <div class="drawer-title" id="faq-drawer-title">Нове питання</div>
+    <button class="drawer-close" id="faq-drawer-close" type="button">&times;</button>
+  </div>
+  <div class="drawer-body">
+    <p class="form-section-title">Питання</p>
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <label>Текст питання <span class="req">*</span></label>
+        <input id="faq-question" type="text" placeholder="Чи потрібен досвід?">
+      </div>
+    </div>
+
+    <p class="form-section-title">Відповідь</p>
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <label>Текст відповіді <span class="req">*</span></label>
+        <textarea id="faq-answer" rows="4" placeholder="Ні, підходить для новачків."></textarea>
+      </div>
+    </div>
+
+    <p class="form-section-title">Налаштування</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Статус</label>
+        <select id="faq-status">
+          <option value="published">Опубліковано</option>
+          <option value="draft">Чернетка</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Порядок (менше = вище)</label>
+        <input id="faq-sort" type="number" value="0">
+      </div>
+    </div>
+  </div>
+  <div class="drawer-footer">
+    <button class="btn-secondary" id="btn-faq-delete" style="color:#D14A3F;border-color:#FCA5A5;display:none">Видалити</button>
+    <div style="flex:1"></div>
+    <button class="btn-secondary" id="btn-faq-cancel" type="button">Скасувати</button>
+    <button class="btn-save" id="btn-faq-save" type="button">Зберегти</button>
+  </div>
+</aside>
+
 <!-- ====================== DRAWER: КУРС ЛЕНДИНГУ ====================== -->
 <aside class="drawer" id="drawer-landing-course">
   <div class="drawer-header">
@@ -1376,6 +1436,7 @@ function showApp(user) {
   loadCategories();
   loadSettings();
   loadLandingCourses();
+  loadFAQ();
 }
 
 // ====== Login form ======
@@ -2556,6 +2617,114 @@ $('#btn-save-settings').addEventListener('click', async () => {
     company_name: $('#set-company').value.trim(),
     company_tax_id: $('#set-tax-id').value.trim()
   }, '#settings-status');
+});
+
+// ====== LANDING FAQ (CRUD) ======
+let allFAQ = [];
+let editingFAQId = null;
+const faqDrawer = $('#drawer-faq');
+
+async function loadFAQ() {
+  const { data, error } = await supa.from('landing_faq').select('*').order('sort_order');
+  const container = $('#faq-list');
+  if (error) {
+    container.innerHTML = `<div class="alert alert--error">Помилка: ${escapeHtml(error.message)}. Запустіть landing-faq-schema.sql у Supabase</div>`;
+    return;
+  }
+  allFAQ = data || [];
+  renderFAQ();
+}
+
+function renderFAQ() {
+  const container = $('#faq-list');
+  if (allFAQ.length === 0) {
+    container.innerHTML = '<div class="empty-state"><p>Питань немає. Натисніть «Додати питання»</p></div>';
+    return;
+  }
+  container.innerHTML = allFAQ.map((f, idx) => `
+    <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:var(--text-muted);flex-shrink:0">${idx + 1}</div>
+      <div style="flex:1;min-width:240px">
+        <div style="font-weight:600;font-size:14px;margin-bottom:4px">${escapeHtml(f.question)}</div>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.5">${escapeHtml(f.answer)}</div>
+        ${f.status === 'draft' ? '<span style="display:inline-block;margin-top:6px;padding:2px 8px;background:#FEF3C7;color:#92400E;border-radius:4px;font-size:10px;font-weight:600;text-transform:uppercase">Чернетка</span>' : ''}
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn-action" onclick="editFAQ(${f.id})">✏️ Редагувати</button>
+        <button class="btn-action btn-action--danger" onclick="deleteFAQ(${f.id})">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openFAQDrawer(faq = null) {
+  editingFAQId = faq ? faq.id : null;
+  $('#faq-drawer-title').textContent = faq ? 'Редагувати питання' : 'Нове питання';
+  $('#faq-question').value = faq?.question || '';
+  $('#faq-answer').value = faq?.answer || '';
+  $('#faq-status').value = faq?.status || 'published';
+  $('#faq-sort').value = faq?.sort_order ?? 0;
+  $('#btn-faq-delete').style.display = faq ? 'block' : 'none';
+  faqDrawer.classList.add('is-open');
+  $('#drawer-overlay').classList.add('is-open');
+}
+
+function closeFAQDrawer() {
+  faqDrawer.classList.remove('is-open');
+  $('#drawer-overlay').classList.remove('is-open');
+}
+
+$('#faq-drawer-close').addEventListener('click', closeFAQDrawer);
+$('#btn-faq-cancel').addEventListener('click', closeFAQDrawer);
+$('#btn-add-faq').addEventListener('click', () => openFAQDrawer(null));
+
+window.editFAQ = id => {
+  const f = allFAQ.find(x => x.id === id);
+  if (f) openFAQDrawer(f);
+};
+
+window.deleteFAQ = async id => {
+  const f = allFAQ.find(x => x.id === id);
+  if (!f) return;
+  if (!confirm(`Видалити питання «${f.question}»?`)) return;
+  const { error } = await supa.from('landing_faq').delete().eq('id', id);
+  if (error) return alert('Помилка: ' + error.message);
+  await loadFAQ();
+};
+
+$('#btn-faq-delete').addEventListener('click', () => {
+  if (editingFAQId) deleteFAQ(editingFAQId).then(closeFAQDrawer);
+});
+
+$('#btn-faq-save').addEventListener('click', async () => {
+  const btn = $('#btn-faq-save');
+  btn.disabled = true;
+  btn.textContent = 'Зберігаю…';
+  try {
+    const question = $('#faq-question').value.trim();
+    const answer = $('#faq-answer').value.trim();
+    if (!question || !answer) throw new Error('Питання і відповідь обовʼязкові');
+    const payload = {
+      question,
+      answer,
+      status: $('#faq-status').value,
+      sort_order: parseInt($('#faq-sort').value || 0)
+    };
+    if (editingFAQId) {
+      const { error } = await supa.from('landing_faq').update(payload).eq('id', editingFAQId);
+      if (error) throw error;
+    } else {
+      const { error } = await supa.from('landing_faq').insert(payload);
+      if (error) throw error;
+    }
+    closeFAQDrawer();
+    await loadFAQ();
+  } catch (err) {
+    alert('Помилка: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Зберегти';
+  }
 });
 
 // ====== LANDING COURSES (CRUD) ======

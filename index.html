@@ -3186,31 +3186,8 @@ body:has(.modal:target) { overflow: hidden; }
   <div class="faq__inner">
     <h2 class="faq__title">Питання — <span class="faq__title--accent">відповіді</span></h2>
 
-    <div class="faq__list">
-      <details class="faq__item">
-        <summary class="faq__summary">Чи потрібен досвід?<span class="faq__icon" aria-hidden="true"></span></summary>
-        <div class="faq__answer">Ні, підходить для новачків.</div>
-      </details>
-
-      <details class="faq__item">
-        <summary class="faq__summary">Чи потрібне дороге обладнання?<span class="faq__icon" aria-hidden="true"></span></summary>
-        <div class="faq__answer">Можна почати вдома, без складного обладнання.</div>
-      </details>
-
-      <details class="faq__item">
-        <summary class="faq__summary">Чи є підтримка?<span class="faq__icon" aria-hidden="true"></span></summary>
-        <div class="faq__answer">Так, є підтримка, необмежена часом, є чат.</div>
-      </details>
-
-      <details class="faq__item">
-        <summary class="faq__summary">Де проходить навчання?<span class="faq__icon" aria-hidden="true"></span></summary>
-        <div class="faq__answer">В Telegram, відеоуроки в записі.</div>
-      </details>
-
-      <details class="faq__item">
-        <summary class="faq__summary">Що ви зможете створювати?<span class="faq__icon" aria-hidden="true"></span></summary>
-        <div class="faq__answer">Відповідно до обраного курсу ви зможете створювати свічки, аромапродукти, бетонні та гіпсові вироби.</div>
-      </details>
+    <div class="faq__list" id="faq-list-dynamic">
+      <!-- генерується JS з БД -->
     </div>
   </div>
 </section>
@@ -3694,6 +3671,34 @@ body:has(.modal:target) { overflow: hidden; }
     }
     requestAnimationFrame(step);
   });
+})();
+</script>
+
+<!-- ====================== FAQ з БД ====================== -->
+<script>
+(function() {
+  const SUPABASE_URL = 'https://jmfudjhembgeaztowcoe.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptZnVkamhlbWJnZWF6dG93Y29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDEyODMsImV4cCI6MjA5NTM3NzI4M30.AQC4uLLBE6lsbdRorypc6gKkZQU4n6yg4gGG_rG55iM';
+  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  const list = document.getElementById('faq-list-dynamic');
+  if (!list) return;
+  fetch(`${SUPABASE_URL}/rest/v1/landing_faq?select=*&status=eq.published&order=sort_order`, {
+    headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY }
+  })
+  .then(r => r.json())
+  .then(items => {
+    if (!Array.isArray(items) || items.length === 0) {
+      list.innerHTML = '';
+      return;
+    }
+    list.innerHTML = items.map(f => `
+      <details class="faq__item">
+        <summary class="faq__summary">${esc(f.question)}<span class="faq__icon" aria-hidden="true"></span></summary>
+        <div class="faq__answer">${esc(f.answer)}</div>
+      </details>
+    `).join('');
+  })
+  .catch(err => { console.warn('FAQ load failed:', err); });
 })();
 </script>
 
