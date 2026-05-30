@@ -800,7 +800,95 @@ html, body {
         <button type="button" class="code-tab is-active" data-landing-sub="courses">Курси</button>
         <button type="button" class="code-tab" data-landing-sub="faq">FAQ</button>
         <button type="button" class="code-tab" data-landing-sub="reviews">Відгуки</button>
-        <button type="button" class="code-tab" data-landing-sub="texts" style="opacity:0.5" disabled>Тексти <span style="font-size:10px">(скоро)</span></button>
+        <button type="button" class="code-tab" data-landing-sub="texts">Тексти</button>
+      </div>
+
+      <!-- Sub: Texts -->
+      <div class="landing-sub-content" data-landing-content="texts">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px;flex-wrap:wrap">
+          <p style="color:var(--text-muted);font-size:13px;margin:0">Заголовки та тексти у блоках Hero та «Про автора»</p>
+          <button class="btn-add" id="btn-save-texts">Зберегти всі</button>
+        </div>
+        <div id="texts-status" class="alert alert--success" style="display:none">Збережено. Натисніть F5 на сайті щоб побачити зміни.</div>
+
+        <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:14px">
+          <div style="font-weight:700;font-size:16px;margin-bottom:14px">🎯 Hero (перший блок)</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Заголовок (частина 1)</label>
+              <input id="t-hero-1" type="text" placeholder="Крафт-свічки та">
+            </div>
+            <div class="form-group">
+              <label>Зелений акцент</label>
+              <input id="t-hero-accent" type="text" placeholder="арома-професія">
+            </div>
+          </div>
+          <div class="form-row form-row--single">
+            <div class="form-group">
+              <label>Заголовок (частина 2)</label>
+              <input id="t-hero-2" type="text" placeholder="з нуля">
+            </div>
+          </div>
+          <div class="form-row form-row--single">
+            <div class="form-group">
+              <label>Інфо-пункт №1</label>
+              <textarea id="t-hero-info-1" rows="2" placeholder="Навчіться виготовляти свічки..."></textarea>
+            </div>
+          </div>
+          <div class="form-row form-row--single">
+            <div class="form-group">
+              <label>Інфо-пункт №2</label>
+              <textarea id="t-hero-info-2" rows="2" placeholder="Оберіть свій напрям..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:14px">
+          <div style="font-weight:700;font-size:16px;margin-bottom:14px">👤 Про автора</div>
+          <div class="form-row form-row--single">
+            <div class="form-group">
+              <label>Підзаголовок під «Про автора»</label>
+              <textarea id="t-author-sub" rows="2" placeholder="Курси створені практиком з досвідом..."></textarea>
+            </div>
+          </div>
+          <div class="form-row form-row--single">
+            <div class="form-group">
+              <label>Фото автора (URL або шлях)</label>
+              <label class="media-upload" style="aspect-ratio:auto;height:auto;padding:14px 20px;flex-direction:row;gap:10px;margin-bottom:8px">
+                <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <span>Завантажити нове фото</span>
+                <input type="file" accept="image/*" onchange="uploadAuthorPhoto(event)">
+              </label>
+              <input id="t-author-photo" type="text" placeholder="assets/author-photo-new.jpg">
+              <div id="t-author-progress" class="uploader-progress" style="font-size:11px"></div>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--text-muted);margin:6px 0 10px">4 пункти «досягнення». Використовуйте <code>**жирний**</code> навколо тексту що має бути виділений жирним.</p>
+          <div class="form-row form-row--single">
+            <div class="form-group">
+              <label>Пункт 1</label>
+              <input id="t-author-1" type="text" placeholder="**5 років** практичного досвіду">
+            </div>
+          </div>
+          <div class="form-row form-row--single">
+            <div class="form-group">
+              <label>Пункт 2</label>
+              <input id="t-author-2" type="text" placeholder="**450+ учнів** базового курсу">
+            </div>
+          </div>
+          <div class="form-row form-row--single">
+            <div class="form-group">
+              <label>Пункт 3</label>
+              <input id="t-author-3" type="text" placeholder="**практичний підхід** без зайвої теорії">
+            </div>
+          </div>
+          <div class="form-row form-row--single">
+            <div class="form-group">
+              <label>Пункт 4</label>
+              <input id="t-author-4" type="text" placeholder="**фокус на реальних технологіях** виробництва">
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Sub: Reviews -->
@@ -2580,6 +2668,18 @@ async function loadSettings() {
   $('#set-custom-body-start').value = siteSettings.custom_body_start || '';
   $('#set-custom-body-end').value = siteSettings.custom_body_end || '';
   $('#set-custom-css').value = siteSettings.custom_css || '';
+  // Тексти лендингу
+  $('#t-hero-1').value = siteSettings.hero_title_1 || '';
+  $('#t-hero-accent').value = siteSettings.hero_title_accent || '';
+  $('#t-hero-2').value = siteSettings.hero_title_2 || '';
+  $('#t-hero-info-1').value = siteSettings.hero_info_1 || '';
+  $('#t-hero-info-2').value = siteSettings.hero_info_2 || '';
+  $('#t-author-sub').value = siteSettings.author_sub || '';
+  $('#t-author-photo').value = siteSettings.author_photo || '';
+  $('#t-author-1').value = siteSettings.author_item_1 || '';
+  $('#t-author-2').value = siteSettings.author_item_2 || '';
+  $('#t-author-3').value = siteSettings.author_item_3 || '';
+  $('#t-author-4').value = siteSettings.author_item_4 || '';
   $('#set-telegram').value = siteSettings.contact_telegram || '';
   $('#set-phone').value = siteSettings.contact_phone || '';
   $('#set-email').value = siteSettings.contact_email || '';
@@ -2633,6 +2733,52 @@ $('#btn-save-settings').addEventListener('click', async () => {
     company_tax_id: $('#set-tax-id').value.trim()
   }, '#settings-status');
 });
+
+// Зберегти тексти лендингу
+$('#btn-save-texts').addEventListener('click', async () => {
+  const btn = $('#btn-save-texts');
+  btn.disabled = true;
+  btn.textContent = 'Зберігаю…';
+  await saveSettingsMap({
+    hero_title_1: $('#t-hero-1').value.trim(),
+    hero_title_accent: $('#t-hero-accent').value.trim(),
+    hero_title_2: $('#t-hero-2').value.trim(),
+    hero_info_1: $('#t-hero-info-1').value.trim(),
+    hero_info_2: $('#t-hero-info-2').value.trim(),
+    author_sub: $('#t-author-sub').value.trim(),
+    author_photo: $('#t-author-photo').value.trim(),
+    author_item_1: $('#t-author-1').value.trim(),
+    author_item_2: $('#t-author-2').value.trim(),
+    author_item_3: $('#t-author-3').value.trim(),
+    author_item_4: $('#t-author-4').value.trim()
+  }, '#texts-status');
+  btn.disabled = false;
+  btn.textContent = 'Зберегти всі';
+});
+
+// Upload фото автора
+window.uploadAuthorPhoto = async (e) => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  const progressEl = $('#t-author-progress');
+  progressEl.style.color = 'var(--accent)';
+  progressEl.classList.add('is-active');
+  progressEl.textContent = `Завантаження "${file.name}"…`;
+  try {
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    const path = `author/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
+    const { error } = await supa.storage.from('product-photos').upload(path, file, { cacheControl: '3600', upsert: false });
+    if (error) throw error;
+    const { data: { publicUrl } } = supa.storage.from('product-photos').getPublicUrl(path);
+    $('#t-author-photo').value = publicUrl;
+    progressEl.textContent = '✓ Завантажено. Натисніть «Зберегти всі».';
+    setTimeout(() => progressEl.classList.remove('is-active'), 3000);
+  } catch (err) {
+    progressEl.style.color = 'var(--danger)';
+    progressEl.textContent = 'Помилка: ' + err.message;
+  }
+};
 
 // ====== LANDING REVIEWS (CRUD) ======
 let allReviews = [];

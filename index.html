@@ -1658,9 +1658,9 @@ section[id] { scroll-margin-top: 72px; }
 
     <div class="hero__panel">
       <h1 class="hero__title">
-        Крафт-свічки та
-        <span class="hero__title--accent">арома-професія</span>
-        з нуля
+        <span data-text-key="hero_title_1">Крафт-свічки та</span>
+        <span class="hero__title--accent" data-text-key="hero_title_accent">арома-професія</span>
+        <span data-text-key="hero_title_2">з нуля</span>
       </h1>
 
       <div class="hero__info">
@@ -1671,7 +1671,7 @@ section[id] { scroll-margin-top: 72px; }
               <rect x="7.5" y="11" width="9" height="11" rx="1.5" fill="white"/>
             </svg>
           </span>
-          <p>Навчіться виготовляти свічки, аромапродукти та декоративні вироби з нуля і перетворіть це у креативну професію.</p>
+          <p data-text-key="hero_info_1">Навчіться виготовляти свічки, аромапродукти та декоративні вироби з нуля і перетворіть це у креативну професію.</p>
         </div>
 
         <div class="hero__info-item">
@@ -1680,7 +1680,7 @@ section[id] { scroll-margin-top: 72px; }
               <path d="M21.5 3.5L2.5 10.5L9 13L11.5 20L21.5 3.5Z" fill="white" stroke="white" stroke-width="1" stroke-linejoin="round"/>
             </svg>
           </span>
-          <p>Оберіть свій напрям і навчайтесь повністю онлайн у Telegram.</p>
+          <p data-text-key="hero_info_2">Оберіть свій напрям і навчайтесь повністю онлайн у Telegram.</p>
         </div>
       </div>
 
@@ -1976,18 +1976,18 @@ section[id] { scroll-margin-top: 72px; }
         Про
         <span class="author__title--accent">автора</span>
       </h2>
-      <p class="author__sub">Курси створені практиком з досвідом виготовлення свічок та декоративних виробів.</p>
+      <p class="author__sub" data-text-key="author_sub">Курси створені практиком з досвідом виготовлення свічок та декоративних виробів.</p>
     </div>
 
     <div class="author__visual">
-      <img class="author__photo" src="assets/author-photo-new.jpg" alt="Фото автора">
+      <img class="author__photo" id="author-photo-img" src="assets/author-photo-new.jpg" alt="Фото автора">
     </div>
 
     <div class="author__list">
-      <p><strong>5 років</strong> практичного досвіду</p>
-      <p><strong>450+ учнів</strong> базового курсу</p>
-      <p><strong>практичний підхід</strong> без зайвої теорії</p>
-      <p><strong>фокус на реальних технологіях</strong> виробництва</p>
+      <p data-text-key="author_item_1" data-text-md="1"><strong>5 років</strong> практичного досвіду</p>
+      <p data-text-key="author_item_2" data-text-md="1"><strong>450+ учнів</strong> базового курсу</p>
+      <p data-text-key="author_item_3" data-text-md="1"><strong>практичний підхід</strong> без зайвої теорії</p>
+      <p data-text-key="author_item_4" data-text-md="1"><strong>фокус на реальних технологіях</strong> виробництва</p>
     </div>
   </div>
 </section>
@@ -3645,6 +3645,41 @@ body:has(.modal:target) { overflow: hidden; }
     }
     requestAnimationFrame(step);
   });
+})();
+</script>
+
+<!-- ====================== Тексти лендингу з БД ====================== -->
+<script>
+(function() {
+  const SUPABASE_URL = 'https://jmfudjhembgeaztowcoe.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptZnVkamhlbWJnZWF6dG93Y29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDEyODMsImV4cCI6MjA5NTM3NzI4M30.AQC4uLLBE6lsbdRorypc6gKkZQU4n6yg4gGG_rG55iM';
+  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  // Парсимо **bold** → <strong>bold</strong> (без іншого HTML)
+  function parseBold(s) {
+    return esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  }
+  fetch(`${SUPABASE_URL}/rest/v1/site_settings?select=key,value`, {
+    headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY }
+  })
+  .then(r => r.json())
+  .then(rows => {
+    if (!Array.isArray(rows)) return;
+    const map = {};
+    rows.forEach(r => map[r.key] = r.value || '');
+    // Заміна <span data-text-key="...">
+    document.querySelectorAll('[data-text-key]').forEach(el => {
+      const key = el.dataset.textKey;
+      if (!key || !map[key]) return;
+      const useMd = el.dataset.textMd === '1';
+      el.innerHTML = useMd ? parseBold(map[key]) : esc(map[key]);
+    });
+    // Фото автора
+    const authorImg = document.getElementById('author-photo-img');
+    if (authorImg && map.author_photo) {
+      authorImg.src = map.author_photo.startsWith('http') ? map.author_photo : '/' + map.author_photo;
+    }
+  })
+  .catch(err => { console.warn('Texts load failed:', err); });
 })();
 </script>
 
