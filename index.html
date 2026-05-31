@@ -1290,7 +1290,6 @@ section[id] { scroll-margin-top: 72px; }
 }
 
 .course-card__price {
-  margin-top: auto;
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-weight: 700;
   font-size: 42px;
@@ -1300,6 +1299,39 @@ section[id] { scroll-margin-top: 72px; }
   padding-top: 16px;
   letter-spacing: 0.02em;
   line-height: 1;
+}
+p.course-card__price { margin-top: auto; }
+.course-card__price-block {
+  margin-top: auto;
+  padding-top: 16px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.course-card__price-block .course-card__price {
+  margin: 0;
+  padding: 0;
+}
+.course-card__price-old {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 500;
+  font-size: 22px;
+  color: #999;
+  text-decoration: line-through;
+  letter-spacing: 0.02em;
+}
+.course-card__discount {
+  background: #D14A3F;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.04em;
 }
 .course-card__cta {
   background: linear-gradient(180deg, #49C318 0%, #38A30D 100%);
@@ -2162,7 +2194,6 @@ section[id] { scroll-margin-top: 72px; }
   margin-top: 7px;
 }
 .course-card__price {
-  margin-top: auto;
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-weight: 700;
   font-size: 42px;
@@ -2172,6 +2203,39 @@ section[id] { scroll-margin-top: 72px; }
   padding-top: 16px;
   letter-spacing: 0.02em;
   line-height: 1;
+}
+p.course-card__price { margin-top: auto; }
+.course-card__price-block {
+  margin-top: auto;
+  padding-top: 16px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.course-card__price-block .course-card__price {
+  margin: 0;
+  padding: 0;
+}
+.course-card__price-old {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 500;
+  font-size: 22px;
+  color: #999;
+  text-decoration: line-through;
+  letter-spacing: 0.02em;
+}
+.course-card__discount {
+  background: #D14A3F;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.04em;
 }
 .course-card__cta {
   background: linear-gradient(180deg, #49C318 0%, #38A30D 100%);
@@ -3770,7 +3834,21 @@ body:has(.modal:target) { overflow: hidden; }
         ${renderListItems(c.items)}
         ${c.subhead_2 ? `<p class="course-card__subhead">${esc(c.subhead_2)}</p>` : ''}
         ${renderListItems(c.items_2)}
-        <p class="course-card__price">${(c.price || 0).toLocaleString('uk-UA').replace(/,/g, ' ')} ₴</p>
+        ${(() => {
+          const p = (c.price || 0).toLocaleString('uk-UA').replace(/,/g, ' ');
+          const op = c.old_price && Number(c.old_price) > Number(c.price)
+            ? (c.old_price || 0).toLocaleString('uk-UA').replace(/,/g, ' ')
+            : null;
+          if (op) {
+            const discount = Math.round((1 - Number(c.price) / Number(c.old_price)) * 100);
+            return `<div class="course-card__price-block">
+              <span class="course-card__price-old">${op} ₴</span>
+              <span class="course-card__price">${p} ₴</span>
+              <span class="course-card__discount">−${discount}%</span>
+            </div>`;
+          }
+          return `<p class="course-card__price">${p} ₴</p>`;
+        })()}
         <a href="#${modalId}" class="course-card__cta">${esc(c.cta_text || 'Обрати цей курс')}</a>
       </div>
     `;
