@@ -3071,6 +3071,7 @@ function renderLandingCourses() {
         </div>
         <div style="font-weight:700;color:var(--accent);font-size:18px;font-family:'Cormorant Garamond',serif">${c.price} ₴</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn-action" onclick="copyCourseThanksLink(${c.id}, '${escapeAttr(c.slug || '')}', event)" title="Скопіювати посилання на сторінку доступу">🔗 Доступ</button>
           <button class="btn-action" onclick="toggleCourseVisibility(${c.id})" title="${toggleTitle}">${toggleEmoji} ${isPublished ? 'Приховати' : 'Опублікувати'}</button>
           <button class="btn-action" onclick="editLandingCourse(${c.id})">✏️ Редагувати</button>
           <button class="btn-action btn-action--danger" onclick="deleteLandingCourse(${c.id})">🗑️</button>
@@ -3184,6 +3185,32 @@ window.toggleCourseVisibility = async id => {
   const { error } = await supa.from('landing_courses').update({ status: newStatus }).eq('id', id);
   if (error) return alert('Помилка: ' + error.message);
   await loadLandingCourses();
+};
+
+window.copyCourseThanksLink = (id, slug, ev) => {
+  const origin = window.location.origin;
+  // Якщо є slug — використовуємо його (стабільніше). Інакше — id.
+  const url = slug ? `${origin}/thanks.html?slug=${slug}` : `${origin}/thanks.html?course=${id}`;
+  const finish = () => {
+    const btn = ev?.target?.closest('button');
+    if (!btn) return;
+    const orig = btn.textContent;
+    btn.textContent = '✓ Скопійовано';
+    btn.style.background = 'rgba(56,163,13,0.2)';
+    btn.style.color = 'var(--accent)';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 1500);
+  };
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(finish).catch(() => {
+      prompt('Скопіюйте URL вручну:', url);
+    });
+  } else {
+    prompt('Скопіюйте URL вручну:', url);
+  }
 };
 
 window.deleteLandingCourse = async id => {
