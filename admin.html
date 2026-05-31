@@ -3063,7 +3063,7 @@ function renderLandingCourses() {
         <div style="flex:1;min-width:200px">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <strong style="font-size:15px">${escapeHtml(c.title)}</strong>
-            <span class="product-card__status status-${c.status}" style="font-size:10px">${statusLabel}</span>
+            <span class="product-card__status status-${c.status}" style="font-size:10px;position:static;display:inline-block">${statusLabel}</span>
           </div>
           <div style="font-size:12px;color:var(--text-muted);margin-top:3px">
             ${c.badge ? escapeHtml(c.badge) + ' · ' : ''}${c.items?.length || 0} пунктів${c.items_2?.length ? ' + ' + c.items_2.length : ''}
