@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Дякуємо за оплату! — 100candle.shop</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/favicon.svg">
+<meta name="theme-color" content="#38A30D">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: linear-gradient(135deg, #fbf7f4 0%, #f0e8e0 100%);
+  color: #262626;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+.card {
+  background: #fff;
+  border-radius: 28px;
+  padding: 56px 40px 44px;
+  max-width: 540px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+  border: 1px solid rgba(38,38,38,0.05);
+  text-align: center;
+}
+.check-icon {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #49C318, #38A30D);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  box-shadow: 0 14px 32px rgba(56,163,13,0.4);
+  animation: bounce 0.6s ease-out;
+}
+@keyframes bounce {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+.check-icon svg {
+  width: 48px;
+  height: 48px;
+  color: #fff;
+}
+h1 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: 38px;
+  margin-bottom: 12px;
+  letter-spacing: 0.01em;
+}
+.course-name {
+  display: inline-block;
+  padding: 6px 16px;
+  background: rgba(56,163,13,0.1);
+  color: var(--accent, #38A30D);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+}
+.subtitle {
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 36px;
+  line-height: 1.6;
+}
+.tg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 34px;
+  background: #229ED9;
+  color: #fff !important;
+  text-decoration: none;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 600;
+  box-shadow: 0 12px 28px rgba(34,158,217,0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.tg-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(34,158,217,0.55);
+}
+.tg-btn svg { width: 22px; height: 22px; }
+.tg-note {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #888;
+  line-height: 1.5;
+}
+.divider {
+  margin: 32px 0 24px;
+  border: none;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+.help {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
+}
+.help a {
+  color: #38A30D;
+  text-decoration: none;
+  font-weight: 600;
+}
+.back-link {
+  display: inline-block;
+  margin-top: 20px;
+  font-size: 13px;
+  color: #999;
+  text-decoration: none;
+}
+.back-link:hover { color: #38A30D; }
+
+.loader, .error-state {
+  padding: 40px 0;
+  color: #999;
+}
+.error-state h1 { color: #D14A3F; font-size: 28px; }
+.error-state .check-icon {
+  background: linear-gradient(180deg, #FCA5A5, #D14A3F);
+  box-shadow: 0 14px 32px rgba(209,74,63,0.4);
+}
+
+@media (max-width: 560px) {
+  .card { padding: 40px 24px 32px; }
+  h1 { font-size: 30px; }
+  .check-icon { width: 72px; height: 72px; }
+  .check-icon svg { width: 38px; height: 38px; }
+  .tg-btn { padding: 16px 26px; font-size: 15px; width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="card" id="card">
+    <div class="loader">
+      <p>Завантаження…</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const SUPABASE_URL = 'https://jmfudjhembgeaztowcoe.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptZnVkamhlbWJnZWF6dG93Y29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDEyODMsImV4cCI6MjA5NTM3NzI4M30.AQC4uLLBE6lsbdRorypc6gKkZQU4n6yg4gGG_rG55iM';
+  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  const card = document.getElementById('card');
+
+  const params = new URLSearchParams(window.location.search);
+  // Підтримуємо як ?course=ID, так і ?id=ID, а також ?slug=...
+  const courseId = params.get('course') || params.get('id');
+  const courseSlug = params.get('slug');
+
+  function showError(message, details) {
+    card.innerHTML = `
+      <div class="check-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </div>
+      <h1>${esc(message)}</h1>
+      ${details ? `<p class="subtitle">${esc(details)}</p>` : ''}
+      <a href="/" class="back-link">← Повернутись на сайт</a>
+    `;
+    card.classList.add('error-state');
+  }
+
+  function showSuccess(course) {
+    if (!course.telegram_url) {
+      showError('Доступ ще не налаштований', 'Будь ласка, звʼяжіться з нами у Telegram @GalunaSpeak — ми надішлемо посилання вручну.');
+      return;
+    }
+    card.innerHTML = `
+      <div class="check-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <p class="course-name">${esc(course.title)}</p>
+      <h1>Дякуємо за оплату!</h1>
+      <p class="subtitle">Ваш доступ до курсу готовий. Натисніть на кнопку нижче, щоб приєднатись до приватної Telegram-групи з усіма матеріалами.</p>
+
+      <a href="${esc(course.telegram_url)}" class="tg-btn" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.8 3.2L2.6 10.7c-1.3.5-1.3 1.3-.2 1.6l4.9 1.5 11.3-7.1c.5-.3 1 .1.6.5l-9.2 8.3v3.4c0 .7.5.9.9.4l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.6c.3-1.2-.5-1.8-1.9-1.3z"/></svg>
+        Приєднатись до групи
+      </a>
+      <p class="tg-note">Посилання працює для всіх ваших пристроїв. Збережіть цю сторінку чи додайте посилання у закладки.</p>
+
+      <hr class="divider">
+
+      <p class="help">
+        Виникли питання? Напишіть нам у <a href="https://t.me/GalunaSpeak" target="_blank" rel="noopener">@GalunaSpeak</a> або на <a href="mailto:okvozuk@gmail.com">okvozuk@gmail.com</a>
+      </p>
+
+      <a href="/" class="back-link">← Повернутись на головну</a>
+    `;
+  }
+
+  // Збираємо запит
+  let url;
+  if (courseId) {
+    url = `${SUPABASE_URL}/rest/v1/landing_courses?select=*&id=eq.${encodeURIComponent(courseId)}`;
+  } else if (courseSlug) {
+    url = `${SUPABASE_URL}/rest/v1/landing_courses?select=*&slug=eq.${encodeURIComponent(courseSlug)}`;
+  } else {
+    showError('Курс не вказаний', 'У URL відсутній параметр ?course=ID. Будь ласка, напишіть нам у Telegram @GalunaSpeak — ми надішлемо посилання.');
+    return;
+  }
+
+  fetch(url, {
+    headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY }
+  })
+  .then(r => r.json())
+  .then(items => {
+    if (!Array.isArray(items) || items.length === 0) {
+      showError('Курс не знайдений', 'Можливо, посилання неправильне. Напишіть нам у Telegram @GalunaSpeak.');
+      return;
+    }
+    showSuccess(items[0]);
+    document.title = `Доступ до курсу: ${items[0].title}`;
+  })
+  .catch(err => {
+    showError('Помилка', 'Не вдалось завантажити дані. Напишіть нам у Telegram @GalunaSpeak.');
+    console.error(err);
+  });
+})();
+</script>
+
+</body>
+</html>

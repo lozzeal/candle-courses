@@ -1398,6 +1398,13 @@ html, body {
         <input id="lc-payment" type="url" placeholder="https://secure.wayforpay.com/...">
       </div>
     </div>
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <label>🔗 Telegram-група (доступ до курсу після оплати)</label>
+        <input id="lc-telegram" type="url" placeholder="https://t.me/+...">
+        <p class="form-help">Посилання-запрошення у приватну Telegram-групу. Клієнт побачить його на сторінці подяки після оплати. Сторінка: <code>/thanks.html?course=ID</code></p>
+      </div>
+    </div>
 
     <p class="form-section-title">Фото обкладинки</p>
     <div class="form-row form-row--single">
@@ -3072,6 +3079,7 @@ function openLandingCourseDrawer(course = null) {
   $('#lc-price').value = course?.price || '';
   $('#lc-old-price').value = course?.old_price || '';
   $('#lc-payment').value = course?.payment_url || '';
+  $('#lc-telegram').value = course?.telegram_url || '';
   $('#lc-photo').value = course?.photo_path || '';
   $('#lc-cta').value = course?.cta_text || 'Обрати цей курс';
   $('#lc-status').value = course?.status || 'published';
@@ -3190,6 +3198,7 @@ $('#btn-lc-save').addEventListener('click', async () => {
       price,
       old_price: $('#lc-old-price').value ? parseFloat($('#lc-old-price').value) : null,
       payment_url: $('#lc-payment').value.trim() || null,
+      telegram_url: $('#lc-telegram').value.trim() || null,
       photo_path: $('#lc-photo').value.trim() || null,
       cta_text: $('#lc-cta').value.trim() || 'Обрати цей курс',
       status: $('#lc-status').value,
