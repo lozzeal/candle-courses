@@ -1402,7 +1402,23 @@ html, body {
       <div class="form-group">
         <label>🔗 Telegram-група (доступ до курсу після оплати)</label>
         <input id="lc-telegram" type="url" placeholder="https://t.me/+...">
-        <p class="form-help">Посилання-запрошення у приватну Telegram-групу. Клієнт побачить його на сторінці подяки після оплати. Сторінка: <code>/thanks.html?course=ID</code></p>
+        <p class="form-help">Посилання-запрошення у приватну Telegram-групу. Клієнт побачить його на сторінці подяки після оплати.</p>
+      </div>
+    </div>
+
+    <div id="lc-thanks-block" class="form-row form-row--single" style="display:none">
+      <div class="form-group" style="background:rgba(56,163,13,0.06);border:1px dashed rgba(56,163,13,0.35);border-radius:10px;padding:14px;margin-top:4px">
+        <label style="color:var(--accent);font-weight:700">🔗 Посилання на сторінку доступу (для WayForPay)</label>
+        <p class="form-help" style="margin:4px 0 10px">Це URL який треба вставити у налаштування кнопки WayForPay у полі «Return URL» / «URL повернення». Клієнт потрапить сюди після успішної оплати.</p>
+        <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+          <input id="lc-thanks-url-id" type="text" readonly style="flex:1;min-width:200px;font-family:monospace;font-size:12px;background:#fff" value="">
+          <button type="button" class="btn-action" onclick="copyText('lc-thanks-url-id')">📋 Копіювати</button>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <input id="lc-thanks-url-slug" type="text" readonly style="flex:1;min-width:200px;font-family:monospace;font-size:12px;background:#fff" value="">
+          <button type="button" class="btn-action" onclick="copyText('lc-thanks-url-slug')">📋 Копіювати</button>
+        </div>
+        <p class="form-help" style="margin-top:8px">Можна використовувати або варіант з ID (короткий), або з slug (зрозумілий, не змінюється при перестановці курсів). <strong>Раджу варіант з slug</strong> — він стабільний.</p>
       </div>
     </div>
 
@@ -3067,6 +3083,16 @@ function renderLandingCourses() {
 function openLandingCourseDrawer(course = null) {
   editingLandingCourseId = course ? course.id : null;
   $('#lc-drawer-title').textContent = course ? 'Редагувати курс' : 'Новий курс';
+  // Показуємо блок URL подяки тільки для існуючих курсів
+  const thanksBlock = $('#lc-thanks-block');
+  if (course && course.id) {
+    thanksBlock.style.display = 'block';
+    const origin = window.location.origin;
+    $('#lc-thanks-url-id').value = `${origin}/thanks.html?course=${course.id}`;
+    $('#lc-thanks-url-slug').value = `${origin}/thanks.html?slug=${course.slug || ''}`;
+  } else {
+    thanksBlock.style.display = 'none';
+  }
   $('#lc-title').value = course?.title || '';
   $('#lc-slug').value = course?.slug || '';
   $('#lc-slug').dataset.touched = course ? '1' : '';
@@ -3238,6 +3264,33 @@ _lcStyle.textContent = '.landing-sub-content{display:none}.landing-sub-content.i
 document.head.appendChild(_lcStyle);
 
 function escapeAttr(s) { return String(s ?? '').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+
+window.copyText = (elementId) => {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  el.select();
+  el.setSelectionRange(0, 99999);
+  try {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(el.value);
+    } else {
+      document.execCommand('copy');
+    }
+    // Візуальний feedback
+    const btn = event?.target;
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = '✓ Скопійовано';
+      btn.style.background = 'rgba(56,163,13,0.2)';
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.background = '';
+      }, 1500);
+    }
+  } catch (e) {
+    alert('Не вдалось скопіювати. Виділіть текст вручну.');
+  }
+};
 
 // ====== Utils ======
 function escapeHtml(s) {
