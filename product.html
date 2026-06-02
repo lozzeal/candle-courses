@@ -274,6 +274,12 @@ input[type="radio"][name="color"]:checked + .swatch { box-shadow: 0 0 0 2px var(
   max-width: 880px;
   margin: 0 auto;
 }
+/* Якщо відео одне — центруємо і обмежуємо ширину */
+.videos-grid:has(video:only-child) {
+  grid-template-columns: minmax(0, 420px);
+  justify-content: center;
+  max-width: 420px;
+}
 .videos-grid video {
   width: 100%;
   aspect-ratio: 9/16;
