@@ -293,6 +293,62 @@ input[type="radio"][name="color"]:checked + .swatch { box-shadow: 0 0 0 2px var(
 }
 .description__text p { margin-bottom: 16px; }
 .description__text p:last-child { margin-bottom: 0; }
+.description__text h2,
+.description__text h3,
+.description__text h4 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  color: #262626;
+  line-height: 1.25;
+  margin: 28px 0 12px;
+}
+.description__text h2 { font-size: 26px; }
+.description__text h3 { font-size: 22px; }
+.description__text h4 { font-size: 18px; text-transform: uppercase; letter-spacing: 0.04em; }
+.description__text strong { color: #262626; font-weight: 700; }
+.description__text em { font-style: italic; }
+.description__text a { color: var(--accent); text-decoration: underline; }
+.description__text ul,
+.description__text ol {
+  margin: 0 0 16px 4px;
+  padding-left: 22px;
+}
+.description__text ul li,
+.description__text ol li {
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+.description__text ul { list-style: none; padding-left: 0; }
+.description__text ul li {
+  position: relative;
+  padding-left: 26px;
+}
+.description__text ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+.description__text blockquote {
+  margin: 16px 0;
+  padding: 12px 18px;
+  border-left: 3px solid var(--accent);
+  background: rgba(56,163,13,0.06);
+  font-style: italic;
+  color: #555;
+  border-radius: 0 8px 8px 0;
+}
+.description__text hr {
+  border: none;
+  border-top: 1px solid rgba(38,38,38,0.1);
+  margin: 24px 0;
+}
 
 /* ===== ХАРАКТЕРИСТИКИ ===== */
 .specs-list {
@@ -662,6 +718,75 @@ body:has(.modal:target) { overflow: hidden; }
   const $ = sel => document.querySelector(sel);
   function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
+  // Mini-markdown: # h2, ## h3, ### h4, **bold**, *italic*, [text](url),
+  // - / • / ◆ / ✓ — список, > blockquote, --- — hr,
+  // \n\n — новий параграф, \n всередині — <br>
+  function formatRichText(raw) {
+    if (!raw) return '';
+    const inline = (s) => {
+      let t = esc(s);
+      // Посилання [текст](url)
+      t = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, txt, url) =>
+        `<a href="${url}" target="_blank" rel="noopener">${txt}</a>`);
+      // **жирний**
+      t = t.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+      // __жирний__
+      t = t.replace(/__([^_\n]+)__/g, '<strong>$1</strong>');
+      // *курсив* (не плутати з **)
+      t = t.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
+      // _курсив_
+      t = t.replace(/(^|[^_])_([^_\n]+)_(?!_)/g, '$1<em>$2</em>');
+      return t;
+    };
+
+    // Розділяємо на блоки по подвійному переносу
+    const blocks = raw.replace(/\r\n/g, '\n').split(/\n\s*\n+/);
+    const out = [];
+
+    for (let block of blocks) {
+      block = block.replace(/^\n+|\n+$/g, '');
+      if (!block) continue;
+
+      // HR
+      if (/^-{3,}$|^\*{3,}$|^_{3,}$/.test(block.trim())) {
+        out.push('<hr>');
+        continue;
+      }
+      // Blockquote
+      if (/^>/.test(block)) {
+        const txt = block.split('\n').map(l => l.replace(/^>\s?/, '')).join('<br>');
+        out.push('<blockquote>' + inline(txt) + '</blockquote>');
+        continue;
+      }
+      // Заголовок
+      const hMatch = block.match(/^(#{1,4})\s+(.+)$/);
+      if (hMatch && !block.includes('\n')) {
+        const lvl = Math.min(hMatch[1].length + 1, 4);
+        out.push(`<h${lvl}>${inline(hMatch[2])}</h${lvl}>`);
+        continue;
+      }
+      // Список (- • ◆ ✓ ✦ * або 1. 2. 3.)
+      const lines = block.split('\n');
+      const isBulletList = lines.every(l => /^\s*[-•◆✓✦◆]\s+/.test(l) || /^\s*\*\s+/.test(l));
+      const isNumberedList = lines.every(l => /^\s*\d+[.)]\s+/.test(l));
+      if (isBulletList && lines.length > 0) {
+        out.push('<ul>' + lines.map(l =>
+          '<li>' + inline(l.replace(/^\s*[-•◆✓✦*]\s+/, '')) + '</li>'
+        ).join('') + '</ul>');
+        continue;
+      }
+      if (isNumberedList && lines.length > 0) {
+        out.push('<ol>' + lines.map(l =>
+          '<li>' + inline(l.replace(/^\s*\d+[.)]\s+/, '')) + '</li>'
+        ).join('') + '</ol>');
+        continue;
+      }
+      // Звичайний параграф — одинарні \n → <br>
+      out.push('<p>' + lines.map(inline).join('<br>') + '</p>');
+    }
+    return out.join('');
+  }
+
   // Витягуємо ID з URL: ?id=N
   const params = new URLSearchParams(window.location.search);
   const productId = parseInt(params.get('id'));
@@ -753,22 +878,42 @@ body:has(.modal:target) { overflow: hidden; }
     const videos = media.filter(m => m.type === 'video');
     if (videos.length > 0) {
       $('#product-videos-section').style.display = 'block';
-      $('#product-videos-grid').innerHTML = videos.map(v => `
-        <video controls preload="metadata" playsinline>
-          <source src="${esc(v.url)}" type="video/mp4">
-          Ваш браузер не підтримує відео.
-        </video>
-      `).join('');
+      // #t=0.5 — підказує браузеру показати кадр на 0.5 сек замість чорного нульового
+      $('#product-videos-grid').innerHTML = videos.map((v, idx) => {
+        const url = v.url + (v.url.includes('#') ? '' : '#t=0.5');
+        return `
+          <video controls preload="metadata" playsinline crossorigin="anonymous"
+                 id="prod-video-${idx}" style="background:#fbf7f4">
+            <source src="${esc(url)}" type="video/mp4">
+            Ваш браузер не підтримує відео.
+          </video>
+        `;
+      }).join('');
+      // Генеруємо poster з першого кадру через canvas (fallback якщо #t=0.5 не спрацював)
+      videos.forEach((_, idx) => {
+        const vid = document.getElementById('prod-video-' + idx);
+        if (!vid) return;
+        let postered = false;
+        const grabFrame = () => {
+          if (postered) return;
+          try {
+            const cnv = document.createElement('canvas');
+            cnv.width = vid.videoWidth || 720;
+            cnv.height = vid.videoHeight || 1280;
+            cnv.getContext('2d').drawImage(vid, 0, 0, cnv.width, cnv.height);
+            vid.poster = cnv.toDataURL('image/jpeg', 0.75);
+            postered = true;
+          } catch (e) { /* CORS */ }
+        };
+        vid.addEventListener('loadeddata', grabFrame, { once: true });
+        vid.addEventListener('seeked', grabFrame, { once: true });
+      });
     }
 
-    // Повний опис
+    // Повний опис — підтримує Markdown-формат (списки, заголовки, жирний, посилання, переноси)
     if (p.description) {
       $('#product-desc-section').style.display = 'block';
-      $('#product-description').innerHTML = p.description
-        .split(/\n\n+/)
-        .filter(par => par.trim())
-        .map(par => `<p>${esc(par.trim())}</p>`)
-        .join('');
+      $('#product-description').innerHTML = formatRichText(p.description);
     }
 
     // Характеристики
