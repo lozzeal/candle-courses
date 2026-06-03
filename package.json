@@ -1,0 +1,12 @@
+{
+  "name": "candle-courses",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Лендинг + магазин + адмінка для курсів свічковаріння (100candle.shop)",
+  "engines": {
+    "node": "20.x"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.16"
+  }
+}
