@@ -3456,7 +3456,7 @@ const BLOCK_DEFAULTS = {
   hero:    { badge: '', title: '', subtitle: '', button_text: 'Обрати цей курс' },
   text:    { title: '', title_accent: '', accent_position: 'after', subtitle: '', body: '' },
   program: { title: 'Програма', title_accent: 'курсу', accent_position: 'after', subtitle: '', items: [{ title: '', details: '' }] },
-  video:   { title: 'Відео', title_accent: 'про курс', accent_position: 'after', subtitle: '', url: '', caption: '' },
+  video:   { title: 'Відео', title_accent: 'про курс', accent_position: 'after', subtitle: '', url: '', caption: '', aspect_ratio: 'auto', size: 'medium', object_fit: 'contain', autoplay: false, loop: false, muted: false, controls: true },
   reviews: { title: 'Сотні позитивних', title_accent: 'відгуків', accent_position: 'after', subtitle: '', review_ids: [] },
   works:   { title: 'Роботи учнів', title_accent: 'після курсу', accent_position: 'after', subtitle: '', photos: [] },
   author:  { title: 'Про', title_accent: 'автора', accent_position: 'after', use_landing: true, name: '', text: '', items: [], photo: '' },
@@ -3653,11 +3653,51 @@ function renderBlockEditor(b, idx) {
       return titleWithAccent()
         + t('Підзаголовок', 'subtitle', d.subtitle)
         + renderItemsEditor(idx, d.items || [], 'items', ['title:Назва теми', 'details:Деталі (опц.)']);
-    case 'video':
+    case 'video': {
+      const sel = (label, key, current, options) => `
+        <div class="form-group" style="margin-top:10px">
+          <label style="font-size:12px;color:#666">${label}</label>
+          <select onchange="updateBlockField(${idx},'${key}',this.value)" style="width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;background:#fff">
+            ${options.map(o => `<option value="${o.v}" ${current === o.v ? 'selected' : ''}>${o.l}</option>`).join('')}
+          </select>
+        </div>`;
+      const chk = (label, key, current, hint = '') => `
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:8px;font-size:13px">
+          <input type="checkbox" ${current ? 'checked' : ''} onchange="updateBlockField(${idx},'${key}',this.checked)" style="width:16px;height:16px">
+          <span>${label}${hint ? ` <span style="color:#999;font-size:11px">${hint}</span>` : ''}</span>
+        </label>`;
       return titleWithAccent()
         + t('Підзаголовок', 'subtitle', d.subtitle)
         + renderVideoUploader(idx, d.url || '')
-        + t('Підпис під відео (опц.)', 'caption', d.caption);
+        + t('Підпис під відео (опц.)', 'caption', d.caption)
+        + `<div style="background:#f5f7f3;padding:12px;border-radius:10px;margin-top:14px">
+            <div style="font-size:12px;color:#555;font-weight:600;margin-bottom:6px">⚙️ Налаштування плеєра</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              ${sel('Формат кадру', 'aspect_ratio', d.aspect_ratio || 'auto', [
+                {v:'auto', l:'Авто (за відео) — рекомендовано'},
+                {v:'16-9', l:'16:9 — горизонтальне'},
+                {v:'9-16', l:'9:16 — вертикальне (Reels)'},
+                {v:'1-1',  l:'1:1 — квадрат'},
+                {v:'4-3',  l:'4:3 — класика'}
+              ])}
+              ${sel('Розмір блоку', 'size', d.size || 'medium', [
+                {v:'narrow', l:'Вузький (420px)'},
+                {v:'medium', l:'Середній (720px) — рекомендовано'},
+                {v:'wide',   l:'Широкий (980px)'}
+              ])}
+              ${sel('Заповнення (якщо є фіксований формат)', 'object_fit', d.object_fit || 'contain', [
+                {v:'contain', l:'Вписати (показати все)'},
+                {v:'cover',   l:'Заповнити (обрізати)'}
+              ])}
+            </div>
+            <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+              ${chk('Автозапуск', 'autoplay', d.autoplay, '(автоматично без звуку)')}
+              ${chk('Повторювати', 'loop', d.loop, '(зациклити)')}
+              ${chk('Без звуку', 'muted', d.muted)}
+              ${chk('Показати керування', 'controls', d.controls !== false)}
+            </div>
+          </div>`;
+    }
     case 'reviews':
       return titleWithAccent()
         + t('Підзаголовок', 'subtitle', d.subtitle)

@@ -247,25 +247,42 @@ img, video { display: block; max-width: 100%; }
 .program-item__details { color: #666; font-size: 14px; line-height: 1.5; }
 
 /* ===== VIDEO ===== */
-.cs-video {
-  max-width: 720px;
-  margin: 0 auto;
-}
+.cs-video { margin: 0 auto; }
+.cs-video--narrow { max-width: 420px; }
+.cs-video--medium { max-width: 720px; }
+.cs-video--wide   { max-width: 980px; }
 .cs-video__frame {
   position: relative;
   border-radius: 18px;
   overflow: hidden;
-  background: #f0eae6;
+  background: #0d0d0d;
   box-shadow: 0 10px 28px rgba(0,0,0,0.1);
-  aspect-ratio: 16/9;
 }
-.cs-video__frame iframe, .cs-video__frame video {
+.cs-video__frame--ratio-16-9 { aspect-ratio: 16/9; }
+.cs-video__frame--ratio-4-3  { aspect-ratio: 4/3; }
+.cs-video__frame--ratio-1-1  { aspect-ratio: 1/1; }
+.cs-video__frame--ratio-9-16 { aspect-ratio: 9/16; max-width: 380px; margin: 0 auto; }
+.cs-video__frame--ratio-auto video { position: relative; inset: auto; }
+.cs-video__frame iframe,
+.cs-video__frame:not(.cs-video__frame--ratio-auto) video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
   border: none;
+}
+.cs-video__frame video.fit-contain { object-fit: contain; background: #0d0d0d; }
+.cs-video__frame video.fit-cover { object-fit: cover; }
+.cs-video__frame--ratio-auto {
+  background: transparent;
+  box-shadow: none;
+}
+.cs-video__frame--ratio-auto video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.1);
 }
 .cs-video__caption {
   text-align: center;
@@ -779,23 +796,52 @@ body:has(.modal:target) { overflow: hidden; }
       </section>`;
     },
     video(d, ctx, idx) {
-      let frame = '';
       const url = d.url || '';
+      const ratio = d.aspect_ratio || 'auto';     // auto, 16-9, 4-3, 1-1, 9-16
+      const fit = d.object_fit || 'contain';      // contain / cover
+      const size = d.size || 'medium';            // narrow / medium / wide
+      const autoplay = !!d.autoplay;
+      const loop = !!d.loop;
+      const muted = autoplay || !!d.muted;
+      const controls = d.controls !== false;
       const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]+)/);
+      let frame = '';
+      let ratioClass = `cs-video__frame--ratio-${ratio}`;
       if (ytMatch) {
-        frame = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen loading="lazy"></iframe>`;
+        // YouTube: завжди заданий aspect-ratio (16:9 за замовч.)
+        if (ratio === 'auto') ratioClass = 'cs-video__frame--ratio-16-9';
+        const params = new URLSearchParams({
+          rel: '0', modestbranding: '1',
+          autoplay: autoplay ? '1' : '0',
+          mute: muted ? '1' : '0',
+          loop: loop ? '1' : '0',
+          ...(loop ? { playlist: ytMatch[1] } : {}),
+          controls: controls ? '1' : '0'
+        }).toString();
+        frame = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}?${params}" allowfullscreen allow="autoplay; encrypted-media" loading="lazy"></iframe>`;
       } else if (url) {
         const u = url + (url.includes('#') ? '' : '#t=0.5');
-        frame = `<video controls preload="metadata" playsinline src="${escAttr(u)}"></video>`;
+        const attrs = [
+          controls ? 'controls' : '',
+          autoplay ? 'autoplay' : '',
+          muted ? 'muted' : '',
+          loop ? 'loop' : '',
+          'playsinline',
+          'preload="metadata"',
+          'crossorigin="anonymous"'
+        ].filter(Boolean).join(' ');
+        const fitClass = `fit-${fit}`;
+        frame = `<video ${attrs} class="${fitClass}" src="${escAttr(u)}"></video>`;
       } else {
-        frame = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-size:14px">Відео не додано</div>`;
+        frame = `<div style="display:flex;align-items:center;justify-content:center;height:240px;color:#999;font-size:14px;background:#f5f0eb;border-radius:18px">Відео не додано</div>`;
+        ratioClass = '';
       }
       return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
         <div class="cs__inner">
           ${renderSectionTitle(d)}
           ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
-          <div class="cs-video">
-            <div class="cs-video__frame">${frame}</div>
+          <div class="cs-video cs-video--${size}">
+            <div class="cs-video__frame ${ratioClass}">${frame}</div>
             ${d.caption ? `<p class="cs-video__caption">${esc(d.caption)}</p>` : ''}
           </div>
         </div>
