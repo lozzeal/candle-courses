@@ -797,6 +797,16 @@ body:has(.modal:target) { overflow: hidden; }
   function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   function escAttr(s) { return esc(s); }
 
+  // Просте форматування переносів для підзаголовків/підписів:
+  //   \n\n → новий абзац (</p><p>)
+  //   \n   → <br>
+  function escMulti(s) {
+    if (!s) return '';
+    return esc(s)
+      .replace(/\n\s*\n+/g, '</p><p>')
+      .replace(/\n/g, '<br>');
+  }
+
   const root = document.getElementById('page-root');
   const params = new URLSearchParams(window.location.search);
   const slug = params.get('slug') || params.get('course');
@@ -905,7 +915,7 @@ body:has(.modal:target) { overflow: hidden; }
           <div class="course-hero__inner">
             ${d.badge || ctx.course.badge ? `<span class="course-hero__badge">${esc(d.badge || ctx.course.badge)}</span>` : ''}
             <h1 class="course-hero__title">${esc(d.title || ctx.course.title)}</h1>
-            ${d.subtitle ? `<p class="course-hero__subtitle">${esc(d.subtitle)}</p>` : ''}
+            ${d.subtitle ? `<p class="course-hero__subtitle">${escMulti(d.subtitle)}</p>` : ''}
             <div class="course-hero__price">
               ${oldPrice ? `<span class="course-hero__price-old">${oldPrice} ₴</span>` : ''}
               <span class="course-hero__price-now">${price} ₴</span>
@@ -920,7 +930,7 @@ body:has(.modal:target) { overflow: hidden; }
       return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
         <div class="cs__inner">
           ${renderSectionTitle(d)}
-          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
+          ${d.subtitle ? `<p class="cs__sub">${escMulti(d.subtitle)}</p>` : ''}
           <div class="cs-text">${formatRichText(d.body || '')}</div>
         </div>
       </section>`;
@@ -930,7 +940,7 @@ body:has(.modal:target) { overflow: hidden; }
       return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
         <div class="cs__inner">
           ${renderSectionTitle(d, { title: 'Програма', title_accent: 'курсу' })}
-          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
+          ${d.subtitle ? `<p class="cs__sub">${escMulti(d.subtitle)}</p>` : ''}
           <div class="program-list">
             ${items.map((it, i) => `
               <div class="program-item">
@@ -989,10 +999,10 @@ body:has(.modal:target) { overflow: hidden; }
       return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
         <div class="cs__inner">
           ${renderSectionTitle(d)}
-          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
+          ${d.subtitle ? `<p class="cs__sub">${escMulti(d.subtitle)}</p>` : ''}
           <div class="cs-video cs-video--${size}">
             <div class="cs-video__frame ${ratioClass}">${frame}</div>
-            ${d.caption ? `<p class="cs-video__caption">${esc(d.caption)}</p>` : ''}
+            ${d.caption ? `<p class="cs-video__caption">${escMulti(d.caption)}</p>` : ''}
           </div>
         </div>
       </section>`;
@@ -1012,7 +1022,7 @@ body:has(.modal:target) { overflow: hidden; }
       return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
         <div style="text-align:center;margin-bottom:36px;padding:0 16px">
           ${renderSectionTitle(d, { title: 'Сотні позитивних', title_accent: 'відгуків' })}
-          ${d.subtitle ? `<p class="cs__sub" style="margin-bottom:0">${esc(d.subtitle)}</p>` : ''}
+          ${d.subtitle ? `<p class="cs__sub" style="margin-bottom:0">${escMulti(d.subtitle)}</p>` : ''}
         </div>
         <div class="marquee-wrap">
           <div class="marquee-track" style="animation-duration:${duration}s">${track}</div>
@@ -1030,7 +1040,7 @@ body:has(.modal:target) { overflow: hidden; }
       return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
         <div style="text-align:center;margin-bottom:36px;padding:0 16px">
           ${renderSectionTitle(d, { title: 'Роботи учнів', title_accent: 'після курсу' })}
-          ${d.subtitle ? `<p class="cs__sub" style="margin-bottom:0">${esc(d.subtitle)}</p>` : ''}
+          ${d.subtitle ? `<p class="cs__sub" style="margin-bottom:0">${escMulti(d.subtitle)}</p>` : ''}
         </div>
         <div class="marquee-wrap">
           <div class="marquee-track" style="animation-duration:${duration}s">${track}</div>
@@ -1065,7 +1075,7 @@ body:has(.modal:target) { overflow: hidden; }
       return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
         <div class="cs__inner">
           ${renderSectionTitle(d, { title: 'Цей курс', title_accent: 'для вас' })}
-          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
+          ${d.subtitle ? `<p class="cs__sub">${escMulti(d.subtitle)}</p>` : ''}
           <div class="audience-grid">
             ${items.map((it, i) => `
               <div class="audience-item">
@@ -1083,7 +1093,7 @@ body:has(.modal:target) { overflow: hidden; }
       return `<section class="cs ${idx % 2 ? 'cs--alt' : 'cs--accent'}">
         <div class="cs__inner">
           ${renderSectionTitle(d, { title: 'Після курсу', title_accent: 'ви зможете' })}
-          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
+          ${d.subtitle ? `<p class="cs__sub">${escMulti(d.subtitle)}</p>` : ''}
           <div class="outcomes-wrap">
             <div class="outcomes-grid">
               ${items.map(it => `
@@ -1103,7 +1113,7 @@ body:has(.modal:target) { overflow: hidden; }
       return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
         <div class="cs__inner">
           ${renderSectionTitle(d, { title: 'Питання', title_accent: 'та відповіді' })}
-          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
+          ${d.subtitle ? `<p class="cs__sub">${escMulti(d.subtitle)}</p>` : ''}
           <div class="faq-list">
             ${items.map(it => `
               <details class="faq-item">
@@ -1120,7 +1130,7 @@ body:has(.modal:target) { overflow: hidden; }
       return `<section class="cs ${idx % 2 ? 'cs--alt' : 'cs--accent'}">
         <div class="cs__inner">
           ${renderSectionTitle(d)}
-          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
+          ${d.subtitle ? `<p class="cs__sub">${escMulti(d.subtitle)}</p>` : ''}
           <div class="info-grid">
             ${items.map(i => `
               <div class="info-item">
@@ -1138,7 +1148,7 @@ body:has(.modal:target) { overflow: hidden; }
           <div class="cta-block">
             <div class="cta-block__inner">
               <h2 class="cta-block__title">${esc(d.title || 'Готові почати?')}</h2>
-              ${d.subtitle ? `<p class="cta-block__sub">${esc(d.subtitle)}</p>` : ''}
+              ${d.subtitle ? `<p class="cta-block__sub">${escMulti(d.subtitle)}</p>` : ''}
               <div class="cta-block__btn-wrap">
                 <a href="#order" class="cta-btn">${esc(d.button_text || 'Обрати цей курс')}</a>
               </div>
