@@ -1346,6 +1346,15 @@ p.course-card__price { margin-top: auto; }
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
+.course-card__cta-arrow {
+  display: inline-block;
+  margin-left: 4px;
+  transition: transform 0.2s ease;
+}
+.course-card__cta--detail:hover .course-card__cta-arrow {
+  transform: translateX(4px);
+}
+
 .course-card__cta:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 22px rgba(56, 163, 13, 0.35);
@@ -3850,7 +3859,7 @@ body:has(.modal:target) { overflow: hidden; }
           return `<p class="course-card__price">${p} ₴</p>`;
         })()}
         ${c.page_enabled
-          ? `<a href="course.html?slug=${escAttr(slug)}" class="course-card__cta">${esc(c.cta_text || 'Обрати цей курс')}</a>`
+          ? `<a href="course.html?slug=${escAttr(slug)}" class="course-card__cta course-card__cta--detail">Детальніше про курс <span class="course-card__cta-arrow">→</span></a>`
           : `<a href="#${modalId}" class="course-card__cta">${esc(c.cta_text || 'Обрати цей курс')}</a>`}
       </div>
     `;
