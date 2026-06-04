@@ -1479,6 +1479,65 @@ html, body {
   </div>
 </aside>
 
+<!-- ====================== DRAWER: РЕДАКТОР СТОРІНКИ КУРСУ ====================== -->
+<aside class="drawer" id="drawer-course-page" style="max-width:780px">
+  <div class="drawer-header">
+    <div class="drawer-title">📄 Сторінка курсу: <span id="cpe-course-title">…</span></div>
+    <button class="drawer-close" id="cpe-close" type="button">&times;</button>
+  </div>
+  <div class="drawer-body">
+    <!-- Page enabled toggle -->
+    <div class="form-row form-row--single" style="background:#f5f7f3;padding:14px;border-radius:10px;margin-bottom:18px">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600">
+        <input type="checkbox" id="cpe-enabled" style="width:18px;height:18px">
+        <span>Активувати окрему сторінку курсу</span>
+      </label>
+      <p class="form-help" style="margin-top:6px;margin-left:28px">
+        Якщо вимкнено — кнопка «Обрати курс» на лендингу одразу відкриває форму оплати.<br>
+        Якщо увімкнено — веде на <code>/course.html?slug=...</code> з повним описом.
+      </p>
+    </div>
+
+    <div class="form-row form-row--single">
+      <div class="form-group">
+        <label>SEO-опис сторінки (для Google, опційно)</label>
+        <textarea id="cpe-meta" rows="2" placeholder="Короткий опис курсу 150-160 символів"></textarea>
+      </div>
+    </div>
+
+    <p class="form-section-title">Блоки сторінки</p>
+    <p class="form-help">Контент сторінки. Стрілки ↑↓ змінюють порядок, око — приховує блок без видалення.</p>
+
+    <div id="cpe-blocks-list"></div>
+
+    <div style="margin-top:14px">
+      <select id="cpe-add-type" style="padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;margin-right:8px">
+        <option value="">+ Додати блок…</option>
+        <option value="hero">🎬 Hero (заголовок + кнопка)</option>
+        <option value="text">📝 Текстовий блок</option>
+        <option value="program">📋 Програма курсу</option>
+        <option value="video">🎥 Відео про курс</option>
+        <option value="reviews">⭐ Відгуки слайдером</option>
+        <option value="works">🖼️ Галерея робіт учнів</option>
+        <option value="author">👤 Про автора</option>
+        <option value="info">ℹ️ Інфо-блок (фішки)</option>
+        <option value="cta">🛒 CTA — заклик купити</option>
+      </select>
+      <button class="btn-secondary" id="cpe-add-btn" type="button">Додати</button>
+    </div>
+
+    <div style="margin-top:24px;padding:14px;background:#fef9f0;border-radius:10px;font-size:13px;color:#7a5e2f">
+      <strong>💡 Підказка:</strong> Для тексту підтримується форматування **жирний**, *курсив*, # заголовок, - список, > цитата, [текст](url). Між абзацами — порожній рядок.
+    </div>
+  </div>
+  <div class="drawer-footer">
+    <a id="cpe-preview" href="#" target="_blank" rel="noopener" class="btn-secondary" style="text-decoration:none">👁️ Переглянути сторінку</a>
+    <div style="flex:1"></div>
+    <button class="btn-secondary" id="cpe-cancel" type="button">Скасувати</button>
+    <button class="btn-save" id="cpe-save" type="button">Зберегти</button>
+  </div>
+</aside>
+
 <!-- ====================== DRAWER: КАТЕГОРІЯ ====================== -->
 <aside class="drawer" id="drawer-category">
   <div class="drawer-header">
@@ -3096,6 +3155,7 @@ function renderLandingCourses() {
         <div style="font-weight:700;color:var(--accent);font-size:18px;font-family:'Cormorant Garamond',serif">${c.price} ₴</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn-action" onclick="copyCourseThanksLink(${c.id}, '${escapeAttr(c.slug || '')}', event)" title="Скопіювати посилання на сторінку доступу">🔗 Доступ</button>
+          <button class="btn-action" onclick="openCoursePageEditor(${c.id})" title="Редагувати окрему сторінку курсу">📄 Сторінка${c.page_enabled ? ' ✅' : ''}</button>
           <button class="btn-action" onclick="toggleCourseVisibility(${c.id})" title="${toggleTitle}">${toggleEmoji} ${isPublished ? 'Приховати' : 'Опублікувати'}</button>
           <button class="btn-action" onclick="editLandingCourse(${c.id})">✏️ Редагувати</button>
           <button class="btn-action btn-action--danger" onclick="deleteLandingCourse(${c.id})">🗑️</button>
@@ -3291,6 +3351,453 @@ $('#btn-lc-save').addEventListener('click', async () => {
     }
     closeLandingCourseDrawer();
     await loadLandingCourses();
+  } catch (err) {
+    alert('Помилка: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Зберегти';
+  }
+});
+
+// ============================================================
+// ===== РЕДАКТОР СТОРІНКИ КУРСУ (page_blocks) =====
+// ============================================================
+const cpe = {
+  course: null,
+  blocks: [],
+  enabled: false,
+  metaDescription: '',
+  allReviews: [],
+  uploading: false
+};
+
+const BLOCK_DEFAULTS = {
+  hero:    { badge: '', title: '', subtitle: '', button_text: 'Обрати цей курс' },
+  text:    { title: '', subtitle: '', body: '' },
+  program: { title: 'Програма курсу', subtitle: '', items: [{ title: '', details: '' }] },
+  video:   { title: 'Відео про курс', subtitle: '', url: '', caption: '' },
+  reviews: { title: 'Сотні позитивних відгуків', subtitle: '', review_ids: [] },
+  works:   { title: 'Роботи учнів', subtitle: '', photos: [] },
+  author:  { title: 'Про автора', use_landing: true, name: '', text: '', items: [], photo: '' },
+  info:    { title: 'Що отримуєте', subtitle: '', items: [{ icon: '📚', text: '' }] },
+  cta:     { title: 'Готові почати?', subtitle: '', button_text: 'Обрати цей курс' }
+};
+
+const BLOCK_LABELS = {
+  hero: '🎬 Hero',
+  text: '📝 Текст',
+  program: '📋 Програма',
+  video: '🎥 Відео',
+  reviews: '⭐ Відгуки',
+  works: '🖼️ Роботи учнів',
+  author: '👤 Про автора',
+  info: 'ℹ️ Інфо-блок',
+  cta: '🛒 CTA'
+};
+
+window.openCoursePageEditor = async function(courseId) {
+  const course = allLandingCourses.find(c => c.id === courseId);
+  if (!course) return;
+  cpe.course = course;
+  cpe.blocks = Array.isArray(course.page_blocks) ? JSON.parse(JSON.stringify(course.page_blocks)) : [];
+  cpe.enabled = !!course.page_enabled;
+  cpe.metaDescription = course.page_meta_description || '';
+
+  // Завантажуємо відгуки, щоб показати у блоці reviews
+  try {
+    const { data } = await supa.from('landing_reviews').select('id,image_path').order('sort_order');
+    cpe.allReviews = data || [];
+  } catch { cpe.allReviews = []; }
+
+  $('#cpe-course-title').textContent = course.title;
+  $('#cpe-enabled').checked = cpe.enabled;
+  $('#cpe-meta').value = cpe.metaDescription;
+
+  const previewLink = $('#cpe-preview');
+  previewLink.href = `/course.html?slug=${encodeURIComponent(course.slug || '')}`;
+
+  renderBlocksList();
+  $('#drawer-course-page').classList.add('is-open');
+  $('#drawer-overlay').classList.add('is-open');
+};
+
+function closeCpe() {
+  $('#drawer-course-page').classList.remove('is-open');
+  $('#drawer-overlay').classList.remove('is-open');
+}
+
+function genBlockId() { return 'b-' + Math.random().toString(36).slice(2, 9); }
+
+function renderBlocksList() {
+  const list = $('#cpe-blocks-list');
+  if (cpe.blocks.length === 0) {
+    list.innerHTML = '<div class="empty-state" style="padding:30px"><p>Блоків ще немає. Оберіть тип знизу і натисніть «Додати».</p></div>';
+    return;
+  }
+  list.innerHTML = cpe.blocks.map((b, idx) => renderBlockRow(b, idx)).join('');
+}
+
+function renderBlockRow(b, idx) {
+  const label = BLOCK_LABELS[b.type] || b.type;
+  const hidden = b.visible === false;
+  const summary = blockSummary(b);
+  const isExpanded = b._expanded;
+  return `
+    <div style="background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;${hidden ? 'opacity:0.5' : ''}">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer" onclick="toggleBlockExpand(${idx})">
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <button type="button" class="btn-action" style="padding:2px 6px;font-size:11px" onclick="moveBlock(${idx},-1);event.stopPropagation()" ${idx === 0 ? 'disabled' : ''}>▲</button>
+          <button type="button" class="btn-action" style="padding:2px 6px;font-size:11px" onclick="moveBlock(${idx},1);event.stopPropagation()" ${idx === cpe.blocks.length - 1 ? 'disabled' : ''}>▼</button>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:14px">${label}</div>
+          <div style="font-size:12px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(summary)}</div>
+        </div>
+        <button type="button" class="btn-action" onclick="toggleBlockVisible(${idx});event.stopPropagation()" title="${hidden ? 'Показати' : 'Приховати'}">${hidden ? '🔒' : '👁️'}</button>
+        <button type="button" class="btn-action" onclick="toggleBlockExpand(${idx});event.stopPropagation()">${isExpanded ? '🔼' : '✏️'}</button>
+        <button type="button" class="btn-action btn-action--danger" onclick="deleteBlock(${idx});event.stopPropagation()">🗑️</button>
+      </div>
+      ${isExpanded ? `<div style="padding:0 14px 14px;border-top:1px solid var(--border)">${renderBlockEditor(b, idx)}</div>` : ''}
+    </div>
+  `;
+}
+
+function blockSummary(b) {
+  const d = b.data || {};
+  switch (b.type) {
+    case 'hero':    return d.title || d.subtitle || '(заголовок не заданий)';
+    case 'text':    return d.title || (d.body || '').slice(0, 80);
+    case 'program': return `${d.title || 'Програма'} · ${(d.items || []).length} пунктів`;
+    case 'video':   return d.title || d.url || '(URL не заданий)';
+    case 'reviews': return `${d.title || 'Відгуки'} · ${(d.review_ids || []).length} вибрано`;
+    case 'works':   return `${d.title || 'Роботи'} · ${(d.photos || []).length} фото`;
+    case 'author':  return d.use_landing ? 'Автор з головної' : (d.name || d.title || 'Про автора');
+    case 'info':    return `${d.title || 'Інфо'} · ${(d.items || []).length} пунктів`;
+    case 'cta':     return d.title || d.button_text || 'CTA';
+    default: return '';
+  }
+}
+
+window.toggleBlockExpand = function(idx) {
+  cpe.blocks.forEach((b, i) => { if (i !== idx) b._expanded = false; });
+  cpe.blocks[idx]._expanded = !cpe.blocks[idx]._expanded;
+  renderBlocksList();
+};
+
+window.toggleBlockVisible = function(idx) {
+  cpe.blocks[idx].visible = cpe.blocks[idx].visible === false;
+  renderBlocksList();
+};
+
+window.moveBlock = function(idx, dir) {
+  const target = idx + dir;
+  if (target < 0 || target >= cpe.blocks.length) return;
+  [cpe.blocks[idx], cpe.blocks[target]] = [cpe.blocks[target], cpe.blocks[idx]];
+  renderBlocksList();
+};
+
+window.deleteBlock = function(idx) {
+  if (!confirm('Видалити блок?')) return;
+  cpe.blocks.splice(idx, 1);
+  renderBlocksList();
+};
+
+// ===== EDITORS =====
+function renderBlockEditor(b, idx) {
+  const d = b.data || {};
+  const t = (label, key, value, type='text') => `
+    <div class="form-group" style="margin-top:10px">
+      <label style="font-size:12px;color:#666">${label}</label>
+      ${type === 'textarea'
+        ? `<textarea rows="4" oninput="updateBlockField(${idx},'${key}',this.value)">${escapeHtml(value || '')}</textarea>`
+        : `<input type="${type}" value="${escapeAttr(value || '')}" oninput="updateBlockField(${idx},'${key}',this.value)">`}
+    </div>`;
+
+  switch (b.type) {
+    case 'hero':
+      return t('Бейдж (необов\'язково)', 'badge', d.badge)
+        + t('Заголовок', 'title', d.title)
+        + t('Підзаголовок (опис під заголовком)', 'subtitle', d.subtitle, 'textarea')
+        + t('Текст на кнопці', 'button_text', d.button_text);
+    case 'text':
+      return t('Заголовок (опційно)', 'title', d.title)
+        + t('Підзаголовок (опійно)', 'subtitle', d.subtitle)
+        + t('Текст блоку (Markdown)', 'body', d.body, 'textarea');
+    case 'program':
+      return t('Заголовок', 'title', d.title)
+        + t('Підзаголовок', 'subtitle', d.subtitle)
+        + renderItemsEditor(idx, d.items || [], 'items', ['title:Назва теми', 'details:Деталі (опц.)']);
+    case 'video':
+      return t('Заголовок', 'title', d.title)
+        + t('Підзаголовок', 'subtitle', d.subtitle)
+        + t('URL відео (YouTube або mp4)', 'url', d.url)
+        + t('Підпис під відео (опц.)', 'caption', d.caption);
+    case 'reviews':
+      return t('Заголовок', 'title', d.title)
+        + t('Підзаголовок', 'subtitle', d.subtitle)
+        + renderReviewsPicker(idx, d.review_ids || []);
+    case 'works':
+      return t('Заголовок', 'title', d.title)
+        + t('Підзаголовок', 'subtitle', d.subtitle)
+        + renderWorksEditor(idx, d.photos || []);
+    case 'author':
+      return t('Заголовок секції', 'title', d.title)
+        + `<div class="form-group" style="margin-top:10px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+              <input type="checkbox" ${d.use_landing ? 'checked' : ''} onchange="updateBlockField(${idx},'use_landing',this.checked)">
+              <span style="font-size:13px">Використати фото і текст автора з головної сторінки</span>
+            </label>
+          </div>`
+        + (d.use_landing ? '' :
+          t('Імʼя автора', 'name', d.name)
+          + t('Текст про автора (Markdown)', 'text', d.text, 'textarea')
+          + t('Шлях до фото (URL або path)', 'photo', d.photo)
+          + renderItemsEditor(idx, d.items || [], 'items_str', ['__str:Пункти списку (по одному на рядок)']));
+    case 'info':
+      return t('Заголовок', 'title', d.title)
+        + t('Підзаголовок', 'subtitle', d.subtitle)
+        + renderItemsEditor(idx, d.items || [], 'items', ['icon:Іконка (emoji)', 'text:Текст пункту']);
+    case 'cta':
+      return t('Заголовок (велике)', 'title', d.title)
+        + t('Підзаголовок', 'subtitle', d.subtitle)
+        + t('Текст на кнопці', 'button_text', d.button_text);
+  }
+  return '';
+}
+
+function renderItemsEditor(blockIdx, items, key, fields) {
+  // fields формат: ['key:label', 'key:label']
+  // або '__str' для простого списку рядків
+  const isStringList = fields[0] && fields[0].startsWith('__str:');
+  if (isStringList) {
+    const value = Array.isArray(items) ? items.join('\n') : '';
+    return `<div class="form-group" style="margin-top:10px">
+      <label style="font-size:12px;color:#666">${fields[0].split(':')[1]}</label>
+      <textarea rows="4" oninput="updateBlockField(${blockIdx},'items',this.value.split('\\n').filter(s=>s.trim()))">${escapeHtml(value)}</textarea>
+    </div>`;
+  }
+  const fieldDefs = fields.map(f => { const [k, l] = f.split(':'); return { k, l }; });
+  const rows = items.map((it, i) => `
+    <div style="display:flex;gap:8px;margin-bottom:8px;align-items:flex-start;background:#f8f6f3;padding:10px;border-radius:8px">
+      <div style="flex:1">
+        ${fieldDefs.map(f => `
+          <div style="margin-bottom:6px">
+            <label style="font-size:11px;color:#777">${f.l}</label>
+            <input type="text" value="${escapeAttr(it[f.k] || '')}" oninput="updateItemField(${blockIdx},${i},'${f.k}',this.value)" style="width:100%;padding:6px 9px;border:1px solid #e0dbd8;border-radius:6px;font-size:13px">
+          </div>
+        `).join('')}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <button type="button" class="btn-action" style="padding:3px 6px" onclick="moveItem(${blockIdx},${i},-1)" ${i === 0 ? 'disabled' : ''}>▲</button>
+        <button type="button" class="btn-action" style="padding:3px 6px" onclick="moveItem(${blockIdx},${i},1)" ${i === items.length - 1 ? 'disabled' : ''}>▼</button>
+        <button type="button" class="btn-action btn-action--danger" style="padding:3px 6px" onclick="deleteItem(${blockIdx},${i})">×</button>
+      </div>
+    </div>
+  `).join('');
+  return `<div class="form-group" style="margin-top:10px">
+    <label style="font-size:12px;color:#666">Пункти</label>
+    ${rows}
+    <button type="button" class="btn-secondary" style="margin-top:6px" onclick="addItem(${blockIdx},${JSON.stringify(fieldDefs.map(f=>f.k)).replace(/"/g,'&quot;')})">+ Додати пункт</button>
+  </div>`;
+}
+
+window.updateBlockField = function(idx, key, value) {
+  if (!cpe.blocks[idx].data) cpe.blocks[idx].data = {};
+  cpe.blocks[idx].data[key] = value;
+  // Оновлюємо summary (тільки видиму частину, без повного re-render щоб не втратити focus)
+  const list = $('#cpe-blocks-list');
+  if (list && list.children[idx]) {
+    const summaryEl = list.children[idx].querySelector('div[style*="text-overflow"]');
+    if (summaryEl) summaryEl.textContent = blockSummary(cpe.blocks[idx]);
+  }
+};
+
+window.updateItemField = function(blockIdx, itemIdx, key, value) {
+  const b = cpe.blocks[blockIdx];
+  if (!b.data.items) b.data.items = [];
+  if (!b.data.items[itemIdx]) b.data.items[itemIdx] = {};
+  b.data.items[itemIdx][key] = value;
+};
+
+window.moveItem = function(blockIdx, itemIdx, dir) {
+  const items = cpe.blocks[blockIdx].data.items || [];
+  const t = itemIdx + dir;
+  if (t < 0 || t >= items.length) return;
+  [items[itemIdx], items[t]] = [items[t], items[itemIdx]];
+  cpe.blocks[blockIdx]._expanded = true;
+  renderBlocksList();
+};
+
+window.deleteItem = function(blockIdx, itemIdx) {
+  cpe.blocks[blockIdx].data.items.splice(itemIdx, 1);
+  cpe.blocks[blockIdx]._expanded = true;
+  renderBlocksList();
+};
+
+window.addItem = function(blockIdx, fieldKeys) {
+  const keys = typeof fieldKeys === 'string' ? JSON.parse(fieldKeys.replace(/&quot;/g, '"')) : fieldKeys;
+  const newItem = {};
+  keys.forEach(k => { newItem[k] = ''; });
+  if (!cpe.blocks[blockIdx].data.items) cpe.blocks[blockIdx].data.items = [];
+  cpe.blocks[blockIdx].data.items.push(newItem);
+  cpe.blocks[blockIdx]._expanded = true;
+  renderBlocksList();
+};
+
+// ===== Reviews picker =====
+function renderReviewsPicker(idx, selectedIds) {
+  if (!cpe.allReviews.length) {
+    return '<p class="form-help">Спочатку додайте відгуки на вкладці «Відгуки».</p>';
+  }
+  const isAll = selectedIds.length === 0;
+  return `
+    <div class="form-group" style="margin-top:10px">
+      <label style="font-size:12px;color:#666">Які відгуки показувати</label>
+      <label style="display:block;margin-bottom:8px;cursor:pointer;font-size:13px">
+        <input type="checkbox" ${isAll ? 'checked' : ''} onchange="setReviewsAll(${idx},this.checked)">
+        Усі відгуки (рекомендовано)
+      </label>
+      ${isAll ? '' : `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;padding:8px;background:#f8f6f3;border-radius:8px;max-height:240px;overflow-y:auto">
+        ${cpe.allReviews.map(r => {
+          const url = r.image_path && (r.image_path.startsWith('http') ? r.image_path : '/' + r.image_path);
+          const checked = selectedIds.includes(r.id);
+          return `<label style="cursor:pointer;display:block;position:relative;border:2px solid ${checked ? 'var(--accent)' : 'transparent'};border-radius:6px;overflow:hidden">
+            <input type="checkbox" ${checked ? 'checked' : ''} style="position:absolute;top:4px;left:4px;z-index:2" onchange="toggleReview(${idx},${r.id},this.checked)">
+            ${url ? `<img src="${escapeAttr(url)}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block">` : `<div style="aspect-ratio:1;background:#ddd"></div>`}
+          </label>`;
+        }).join('')}
+      </div>`}
+    </div>
+  `;
+}
+
+window.setReviewsAll = function(idx, isAll) {
+  cpe.blocks[idx].data.review_ids = isAll ? [] : cpe.allReviews.map(r => r.id);
+  cpe.blocks[idx]._expanded = true;
+  renderBlocksList();
+};
+
+window.toggleReview = function(idx, reviewId, checked) {
+  const arr = cpe.blocks[idx].data.review_ids || [];
+  const set = new Set(arr);
+  if (checked) set.add(reviewId); else set.delete(reviewId);
+  cpe.blocks[idx].data.review_ids = Array.from(set);
+};
+
+// ===== Works (галерея) editor =====
+function renderWorksEditor(idx, photos) {
+  const items = photos.map((p, i) => {
+    const url = p.startsWith('http') ? p : '/' + p;
+    return `<div style="position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;background:#f0eae6;border:1px solid var(--border)">
+      <img src="${escapeAttr(url)}" style="width:100%;height:100%;object-fit:cover" alt="">
+      <div style="position:absolute;top:4px;right:4px;display:flex;gap:3px">
+        <button type="button" class="btn-action" style="padding:3px 6px;font-size:11px;background:rgba(255,255,255,0.95)" onclick="moveWork(${idx},${i},-1)" ${i === 0 ? 'disabled' : ''}>◀</button>
+        <button type="button" class="btn-action" style="padding:3px 6px;font-size:11px;background:rgba(255,255,255,0.95)" onclick="moveWork(${idx},${i},1)" ${i === photos.length - 1 ? 'disabled' : ''}>▶</button>
+        <button type="button" class="btn-action btn-action--danger" style="padding:3px 6px;font-size:11px" onclick="deleteWork(${idx},${i})">×</button>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="form-group" style="margin-top:10px">
+    <label style="font-size:12px;color:#666">Фото робіт учнів</label>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:10px">
+      ${items || '<div style="grid-column:1/-1;text-align:center;padding:20px;color:#999">Поки фото не додано</div>'}
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <input type="file" id="cpe-works-upload-${idx}" accept="image/*" multiple style="display:none" onchange="uploadWorks(${idx},this.files)">
+      <button type="button" class="btn-secondary" onclick="document.getElementById('cpe-works-upload-${idx}').click()">📤 Завантажити фото</button>
+      <span style="font-size:12px;color:#999">або</span>
+      <input type="text" id="cpe-works-url-${idx}" placeholder="https://..." style="flex:1;min-width:160px;padding:8px 10px;border:1px solid #e0dbd8;border-radius:8px;font-size:13px">
+      <button type="button" class="btn-secondary" onclick="addWorkByUrl(${idx})">+ Додати URL</button>
+    </div>
+    <p class="form-help" style="margin-top:6px">Можна завантажити одразу кілька фото. Перетягуйте ◀▶ щоб змінити порядок.</p>
+  </div>`;
+}
+
+window.moveWork = function(idx, i, dir) {
+  const arr = cpe.blocks[idx].data.photos;
+  const t = i + dir;
+  if (t < 0 || t >= arr.length) return;
+  [arr[i], arr[t]] = [arr[t], arr[i]];
+  cpe.blocks[idx]._expanded = true;
+  renderBlocksList();
+};
+
+window.deleteWork = function(idx, i) {
+  cpe.blocks[idx].data.photos.splice(i, 1);
+  cpe.blocks[idx]._expanded = true;
+  renderBlocksList();
+};
+
+window.addWorkByUrl = function(idx) {
+  const input = document.getElementById(`cpe-works-url-${idx}`);
+  const url = (input?.value || '').trim();
+  if (!url) return;
+  if (!cpe.blocks[idx].data.photos) cpe.blocks[idx].data.photos = [];
+  cpe.blocks[idx].data.photos.push(url);
+  cpe.blocks[idx]._expanded = true;
+  renderBlocksList();
+};
+
+window.uploadWorks = async function(idx, files) {
+  if (!files || !files.length) return;
+  cpe.uploading = true;
+  try {
+    for (const file of files) {
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+      const path = `course-works/${cpe.course.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+      const { error } = await supa.storage.from('public').upload(path, file, { contentType: file.type, upsert: false });
+      if (error) throw error;
+      const { data: pub } = supa.storage.from('public').getPublicUrl(path);
+      if (!cpe.blocks[idx].data.photos) cpe.blocks[idx].data.photos = [];
+      cpe.blocks[idx].data.photos.push(pub.publicUrl);
+    }
+    cpe.blocks[idx]._expanded = true;
+    renderBlocksList();
+  } catch (e) {
+    alert('Помилка завантаження: ' + e.message);
+  } finally {
+    cpe.uploading = false;
+  }
+};
+
+// ===== Додати блок =====
+$('#cpe-add-btn').addEventListener('click', () => {
+  const type = $('#cpe-add-type').value;
+  if (!type) return;
+  cpe.blocks.push({
+    id: genBlockId(),
+    type,
+    visible: true,
+    data: JSON.parse(JSON.stringify(BLOCK_DEFAULTS[type] || {}))
+  });
+  $('#cpe-add-type').value = '';
+  renderBlocksList();
+});
+
+// Закриття
+$('#cpe-close').addEventListener('click', closeCpe);
+$('#cpe-cancel').addEventListener('click', closeCpe);
+
+// Збереження
+$('#cpe-save').addEventListener('click', async () => {
+  const btn = $('#cpe-save');
+  btn.disabled = true;
+  btn.textContent = 'Зберігаю…';
+  try {
+    // Прибираємо _expanded перед збереженням
+    const cleanBlocks = cpe.blocks.map(b => {
+      const { _expanded, ...rest } = b;
+      return rest;
+    });
+    const payload = {
+      page_blocks: cleanBlocks,
+      page_enabled: $('#cpe-enabled').checked,
+      page_meta_description: $('#cpe-meta').value.trim() || null
+    };
+    const { error } = await supa.from('landing_courses').update(payload).eq('id', cpe.course.id);
+    if (error) throw error;
+    await loadLandingCourses();
+    closeCpe();
   } catch (err) {
     alert('Помилка: ' + err.message);
   } finally {
