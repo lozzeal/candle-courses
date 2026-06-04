@@ -3858,9 +3858,16 @@ body:has(.modal:target) { overflow: hidden; }
           }
           return `<p class="course-card__price">${p} ₴</p>`;
         })()}
-        ${c.page_enabled
-          ? `<a href="course.html?slug=${escAttr(slug)}" class="course-card__cta course-card__cta--detail">Детальніше про курс <span class="course-card__cta-arrow">→</span></a>`
-          : `<a href="#${modalId}" class="course-card__cta">${esc(c.cta_text || 'Обрати цей курс')}</a>`}
+        ${(() => {
+          // Якщо текст кнопки вже містить стрілку — не додаємо ще одну
+          const rawText = (c.cta_text || (c.page_enabled ? 'Детальніше про курс' : 'Обрати цей курс')).trim();
+          const hasArrow = /[→➜⟶➔]/.test(rawText);
+          const text = rawText.replace(/\s*[→➜⟶➔]\s*$/, '');
+          if (c.page_enabled) {
+            return `<a href="course.html?slug=${escAttr(slug)}" class="course-card__cta course-card__cta--detail">${esc(text)} <span class="course-card__cta-arrow">→</span></a>`;
+          }
+          return `<a href="#${modalId}" class="course-card__cta">${esc(hasArrow ? text : rawText)}</a>`;
+        })()}
       </div>
     `;
   }

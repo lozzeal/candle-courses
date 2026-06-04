@@ -1473,8 +1473,13 @@ html, body {
     <p class="form-section-title">Кнопка та оплата</p>
     <div class="form-row">
       <div class="form-group">
-        <label>Текст кнопки</label>
+        <label>Текст кнопки на лендингу</label>
         <input id="lc-cta" type="text" value="Обрати цей курс">
+        <p class="form-help" style="margin-top:6px;font-size:11px;color:#888;line-height:1.5">
+          💡 Якщо у курсі активовано окрему сторінку (📄 Сторінка) — кнопка веде на <code>/course.html</code>.
+          Рекомендуємо текст: <strong>Детальніше про курс →</strong>
+          <button type="button" onclick="document.getElementById('lc-cta').value='Детальніше про курс →'" style="margin-left:6px;padding:2px 8px;font-size:11px;background:#f0f8ec;border:1px solid var(--accent);color:var(--accent);border-radius:6px;cursor:pointer">Вставити</button>
+        </p>
       </div>
       <div class="form-group">
         <label>URL оплати (WayForPay)</label>
