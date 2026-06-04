@@ -96,14 +96,65 @@ async function supabaseUpdate(table, params, body) {
   return r.json();
 }
 
-// Знаходимо курс за сумою (унікальна ціна → курс).
-// Якщо у клієнтки буде кілька курсів з однаковою ціною — додаємо фільтр за email/телефоном з orders.
-async function findCourseByAmount(amount) {
-  const courses = await supabaseSelect(
+// Знаходимо курс за webhook-даними. Стратегії в порядку надійності:
+//   1) Унікальне співпадіння ціни (наш міні-курс 550 ₴ — єдиний)
+//   2) productName з WayForPay містить title курсу (або навпаки)
+//   3) Останнє замовлення по email → product_or_course містить title курсу
+async function findCourse({ amount, productName, email }) {
+  // Strategy 1: унікальна ціна
+  const byPrice = await supabaseSelect(
     'landing_courses',
     `select=*&price=eq.${encodeURIComponent(amount)}`
   );
-  if (Array.isArray(courses) && courses.length === 1) return courses[0];
+  if (byPrice.length === 1) {
+    console.log(`findCourse: ✅ by-price unique → ${byPrice[0].slug}`);
+    return byPrice[0];
+  }
+
+  const nameMatch = (haystack, needle) => {
+    const h = String(haystack || '').toLowerCase().trim();
+    const n = String(needle || '').toLowerCase().trim();
+    if (!h || !n) return false;
+    return h.includes(n) || n.includes(h);
+  };
+
+  // Беремо кандидатів — або всі курси, або тільки ті, що з цією ціною
+  const candidates = byPrice.length
+    ? byPrice
+    : await supabaseSelect('landing_courses', 'select=*');
+
+  // Strategy 2: productName з WayForPay
+  if (productName) {
+    const pName = Array.isArray(productName) ? productName.join(' ') : productName;
+    const found = candidates.find(c => nameMatch(c.title, pName));
+    if (found) {
+      console.log(`findCourse: ✅ by-productName "${pName}" → ${found.slug}`);
+      return found;
+    }
+  }
+
+  // Strategy 3: останнє замовлення по email
+  if (email) {
+    try {
+      const orders = await supabaseSelect(
+        'orders',
+        `select=product_or_course&customer_email=eq.${encodeURIComponent(email)}&order=created_at.desc&limit=3`
+      );
+      for (const o of (orders || [])) {
+        const poc = o.product_or_course;
+        if (!poc) continue;
+        const found = candidates.find(c => nameMatch(c.title, poc));
+        if (found) {
+          console.log(`findCourse: ✅ by-order-history "${poc}" → ${found.slug}`);
+          return found;
+        }
+      }
+    } catch (e) {
+      console.warn('findCourse: orders lookup failed:', e.message);
+    }
+  }
+
+  console.warn(`findCourse: ❌ не вдалось визначити курс — amount=${amount}, productName=${productName}, email=${email}, candidates=${candidates.length}`);
   return null;
 }
 
@@ -260,12 +311,16 @@ export default async function handler(req, res) {
     console.warn('Idempotency check failed:', err.message);
   }
 
-  // ===== Знайти курс по сумі =====
+  // ===== Знайти курс =====
   let course = null;
   try {
-    course = await findCourseByAmount(amount);
+    course = await findCourse({
+      amount,
+      productName: data.productName,
+      email: clientEmail
+    });
   } catch (err) {
-    console.error('findCourseByAmount failed:', err.message);
+    console.error('findCourse failed:', err.message);
   }
 
   if (!course) {
