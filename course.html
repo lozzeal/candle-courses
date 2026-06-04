@@ -274,48 +274,48 @@ img, video { display: block; max-width: 100%; }
   color: #666;
 }
 
-/* ===== REVIEWS (slider) ===== */
-.reviews-track {
+/* ===== MARQUEE (бігаюча стрічка) — для відгуків і робіт ===== */
+.marquee-wrap {
+  overflow: hidden;
+  padding: 6px 0 18px;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+}
+.marquee-track {
   display: flex;
   gap: 18px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding: 8px 4px 18px;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
+  width: max-content;
+  animation: course-marquee 55s linear infinite;
 }
-.reviews-track::-webkit-scrollbar { height: 6px; }
-.reviews-track::-webkit-scrollbar-thumb { background: rgba(56,163,13,0.3); border-radius: 3px; }
-.review-item {
+.marquee-track:hover { animation-play-state: paused; }
+@keyframes course-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-item {
   flex: 0 0 auto;
   width: 280px;
-  max-width: 80vw;
-  scroll-snap-align: start;
-  border-radius: 16px;
+  aspect-ratio: 9 / 16;
+  border-radius: 20px;
   overflow: hidden;
   background: #fff;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.10);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.review-item img { width: 100%; display: block; }
-
-/* ===== WORKS (gallery) ===== */
-.works-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 14px;
+.marquee-item--clickable { cursor: pointer; }
+.marquee-item--clickable:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 16px 36px rgba(0,0,0,0.16);
 }
-.works-grid__item {
-  aspect-ratio: 1;
-  border-radius: 14px;
-  overflow: hidden;
-  background: #f0eae6;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-.works-grid__item:hover { transform: scale(1.02); }
-.works-grid__item img {
+.marquee-item img {
   width: 100%; height: 100%;
   object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+@media (max-width: 768px) {
+  .marquee-track { gap: 14px; animation-duration: 50s; }
+  .marquee-item { width: 78vw; max-width: 340px; border-radius: 18px; }
 }
 
 /* Lightbox */
@@ -443,6 +443,11 @@ img, video { display: block; max-width: 100%; }
   line-height: 1.2;
 }
 .cta-block__sub { color: rgba(255,255,255,0.75); font-size: 16px; margin-bottom: 32px; max-width: 520px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+.cta-block__btn-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
 .cta-block .cta-btn {
   font-size: 17px;
   padding: 20px 52px;
@@ -469,12 +474,17 @@ img, video { display: block; max-width: 100%; }
 }
 .cta-block .cta-btn:hover::after { transform: translateX(4px); }
 .cta-block__guarantee {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  margin-top: 18px;
   font-size: 13px;
   color: rgba(255,255,255,0.55);
+}
+@media (max-width: 600px) {
+  .cta-block { padding: 50px 22px 56px; border-radius: 24px; margin: 0 12px; }
+  .cta-block .cta-btn { font-size: 14px; padding: 14px 28px; border-radius: 12px; }
+  .cta-block__guarantee { font-size: 12px; flex-wrap: wrap; text-align: center; }
 }
 
 /* ===== LOADER ===== */
@@ -743,33 +753,43 @@ body:has(.modal:target) { overflow: hidden; }
         ? ctx.allReviews.filter(r => ids.length === 0 || ids.includes(r.id))
         : [];
       if (!items.length) return '';
+      const cards = items.map(r => {
+        const url = r.photo_url || r.image_path || '';
+        const src = url.startsWith('http') ? url : '/' + url;
+        return `<div class="marquee-item"><img src="${escAttr(src)}" alt="${escAttr(r.author_name || '')}" loading="lazy"></div>`;
+      }).join('');
+      // Дублюємо для безшовного циклу
+      const cardsDup = items.map(r => {
+        const url = r.photo_url || r.image_path || '';
+        const src = url.startsWith('http') ? url : '/' + url;
+        return `<div class="marquee-item" aria-hidden="true"><img src="${escAttr(src)}" alt="" loading="lazy"></div>`;
+      }).join('');
       return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
-        <div class="cs__inner cs__inner--wide">
+        <div style="text-align:center;margin-bottom:36px;padding:0 16px">
           <h2 class="cs__title">${esc(d.title || 'Сотні позитивних')} <span>відгуків</span></h2>
-          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
-          <div class="reviews-track">
-            ${items.map(r => {
-              const url = r.photo_url || r.image_path || '';
-              const src = url.startsWith('http') ? url : '/' + url;
-              return `<div class="review-item"><img src="${escAttr(src)}" alt="${escAttr(r.author_name || '')}" loading="lazy"></div>`;
-            }).join('')}
-          </div>
+          ${d.subtitle ? `<p class="cs__sub" style="margin-bottom:0">${esc(d.subtitle)}</p>` : ''}
+        </div>
+        <div class="marquee-wrap">
+          <div class="marquee-track">${cards}${cardsDup}</div>
         </div>
       </section>`;
     },
     works(d, ctx, idx) {
       const photos = Array.isArray(d.photos) ? d.photos : [];
-      if (!photos.length) return '';   // якщо порожньо — взагалі не рендеримо блок
+      if (!photos.length) return '';
+      const card = (p, hidden) => {
+        const url = p.startsWith('http') ? p : '/' + p;
+        return `<div class="marquee-item marquee-item--clickable"${hidden ? ' aria-hidden="true"' : ''} onclick="window.openLightbox('${escAttr(url)}')"><img src="${escAttr(url)}" alt="" loading="lazy"></div>`;
+      };
+      const cards = photos.map(p => card(p, false)).join('');
+      const cardsDup = photos.map(p => card(p, true)).join('');
       return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
-        <div class="cs__inner cs__inner--wide">
+        <div style="text-align:center;margin-bottom:36px;padding:0 16px">
           <h2 class="cs__title">${esc(d.title || 'Роботи')} <span>учнів</span></h2>
-          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
-          <div class="works-grid">
-            ${photos.map(p => {
-              const url = p.startsWith('http') ? p : '/' + p;
-              return `<div class="works-grid__item" onclick="window.openLightbox('${escAttr(url)}')"><img src="${escAttr(url)}" alt="" loading="lazy"></div>`;
-            }).join('')}
-          </div>
+          ${d.subtitle ? `<p class="cs__sub" style="margin-bottom:0">${esc(d.subtitle)}</p>` : ''}
+        </div>
+        <div class="marquee-wrap">
+          <div class="marquee-track">${cards}${cardsDup}</div>
         </div>
       </section>`;
     },
@@ -819,7 +839,9 @@ body:has(.modal:target) { overflow: hidden; }
             <div class="cta-block__inner">
               <h2 class="cta-block__title">${esc(d.title || 'Готові почати?')}</h2>
               ${d.subtitle ? `<p class="cta-block__sub">${esc(d.subtitle)}</p>` : ''}
-              <a href="#order" class="cta-btn">${esc(d.button_text || 'Обрати цей курс')}</a>
+              <div class="cta-block__btn-wrap">
+                <a href="#order" class="cta-btn">${esc(d.button_text || 'Обрати цей курс')}</a>
+              </div>
               <div class="cta-block__guarantee">🔒 Безпечна оплата · Доступ одразу після оплати</div>
             </div>
           </div>
