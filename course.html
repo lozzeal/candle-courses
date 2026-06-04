@@ -374,6 +374,148 @@ img, video { display: block; max-width: 100%; }
   cursor: pointer;
 }
 
+/* ===== AUDIENCE BLOCK (Для кого) ===== */
+.audience-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  max-width: 820px;
+  margin: 0 auto;
+}
+.audience-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 20px;
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid rgba(56,163,13,0.12);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.audience-item:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,0.08); }
+.audience-item__icon {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(180deg, #49C318, #38A30D);
+  color: #fff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  font-weight: 700;
+}
+.audience-item__text { font-size: 15px; line-height: 1.55; color: #333; padding-top: 6px; }
+@media (max-width: 700px) {
+  .audience-grid { grid-template-columns: 1fr; max-width: 480px; }
+  .audience-item { padding: 14px 16px; }
+}
+
+/* ===== OUTCOMES BLOCK (Після курсу ви зможете) ===== */
+.outcomes-wrap {
+  max-width: 880px;
+  margin: 0 auto;
+}
+.outcomes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.outcome-item {
+  background: linear-gradient(135deg, #fff 0%, #f9fbf6 100%);
+  border-radius: 16px;
+  padding: 22px 24px;
+  border: 1px solid rgba(56,163,13,0.18);
+  position: relative;
+  overflow: hidden;
+}
+.outcome-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 100% 0%, rgba(56,163,13,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.outcome-item__icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+  display: block;
+  line-height: 1;
+}
+.outcome-item__text {
+  font-size: 15px;
+  line-height: 1.55;
+  color: #333;
+  font-weight: 500;
+  position: relative;
+}
+.outcome-item__text strong { color: var(--accent); font-weight: 700; }
+@media (max-width: 700px) {
+  .outcomes-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== FAQ BLOCK ===== */
+.faq-list {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.faq-item {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid rgba(38,38,38,0.06);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.faq-item[open] { box-shadow: 0 8px 22px rgba(0,0,0,0.08); }
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 600;
+  font-size: 15px;
+  color: #262626;
+  transition: color 0.15s;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: '+';
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(56,163,13,0.1);
+  color: var(--accent);
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s, background 0.2s;
+}
+.faq-item[open] summary::after {
+  transform: rotate(45deg);
+  background: var(--accent);
+  color: #fff;
+}
+.faq-item summary:hover { color: var(--accent); }
+.faq-item__answer {
+  padding: 0 22px 20px 22px;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #555;
+}
+.faq-item__answer p { margin-bottom: 10px; }
+.faq-item__answer p:last-child { margin-bottom: 0; }
+
 /* ===== INFO BLOCK ===== */
 .info-grid {
   display: grid;
@@ -913,6 +1055,62 @@ body:has(.modal:target) { overflow: hidden; }
               ${text ? `<p class="author-block__text">${formatRichText(text)}</p>` : ''}
               ${items.length ? `<ul class="author-block__list">${items.map(i => `<li>${formatRichText(i).replace(/^<p>|<\/p>$/g, '')}</li>`).join('')}</ul>` : ''}
             </div>
+          </div>
+        </div>
+      </section>`;
+    },
+    audience(d, ctx, idx) {
+      const items = Array.isArray(d.items) ? d.items : [];
+      if (!items.length) return '';
+      return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
+        <div class="cs__inner">
+          ${renderSectionTitle(d, { title: 'Цей курс', title_accent: 'для вас' })}
+          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
+          <div class="audience-grid">
+            ${items.map((it, i) => `
+              <div class="audience-item">
+                <div class="audience-item__icon">${esc(it.icon || '✓')}</div>
+                <div class="audience-item__text">${formatRichText(it.text || '').replace(/^<p>|<\/p>$/g, '')}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </section>`;
+    },
+    outcomes(d, ctx, idx) {
+      const items = Array.isArray(d.items) ? d.items : [];
+      if (!items.length) return '';
+      return `<section class="cs ${idx % 2 ? 'cs--alt' : 'cs--accent'}">
+        <div class="cs__inner">
+          ${renderSectionTitle(d, { title: 'Після курсу', title_accent: 'ви зможете' })}
+          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
+          <div class="outcomes-wrap">
+            <div class="outcomes-grid">
+              ${items.map(it => `
+                <div class="outcome-item">
+                  ${it.icon ? `<span class="outcome-item__icon">${esc(it.icon)}</span>` : ''}
+                  <div class="outcome-item__text">${formatRichText(it.text || '').replace(/^<p>|<\/p>$/g, '')}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      </section>`;
+    },
+    faq(d, ctx, idx) {
+      const items = Array.isArray(d.items) ? d.items : [];
+      if (!items.length) return '';
+      return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
+        <div class="cs__inner">
+          ${renderSectionTitle(d, { title: 'Питання', title_accent: 'та відповіді' })}
+          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
+          <div class="faq-list">
+            ${items.map(it => `
+              <details class="faq-item">
+                <summary>${esc(it.question || '')}</summary>
+                <div class="faq-item__answer">${formatRichText(it.answer || '')}</div>
+              </details>
+            `).join('')}
           </div>
         </div>
       </section>`;

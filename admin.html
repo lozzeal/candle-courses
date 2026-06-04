@@ -1588,6 +1588,9 @@ html, body {
         <option value="works">🖼️ Галерея робіт учнів</option>
         <option value="author">👤 Про автора</option>
         <option value="info">ℹ️ Інфо-блок (фішки)</option>
+        <option value="audience">🎯 Для кого курс (зняти болі)</option>
+        <option value="outcomes">✨ Результати після курсу</option>
+        <option value="faq">❓ FAQ — відповіді на питання</option>
         <option value="cta">🛒 CTA — заклик купити</option>
       </select>
       <button class="btn-secondary" id="cpe-add-btn" type="button">Додати</button>
@@ -3453,15 +3456,18 @@ const cpe = {
 };
 
 const BLOCK_DEFAULTS = {
-  hero:    { badge: '', title: '', subtitle: '', button_text: 'Обрати цей курс' },
-  text:    { title: '', title_accent: '', accent_position: 'after', subtitle: '', body: '' },
-  program: { title: 'Програма', title_accent: 'курсу', accent_position: 'after', subtitle: '', items: [{ title: '', details: '' }] },
-  video:   { title: 'Відео', title_accent: 'про курс', accent_position: 'after', subtitle: '', url: '', caption: '', aspect_ratio: 'auto', size: 'medium', object_fit: 'contain', autoplay: false, loop: false, muted: false, controls: true },
-  reviews: { title: 'Сотні позитивних', title_accent: 'відгуків', accent_position: 'after', subtitle: '', review_ids: [] },
-  works:   { title: 'Роботи учнів', title_accent: 'після курсу', accent_position: 'after', subtitle: '', photos: [] },
-  author:  { title: 'Про', title_accent: 'автора', accent_position: 'after', use_landing: true, name: '', text: '', items: [], photo: '' },
-  info:    { title: 'Що', title_accent: 'отримуєте', accent_position: 'after', subtitle: '', items: [{ icon: '📚', text: '' }] },
-  cta:     { title: 'Готові почати?', subtitle: '', button_text: 'Обрати цей курс' }
+  hero:     { badge: '', title: '', subtitle: '', button_text: 'Обрати цей курс' },
+  text:     { title: '', title_accent: '', accent_position: 'after', subtitle: '', body: '' },
+  program:  { title: 'Програма', title_accent: 'курсу', accent_position: 'after', subtitle: '', items: [{ title: '', details: '' }] },
+  video:    { title: 'Відео', title_accent: 'про курс', accent_position: 'after', subtitle: '', url: '', caption: '', aspect_ratio: 'auto', size: 'medium', object_fit: 'contain', autoplay: false, loop: false, muted: false, controls: true },
+  reviews:  { title: 'Сотні позитивних', title_accent: 'відгуків', accent_position: 'after', subtitle: '', review_ids: [] },
+  works:    { title: 'Роботи учнів', title_accent: 'після курсу', accent_position: 'after', subtitle: '', photos: [] },
+  author:   { title: 'Про', title_accent: 'автора', accent_position: 'after', use_landing: true, name: '', text: '', items: [], photo: '' },
+  info:     { title: 'Що', title_accent: 'отримуєте', accent_position: 'after', subtitle: '', items: [{ icon: '📚', text: '' }] },
+  audience: { title: 'Цей курс', title_accent: 'для вас', accent_position: 'after', subtitle: 'Якщо ви впізнаєте себе хоча б у двох пунктах — курс ваш', items: [{ icon: '✓', text: '' }] },
+  outcomes: { title: 'Після курсу', title_accent: 'ви зможете', accent_position: 'after', subtitle: 'Конкретні навички та результати, які отримаєте', items: [{ icon: '🕯️', text: '' }] },
+  faq:      { title: 'Питання', title_accent: 'та відповіді', accent_position: 'after', subtitle: 'Все що ви хотіли запитати перед покупкою', items: [{ question: '', answer: '' }] },
+  cta:      { title: 'Готові почати?', subtitle: '', button_text: 'Обрати цей курс' }
 };
 
 const BLOCK_LABELS = {
@@ -3473,6 +3479,9 @@ const BLOCK_LABELS = {
   works: '🖼️ Роботи учнів',
   author: '👤 Про автора',
   info: 'ℹ️ Інфо-блок',
+  audience: '🎯 Для кого курс',
+  outcomes: '✨ Результати після курсу',
+  faq: '❓ FAQ',
   cta: '🛒 CTA'
 };
 
@@ -3723,6 +3732,18 @@ function renderBlockEditor(b, idx) {
       return titleWithAccent()
         + t('Підзаголовок', 'subtitle', d.subtitle)
         + renderItemsEditor(idx, d.items || [], 'items', ['icon:Іконка (emoji)', 'text:Текст пункту']);
+    case 'audience':
+      return titleWithAccent()
+        + t('Підзаголовок', 'subtitle', d.subtitle)
+        + renderItemsEditor(idx, d.items || [], 'items', ['icon:Іконка (✓ / ✦ / emoji)', 'text:Опис болю/потреби клієнта']);
+    case 'outcomes':
+      return titleWithAccent()
+        + t('Підзаголовок', 'subtitle', d.subtitle)
+        + renderItemsEditor(idx, d.items || [], 'items', ['icon:Іконка (emoji)', 'text:Результат (підтримує **жирний** для виділення цифр/слів)']);
+    case 'faq':
+      return titleWithAccent()
+        + t('Підзаголовок', 'subtitle', d.subtitle)
+        + renderItemsEditor(idx, d.items || [], 'items', ['question:Питання клієнта', 'answer:Відповідь (підтримує Markdown — абзаци, **жирний**, списки)']);
     case 'cta':
       return t('Заголовок (велике)', 'title', d.title)
         + t('Підзаголовок', 'subtitle', d.subtitle)
@@ -3742,14 +3763,22 @@ function renderItemsEditor(blockIdx, items, key, fields) {
       <textarea rows="4" oninput="updateBlockField(${blockIdx},'items',this.value.split('\\n').filter(s=>s.trim()))">${escapeHtml(value)}</textarea>
     </div>`;
   }
-  const fieldDefs = fields.map(f => { const [k, l] = f.split(':'); return { k, l }; });
+  // Підтримуємо синтаксис "key:label" або "key:label:textarea" для багаторядкового поля
+  const fieldDefs = fields.map(f => { const [k, l, type] = f.split(':'); return { k, l, type: type || 'text' }; });
+  // FAQ-specific: поле "answer" автоматично стає textarea
+  fieldDefs.forEach(f => {
+    if (f.k === 'answer' || f.k === 'details' || f.k === 'text') f.type = f.type === 'text' && f.k === 'answer' ? 'textarea' : f.type;
+    if (f.k === 'answer') f.type = 'textarea';
+  });
   const rows = items.map((it, i) => `
     <div style="display:flex;gap:8px;margin-bottom:8px;align-items:flex-start;background:#f8f6f3;padding:10px;border-radius:8px">
       <div style="flex:1">
         ${fieldDefs.map(f => `
           <div style="margin-bottom:6px">
             <label style="font-size:11px;color:#777">${f.l}</label>
-            <input type="text" value="${escapeAttr(it[f.k] || '')}" oninput="updateItemField(${blockIdx},${i},'${f.k}',this.value)" style="width:100%;padding:6px 9px;border:1px solid #e0dbd8;border-radius:6px;font-size:13px">
+            ${f.type === 'textarea'
+              ? `<textarea rows="4" oninput="updateItemField(${blockIdx},${i},'${f.k}',this.value)" style="width:100%;padding:8px 10px;border:1px solid #e0dbd8;border-radius:6px;font-size:13px;font-family:inherit;resize:vertical">${escapeHtml(it[f.k] || '')}</textarea>`
+              : `<input type="text" value="${escapeAttr(it[f.k] || '')}" oninput="updateItemField(${blockIdx},${i},'${f.k}',this.value)" style="width:100%;padding:6px 9px;border:1px solid #e0dbd8;border-radius:6px;font-size:13px">`}
           </div>
         `).join('')}
       </div>
