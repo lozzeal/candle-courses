@@ -3380,13 +3380,13 @@ const cpe = {
 
 const BLOCK_DEFAULTS = {
   hero:    { badge: '', title: '', subtitle: '', button_text: 'Обрати цей курс' },
-  text:    { title: '', subtitle: '', body: '' },
-  program: { title: 'Програма курсу', subtitle: '', items: [{ title: '', details: '' }] },
-  video:   { title: 'Відео про курс', subtitle: '', url: '', caption: '' },
-  reviews: { title: 'Сотні позитивних відгуків', subtitle: '', review_ids: [] },
-  works:   { title: 'Роботи учнів', subtitle: '', photos: [] },
-  author:  { title: 'Про автора', use_landing: true, name: '', text: '', items: [], photo: '' },
-  info:    { title: 'Що отримуєте', subtitle: '', items: [{ icon: '📚', text: '' }] },
+  text:    { title: '', title_accent: '', accent_position: 'after', subtitle: '', body: '' },
+  program: { title: 'Програма', title_accent: 'курсу', accent_position: 'after', subtitle: '', items: [{ title: '', details: '' }] },
+  video:   { title: 'Відео', title_accent: 'про курс', accent_position: 'after', subtitle: '', url: '', caption: '' },
+  reviews: { title: 'Сотні позитивних', title_accent: 'відгуків', accent_position: 'after', subtitle: '', review_ids: [] },
+  works:   { title: 'Роботи учнів', title_accent: 'після курсу', accent_position: 'after', subtitle: '', photos: [] },
+  author:  { title: 'Про', title_accent: 'автора', accent_position: 'after', use_landing: true, name: '', text: '', items: [], photo: '' },
+  info:    { title: 'Що', title_accent: 'отримуєте', accent_position: 'after', subtitle: '', items: [{ icon: '📚', text: '' }] },
   cta:     { title: 'Готові почати?', subtitle: '', button_text: 'Обрати цей курс' }
 };
 
@@ -3469,6 +3469,29 @@ function renderBlockRow(b, idx) {
   `;
 }
 
+function buildTitlePreview(d) {
+  const t = escapeHtml(d.title || '');
+  const a = escapeHtml(d.title_accent || '');
+  if (!t && !a) return '<span style="color:#999;font-size:13px;text-transform:none;font-family:Inter,sans-serif;letter-spacing:0;font-weight:400">— заголовок не заданий —</span>';
+  const accentHtml = a ? `<span style="color:var(--accent)">${a}</span>` : '';
+  if ((d.accent_position || 'after') === 'before') {
+    return accentHtml + (t ? ' ' + t : '');
+  }
+  return t + (a ? ' ' + accentHtml : '');
+}
+
+window.refreshTitlePreview = function(idx) {
+  const el = document.getElementById('title-preview-' + idx);
+  if (!el) return;
+  el.innerHTML = buildTitlePreview(cpe.blocks[idx].data || {});
+  // Оновити summary блока
+  const list = $('#cpe-blocks-list');
+  if (list && list.children[idx]) {
+    const summaryEl = list.children[idx].querySelector('div[style*="text-overflow"]');
+    if (summaryEl) summaryEl.textContent = blockSummary(cpe.blocks[idx]);
+  }
+};
+
 function blockSummary(b) {
   const d = b.data || {};
   switch (b.type) {
@@ -3520,6 +3543,28 @@ function renderBlockEditor(b, idx) {
         : `<input type="${type}" value="${escapeAttr(value || '')}" oninput="updateBlockField(${idx},'${key}',this.value)">`}
     </div>`;
 
+  // Заголовок секції з вибором кольорового акценту (для program, video, reviews, works, author, info)
+  const titleWithAccent = () => `
+    <div style="background:#f5f7f3;padding:12px;border-radius:10px;margin-top:10px">
+      <div style="font-size:12px;color:#555;font-weight:600;margin-bottom:8px">📌 Заголовок секції</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end">
+        <div>
+          <label style="font-size:11px;color:#666;display:block;margin-bottom:3px">Темний текст</label>
+          <input type="text" value="${escapeAttr(d.title || '')}" placeholder="Напр. Роботи учнів" oninput="updateBlockField(${idx},'title',this.value);refreshTitlePreview(${idx})" style="width:100%">
+        </div>
+        <div>
+          <label style="font-size:11px;color:#666;display:block;margin-bottom:3px"><span style="color:var(--accent)">●</span> Зелений акцент</label>
+          <input type="text" value="${escapeAttr(d.title_accent || '')}" placeholder="Напр. після курсу" oninput="updateBlockField(${idx},'title_accent',this.value);refreshTitlePreview(${idx})" style="width:100%">
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px;align-items:center;font-size:12px">
+        <span style="color:#666">Зелений показати:</span>
+        <label style="cursor:pointer"><input type="radio" name="accent-pos-${idx}" value="after" ${(d.accent_position || 'after') === 'after' ? 'checked' : ''} onchange="updateBlockField(${idx},'accent_position','after');refreshTitlePreview(${idx})"> після темного</label>
+        <label style="cursor:pointer"><input type="radio" name="accent-pos-${idx}" value="before" ${d.accent_position === 'before' ? 'checked' : ''} onchange="updateBlockField(${idx},'accent_position','before');refreshTitlePreview(${idx})"> перед темним</label>
+      </div>
+      <div id="title-preview-${idx}" style="margin-top:10px;padding:10px 14px;background:#fff;border-radius:8px;font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;text-align:center;color:#262626">${buildTitlePreview(d)}</div>
+    </div>`;
+
   switch (b.type) {
     case 'hero':
       return t('Бейдж (необов\'язково)', 'badge', d.badge)
@@ -3527,28 +3572,28 @@ function renderBlockEditor(b, idx) {
         + t('Підзаголовок (опис під заголовком)', 'subtitle', d.subtitle, 'textarea')
         + t('Текст на кнопці', 'button_text', d.button_text);
     case 'text':
-      return t('Заголовок (опційно)', 'title', d.title)
-        + t('Підзаголовок (опійно)', 'subtitle', d.subtitle)
+      return titleWithAccent()
+        + t('Підзаголовок (опційно)', 'subtitle', d.subtitle)
         + t('Текст блоку (Markdown)', 'body', d.body, 'textarea');
     case 'program':
-      return t('Заголовок', 'title', d.title)
+      return titleWithAccent()
         + t('Підзаголовок', 'subtitle', d.subtitle)
         + renderItemsEditor(idx, d.items || [], 'items', ['title:Назва теми', 'details:Деталі (опц.)']);
     case 'video':
-      return t('Заголовок', 'title', d.title)
+      return titleWithAccent()
         + t('Підзаголовок', 'subtitle', d.subtitle)
         + renderVideoUploader(idx, d.url || '')
         + t('Підпис під відео (опц.)', 'caption', d.caption);
     case 'reviews':
-      return t('Заголовок', 'title', d.title)
+      return titleWithAccent()
         + t('Підзаголовок', 'subtitle', d.subtitle)
         + renderReviewsPicker(idx, d.review_ids || []);
     case 'works':
-      return t('Заголовок', 'title', d.title)
+      return titleWithAccent()
         + t('Підзаголовок', 'subtitle', d.subtitle)
         + renderWorksEditor(idx, d.photos || []);
     case 'author':
-      return t('Заголовок секції', 'title', d.title)
+      return titleWithAccent()
         + `<div class="form-group" style="margin-top:10px">
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
               <input type="checkbox" ${d.use_landing ? 'checked' : ''} onchange="updateBlockField(${idx},'use_landing',this.checked)">
@@ -3561,7 +3606,7 @@ function renderBlockEditor(b, idx) {
           + t('Шлях до фото (URL або path)', 'photo', d.photo)
           + renderItemsEditor(idx, d.items || [], 'items_str', ['__str:Пункти списку (по одному на рядок)']));
     case 'info':
-      return t('Заголовок', 'title', d.title)
+      return titleWithAccent()
         + t('Підзаголовок', 'subtitle', d.subtitle)
         + renderItemsEditor(idx, d.items || [], 'items', ['icon:Іконка (emoji)', 'text:Текст пункту']);
     case 'cta':

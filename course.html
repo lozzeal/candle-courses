@@ -685,6 +685,25 @@ body:has(.modal:target) { overflow: hidden; }
     return out.join('');
   }
 
+  // ====== Helper: рендер заголовка з зеленим акцентом ======
+  // title — основний текст (темний), title_accent — зелена частина
+  // Можна додавати accent_position: 'before' | 'after' (default after)
+  function renderSectionTitle(d, defaults = {}) {
+    const t = (d.title !== undefined && d.title !== '') ? d.title : (defaults.title || '');
+    const a = (d.title_accent !== undefined) ? d.title_accent : (defaults.title_accent || '');
+    if (!t && !a) return '';
+    const position = d.accent_position || defaults.accent_position || 'after';
+    const tHtml = esc(t);
+    const aHtml = a ? `<span>${esc(a)}</span>` : '';
+    let html;
+    if (position === 'before' && a) {
+      html = aHtml + (t ? ' ' + tHtml : '');
+    } else {
+      html = tHtml + (a ? (t ? ' ' : '') + aHtml : '');
+    }
+    return `<h2 class="cs__title">${html}</h2>`;
+  }
+
   // ====== Marquee helper ======
   // Будує стрічку з достатньою кількістю карток + повертає duration,
   // щоб швидкість прокрутки була ~50 px/s незалежно від кількості елементів.
@@ -733,7 +752,7 @@ body:has(.modal:target) { overflow: hidden; }
     text(d, ctx, idx) {
       return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
         <div class="cs__inner">
-          ${d.title ? `<h2 class="cs__title">${esc(d.title)}</h2>` : ''}
+          ${renderSectionTitle(d)}
           ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
           <div class="cs-text">${formatRichText(d.body || '')}</div>
         </div>
@@ -743,7 +762,7 @@ body:has(.modal:target) { overflow: hidden; }
       const items = Array.isArray(d.items) ? d.items : [];
       return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
         <div class="cs__inner">
-          <h2 class="cs__title">${esc(d.title || 'Програма')} <span>курсу</span></h2>
+          ${renderSectionTitle(d, { title: 'Програма', title_accent: 'курсу' })}
           ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
           <div class="program-list">
             ${items.map((it, i) => `
@@ -773,7 +792,7 @@ body:has(.modal:target) { overflow: hidden; }
       }
       return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
         <div class="cs__inner">
-          ${d.title ? `<h2 class="cs__title">${esc(d.title)}</h2>` : ''}
+          ${renderSectionTitle(d)}
           ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
           <div class="cs-video">
             <div class="cs-video__frame">${frame}</div>
@@ -796,7 +815,7 @@ body:has(.modal:target) { overflow: hidden; }
       const { track, duration } = buildMarqueeTrack(items, cardHtml);
       return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
         <div style="text-align:center;margin-bottom:36px;padding:0 16px">
-          <h2 class="cs__title">${esc(d.title || 'Сотні позитивних')} <span>відгуків</span></h2>
+          ${renderSectionTitle(d, { title: 'Сотні позитивних', title_accent: 'відгуків' })}
           ${d.subtitle ? `<p class="cs__sub" style="margin-bottom:0">${esc(d.subtitle)}</p>` : ''}
         </div>
         <div class="marquee-wrap">
@@ -814,7 +833,7 @@ body:has(.modal:target) { overflow: hidden; }
       const { track, duration } = buildMarqueeTrack(photos, cardHtml);
       return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
         <div style="text-align:center;margin-bottom:36px;padding:0 16px">
-          <h2 class="cs__title">${esc(d.title || 'Роботи')} <span>учнів</span></h2>
+          ${renderSectionTitle(d, { title: 'Роботи учнів', title_accent: 'після курсу' })}
           ${d.subtitle ? `<p class="cs__sub" style="margin-bottom:0">${esc(d.subtitle)}</p>` : ''}
         </div>
         <div class="marquee-wrap">
@@ -832,7 +851,7 @@ body:has(.modal:target) { overflow: hidden; }
         : (Array.isArray(d.items) ? d.items : []));
       return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
         <div class="cs__inner">
-          <h2 class="cs__title">${esc(d.title || 'Про')} <span>автора</span></h2>
+          ${renderSectionTitle(d, { title: 'Про', title_accent: 'автора' })}
           <div class="author-block">
             ${photo ? `<div class="author-block__photo"><img src="${escAttr(photo)}" alt="" loading="lazy"></div>` : ''}
             <div>
@@ -848,7 +867,7 @@ body:has(.modal:target) { overflow: hidden; }
       const items = Array.isArray(d.items) ? d.items : [];
       return `<section class="cs ${idx % 2 ? 'cs--alt' : 'cs--accent'}">
         <div class="cs__inner">
-          ${d.title ? `<h2 class="cs__title">${esc(d.title)}</h2>` : ''}
+          ${renderSectionTitle(d)}
           ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
           <div class="info-grid">
             ${items.map(i => `
