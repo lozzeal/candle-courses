@@ -3849,7 +3849,9 @@ body:has(.modal:target) { overflow: hidden; }
           }
           return `<p class="course-card__price">${p} ₴</p>`;
         })()}
-        <a href="#${modalId}" class="course-card__cta">${esc(c.cta_text || 'Обрати цей курс')}</a>
+        ${c.page_enabled
+          ? `<a href="course.html?slug=${escAttr(slug)}" class="course-card__cta">${esc(c.cta_text || 'Обрати цей курс')}</a>`
+          : `<a href="#${modalId}" class="course-card__cta">${esc(c.cta_text || 'Обрати цей курс')}</a>`}
       </div>
     `;
   }

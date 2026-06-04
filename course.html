@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Завантаження курсу… — 100candle.shop</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/favicon.svg">
+<meta name="theme-color" content="#38A30D">
+<script src="/assets/analytics-loader.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --accent: #38A30D;
+  --accent-light: #49C318;
+  --text: #262626;
+}
+html { scroll-behavior: smooth; }
+html, body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: var(--text);
+  background: #fbf7f4;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+img, video { display: block; max-width: 100%; }
+
+/* ===== TOP NAV ===== */
+.top-nav { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; gap: 8px; }
+.top-nav__link { padding: 11px 28px; background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); color: #262626; text-decoration: none; border-radius: 10px; font-size: 14px; font-weight: 600; letter-spacing: 0.02em; box-shadow: 0 4px 16px rgba(0,0,0,0.1); min-width: 120px; text-align: center; transition: transform 0.15s; }
+.top-nav__link:hover { transform: translateY(-1px); }
+.top-nav__link--active { background: linear-gradient(180deg, #49C318, #38A30D); color: #fff; }
+@media (max-width: 600px) { .top-nav { top: 12px; } .top-nav__link { padding: 9px 18px; min-width: 100px; font-size: 13px; } }
+
+/* ===== HERO ===== */
+.course-hero {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 32px 60px;
+  background: linear-gradient(135deg, #fbf7f4 0%, #f5e6e0 100%);
+  position: relative;
+  overflow: hidden;
+}
+.course-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--hero-bg, none);
+  background-size: cover;
+  background-position: center;
+  opacity: 0.15;
+  z-index: 0;
+}
+.course-hero__inner {
+  max-width: 800px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.course-hero__badge {
+  display: inline-block;
+  padding: 6px 16px;
+  background: rgba(56,163,13,0.12);
+  color: var(--accent);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 18px;
+}
+.course-hero__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(34px, 5vw, 56px);
+  line-height: 1.1;
+  margin-bottom: 20px;
+  letter-spacing: 0.01em;
+}
+.course-hero__subtitle {
+  font-size: clamp(15px, 1.6vw, 18px);
+  color: #555;
+  margin-bottom: 32px;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.course-hero__price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.course-hero__price-now {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 44px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.course-hero__price-old { font-size: 22px; color: #aaa; text-decoration: line-through; }
+.course-hero__discount {
+  background: #D14A3F;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 42px;
+  background: linear-gradient(180deg, var(--accent-light), var(--accent));
+  color: #fff !important;
+  text-decoration: none;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 10px 26px rgba(56,163,13,0.35);
+  transition: transform 0.15s, box-shadow 0.2s;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+}
+.cta-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(56,163,13,0.45); }
+
+/* ===== SECTIONS ===== */
+.cs { padding: 70px 32px; }
+.cs--alt { background: #fff; }
+.cs--accent { background: linear-gradient(180deg, #fff 0%, #faf5f2 100%); }
+.cs__inner { max-width: 880px; margin: 0 auto; }
+.cs__inner--wide { max-width: 1180px; }
+.cs__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(28px, 3.4vw, 38px);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.cs__title span { color: var(--accent); }
+.cs__sub {
+  text-align: center;
+  color: #888;
+  font-size: 15px;
+  margin-bottom: 36px;
+}
+
+/* ===== TEXT BLOCK ===== */
+.cs-text {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #444;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.cs-text h2, .cs-text h3, .cs-text h4 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  color: #262626;
+  margin: 28px 0 12px;
+  line-height: 1.25;
+}
+.cs-text h2 { font-size: 28px; }
+.cs-text h3 { font-size: 22px; }
+.cs-text h4 { font-size: 18px; text-transform: uppercase; letter-spacing: 0.04em; }
+.cs-text strong { color: #262626; font-weight: 700; }
+.cs-text em { font-style: italic; }
+.cs-text a { color: var(--accent); text-decoration: underline; }
+.cs-text p { margin-bottom: 16px; }
+.cs-text ul, .cs-text ol { margin: 0 0 16px 4px; padding-left: 22px; }
+.cs-text ul { list-style: none; padding-left: 0; }
+.cs-text ul li {
+  position: relative;
+  padding-left: 26px;
+  margin-bottom: 10px;
+}
+.cs-text ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+.cs-text ol li { margin-bottom: 10px; padding-left: 4px; }
+.cs-text blockquote {
+  margin: 18px 0;
+  padding: 14px 20px;
+  border-left: 3px solid var(--accent);
+  background: rgba(56,163,13,0.06);
+  font-style: italic;
+  color: #555;
+  border-radius: 0 8px 8px 0;
+}
+.cs-text hr {
+  border: none;
+  border-top: 1px solid rgba(38,38,38,0.1);
+  margin: 28px 0;
+}
+
+/* ===== PROGRAM ===== */
+.program-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.program-item {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px 22px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  border: 1px solid rgba(38,38,38,0.05);
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.program-item__num {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(180deg, var(--accent-light), var(--accent));
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+.program-item__content { flex: 1; }
+.program-item__title { font-weight: 600; color: #262626; margin-bottom: 4px; font-size: 16px; }
+.program-item__details { color: #666; font-size: 14px; line-height: 1.5; }
+
+/* ===== VIDEO ===== */
+.cs-video {
+  max-width: 720px;
+  margin: 0 auto;
+}
+.cs-video__frame {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #f0eae6;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.1);
+  aspect-ratio: 16/9;
+}
+.cs-video__frame iframe, .cs-video__frame video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+}
+.cs-video__caption {
+  text-align: center;
+  margin-top: 14px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* ===== REVIEWS (slider) ===== */
+.reviews-track {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 8px 4px 18px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.reviews-track::-webkit-scrollbar { height: 6px; }
+.reviews-track::-webkit-scrollbar-thumb { background: rgba(56,163,13,0.3); border-radius: 3px; }
+.review-item {
+  flex: 0 0 auto;
+  width: 280px;
+  max-width: 80vw;
+  scroll-snap-align: start;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+.review-item img { width: 100%; display: block; }
+
+/* ===== WORKS (gallery) ===== */
+.works-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+.works-grid__item {
+  aspect-ratio: 1;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f0eae6;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.works-grid__item:hover { transform: scale(1.02); }
+.works-grid__item img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+/* Lightbox */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 100%; max-height: 90vh; border-radius: 12px; }
+.lightbox__close {
+  position: absolute;
+  top: 24px; right: 24px;
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* ===== INFO BLOCK ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+}
+.info-item {
+  background: #fff;
+  padding: 24px 22px;
+  border-radius: 14px;
+  text-align: center;
+  border: 1px solid rgba(38,38,38,0.05);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+}
+.info-item__icon { font-size: 32px; margin-bottom: 10px; }
+.info-item__text { font-size: 14px; color: #444; line-height: 1.5; }
+
+/* ===== AUTHOR ===== */
+.author-block {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 36px;
+  align-items: center;
+}
+.author-block__photo {
+  border-radius: 20px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+  border: 4px solid #F5D9D0;
+}
+.author-block__photo img { width: 100%; height: 100%; object-fit: cover; }
+.author-block__name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 30px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.author-block__text { color: #555; font-size: 15px; line-height: 1.7; margin-bottom: 14px; }
+.author-block__list { list-style: none; }
+.author-block__list li {
+  padding: 6px 0 6px 28px;
+  position: relative;
+  font-size: 15px;
+}
+.author-block__list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+@media (max-width: 700px) {
+  .author-block { grid-template-columns: 1fr; text-align: center; }
+  .author-block__photo { max-width: 220px; margin: 0 auto; }
+  .author-block__list li { text-align: left; max-width: 320px; margin: 0 auto; }
+}
+
+/* ===== CTA BLOCK ===== */
+.cta-block {
+  text-align: center;
+  background: linear-gradient(135deg, #2A1F1C 0%, #3D2D29 100%);
+  color: #fff;
+  padding: 60px 32px;
+  border-radius: 28px;
+  margin: 0 16px;
+}
+.cta-block__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(28px, 3.5vw, 40px);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.cta-block__sub { color: rgba(255,255,255,0.7); font-size: 16px; margin-bottom: 28px; max-width: 520px; margin-left: auto; margin-right: auto; }
+.cta-block .cta-btn { font-size: 17px; padding: 20px 48px; }
+
+/* ===== LOADER ===== */
+.page-loader {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #888;
+}
+
+/* ===== STICKY BUY BAR (mobile) ===== */
+.sticky-buy {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: #fff;
+  border-top: 1px solid rgba(38,38,38,0.1);
+  padding: 12px 16px;
+  z-index: 90;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  align-items: center;
+  gap: 12px;
+}
+.sticky-buy__price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.sticky-buy .cta-btn { flex: 1; padding: 14px 16px; font-size: 14px; }
+@media (max-width: 700px) {
+  .sticky-buy { display: flex; }
+  body { padding-bottom: 76px; }
+}
+
+/* ===== MODAL (форма оплати) ===== */
+body:has(.modal:target) { overflow: hidden; }
+.modal { display: none; position: fixed; inset: 0; z-index: 9000; align-items: center; justify-content: center; padding: 16px; }
+.modal:target { display: flex; }
+.modal__overlay { position: absolute; inset: 0; background: rgba(38,28,24,0.6); backdrop-filter: blur(5px); text-decoration: none; }
+.modal__box { position: relative; z-index: 1; background: #fff; border-radius: 24px; padding: 36px 32px 32px; width: 100%; max-width: 460px; max-height: 92vh; overflow-y: auto; }
+.modal__close { position: absolute; top: 14px; right: 18px; font-size: 22px; line-height: 1; color: #bbb; text-decoration: none; }
+.modal__title { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 24px; margin-bottom: 4px; }
+.modal__sub { font-size: 13px; color: #888; margin-bottom: 22px; }
+.modal__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.modal__grid .field--wide, .modal__grid .submit { grid-column: 1 / -1; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #999; }
+.field input, .field textarea { padding: 11px 13px; border: 1.5px solid #e0dbd8; border-radius: 10px; font-size: 14px; outline: none; font-family: inherit; }
+.field input:focus, .field textarea:focus { border-color: var(--accent); }
+.submit { background: linear-gradient(180deg, var(--accent-light), var(--accent)); color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; }
+@media (max-width: 560px) { .modal__box { padding: 28px 18px 24px; } .modal__grid { grid-template-columns: 1fr; } }
+
+/* ===== FOOTER ===== */
+.footer { background: #2A1F1C; color: rgba(255,255,255,0.7); padding: 56px 32px 32px; margin-top: 0; }
+.footer__inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 48px; }
+.footer__brand-name { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 20px; text-transform: uppercase; letter-spacing: 0.06em; color: #fff; margin-bottom: 12px; }
+.footer__brand-desc { font-size: 13px; color: rgba(255,255,255,0.55); max-width: 220px; }
+.footer__col-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.35); margin-bottom: 16px; }
+.footer__nav { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer__nav a { color: rgba(255,255,255,0.65); text-decoration: none; font-size: 14px; }
+.footer__nav a:hover { color: #fff; }
+.footer__copy { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 32px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; }
+@media (max-width: 900px) { .footer__inner { grid-template-columns: 1fr 1fr; gap: 32px; } }
+@media (max-width: 560px) { .footer { padding: 40px 16px 24px; } .footer__inner { grid-template-columns: 1fr; gap: 28px; } }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="index.html" class="top-nav__link">Курси</a>
+  <a href="shop.html" class="top-nav__link">Товари</a>
+</nav>
+
+<!-- Container — заповнюється JS -->
+<main id="page-root">
+  <div class="page-loader">Завантаження…</div>
+</main>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="if(event.target.id==='lightbox')this.classList.remove('open')">
+  <button class="lightbox__close" onclick="document.getElementById('lightbox').classList.remove('open')">×</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div>
+      <p class="footer__brand-name">Крафт-свічки<br>та арома-професія</p>
+      <p class="footer__brand-desc">Онлайн-курси та готові вироби ручної роботи. Доставка по Україні.</p>
+    </div>
+    <div>
+      <p class="footer__col-title">Магазин</p>
+      <ul class="footer__nav">
+        <li><a href="shop.html">Усі товари</a></li>
+        <li><a href="shop.html">Подарункові набори</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer__col-title">Навчання</p>
+      <ul class="footer__nav">
+        <li><a href="index.html#courses">Усі курси</a></li>
+        <li><a href="index.html#faq">FAQ</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer__col-title">Контакти</p>
+      <ul class="footer__nav">
+        <li><a href="https://t.me/GalunaSpeak" target="_blank" rel="noopener">@GalunaSpeak</a></li>
+        <li><a href="mailto:okvozuk@gmail.com">okvozuk@gmail.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <p class="footer__copy">© 2026 Крафт-свічки та арома-професія · <a href="privacy.html" style="color:rgba(255,255,255,0.55);">Політика</a> · <a href="offer.html" style="color:rgba(255,255,255,0.55);">Оферта</a></p>
+</footer>
+
+<script>
+(function() {
+  const SUPABASE_URL = 'https://jmfudjhembgeaztowcoe.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptZnVkamhlbWJnZWF6dG93Y29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDEyODMsImV4cCI6MjA5NTM3NzI4M30.AQC4uLLBE6lsbdRorypc6gKkZQU4n6yg4gGG_rG55iM';
+
+  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function escAttr(s) { return esc(s); }
+
+  const root = document.getElementById('page-root');
+  const params = new URLSearchParams(window.location.search);
+  const slug = params.get('slug') || params.get('course');
+
+  function showError(msg) {
+    root.innerHTML = `<div class="page-loader" style="flex-direction:column;gap:14px">
+      <div style="font-size:48px">🔍</div>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#262626">${esc(msg)}</h1>
+      <a href="index.html" style="color:var(--accent);text-decoration:none;font-weight:600">← На головну</a>
+    </div>`;
+    document.title = 'Курс не знайдений — 100candle.shop';
+  }
+
+  // ====== Mini-markdown (як на /product.html) ======
+  function formatRichText(raw) {
+    if (!raw) return '';
+    const inline = (s) => {
+      let t = esc(s);
+      t = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, txt, url) =>
+        `<a href="${url}" target="_blank" rel="noopener">${txt}</a>`);
+      t = t.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+      t = t.replace(/__([^_\n]+)__/g, '<strong>$1</strong>');
+      t = t.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
+      t = t.replace(/(^|[^_])_([^_\n]+)_(?!_)/g, '$1<em>$2</em>');
+      return t;
+    };
+    const blocks = raw.replace(/\r\n/g, '\n').split(/\n\s*\n+/);
+    const out = [];
+    for (let block of blocks) {
+      block = block.replace(/^\n+|\n+$/g, '');
+      if (!block) continue;
+      if (/^-{3,}$|^\*{3,}$|^_{3,}$/.test(block.trim())) { out.push('<hr>'); continue; }
+      if (/^>/.test(block)) {
+        const txt = block.split('\n').map(l => l.replace(/^>\s?/, '')).join('<br>');
+        out.push('<blockquote>' + inline(txt) + '</blockquote>'); continue;
+      }
+      const hMatch = block.match(/^(#{1,4})\s+(.+)$/);
+      if (hMatch && !block.includes('\n')) {
+        const lvl = Math.min(hMatch[1].length + 1, 4);
+        out.push(`<h${lvl}>${inline(hMatch[2])}</h${lvl}>`); continue;
+      }
+      const lines = block.split('\n');
+      const isBullet = lines.every(l => /^\s*[-•◆✓✦*]\s+/.test(l));
+      const isNumbered = lines.every(l => /^\s*\d+[.)]\s+/.test(l));
+      if (isBullet && lines.length) {
+        out.push('<ul>' + lines.map(l => '<li>' + inline(l.replace(/^\s*[-•◆✓✦*]\s+/, '')) + '</li>').join('') + '</ul>'); continue;
+      }
+      if (isNumbered && lines.length) {
+        out.push('<ol>' + lines.map(l => '<li>' + inline(l.replace(/^\s*\d+[.)]\s+/, '')) + '</li>').join('') + '</ol>'); continue;
+      }
+      out.push('<p>' + lines.map(inline).join('<br>') + '</p>');
+    }
+    return out.join('');
+  }
+
+  // ====== РЕНДЕРИ БЛОКІВ ======
+  const renderers = {
+    hero(d, ctx) {
+      const photo = ctx.course.photo_path
+        ? (ctx.course.photo_path.startsWith('http') ? ctx.course.photo_path : '/' + ctx.course.photo_path)
+        : '';
+      const price = Number(ctx.course.price || 0).toLocaleString('uk-UA').replace(/,/g, ' ');
+      const oldPrice = ctx.course.old_price && Number(ctx.course.old_price) > Number(ctx.course.price)
+        ? Number(ctx.course.old_price).toLocaleString('uk-UA').replace(/,/g, ' ')
+        : null;
+      const discount = oldPrice ? Math.round((1 - Number(ctx.course.price) / Number(ctx.course.old_price)) * 100) : null;
+      return `
+        <section class="course-hero" ${photo ? `style="--hero-bg:url('${escAttr(photo)}')"` : ''}>
+          <div class="course-hero__inner">
+            ${d.badge || ctx.course.badge ? `<span class="course-hero__badge">${esc(d.badge || ctx.course.badge)}</span>` : ''}
+            <h1 class="course-hero__title">${esc(d.title || ctx.course.title)}</h1>
+            ${d.subtitle ? `<p class="course-hero__subtitle">${esc(d.subtitle)}</p>` : ''}
+            <div class="course-hero__price">
+              ${oldPrice ? `<span class="course-hero__price-old">${oldPrice} ₴</span>` : ''}
+              <span class="course-hero__price-now">${price} ₴</span>
+              ${discount ? `<span class="course-hero__discount">−${discount}%</span>` : ''}
+            </div>
+            <a href="#order" class="cta-btn">${esc(d.button_text || 'Обрати цей курс')}</a>
+          </div>
+        </section>
+      `;
+    },
+    text(d, ctx, idx) {
+      return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
+        <div class="cs__inner">
+          ${d.title ? `<h2 class="cs__title">${esc(d.title)}</h2>` : ''}
+          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
+          <div class="cs-text">${formatRichText(d.body || '')}</div>
+        </div>
+      </section>`;
+    },
+    program(d, ctx, idx) {
+      const items = Array.isArray(d.items) ? d.items : [];
+      return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
+        <div class="cs__inner">
+          <h2 class="cs__title">${esc(d.title || 'Програма')} <span>курсу</span></h2>
+          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
+          <div class="program-list">
+            ${items.map((it, i) => `
+              <div class="program-item">
+                <div class="program-item__num">${i + 1}</div>
+                <div class="program-item__content">
+                  <div class="program-item__title">${esc(it.title || '')}</div>
+                  ${it.details ? `<div class="program-item__details">${esc(it.details)}</div>` : ''}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </section>`;
+    },
+    video(d, ctx, idx) {
+      let frame = '';
+      const url = d.url || '';
+      const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]+)/);
+      if (ytMatch) {
+        frame = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen loading="lazy"></iframe>`;
+      } else if (url) {
+        const u = url + (url.includes('#') ? '' : '#t=0.5');
+        frame = `<video controls preload="metadata" playsinline src="${escAttr(u)}"></video>`;
+      } else {
+        frame = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-size:14px">Відео не додано</div>`;
+      }
+      return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
+        <div class="cs__inner">
+          ${d.title ? `<h2 class="cs__title">${esc(d.title)}</h2>` : ''}
+          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
+          <div class="cs-video">
+            <div class="cs-video__frame">${frame}</div>
+            ${d.caption ? `<p class="cs-video__caption">${esc(d.caption)}</p>` : ''}
+          </div>
+        </div>
+      </section>`;
+    },
+    reviews(d, ctx, idx) {
+      const ids = Array.isArray(d.review_ids) ? d.review_ids : [];
+      const items = ctx.allReviews
+        ? ctx.allReviews.filter(r => ids.length === 0 || ids.includes(r.id))
+        : [];
+      if (!items.length) return '';
+      return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
+        <div class="cs__inner cs__inner--wide">
+          <h2 class="cs__title">${esc(d.title || 'Сотні позитивних')} <span>відгуків</span></h2>
+          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
+          <div class="reviews-track">
+            ${items.map(r => `<div class="review-item"><img src="${escAttr(r.image_path.startsWith('http') ? r.image_path : '/' + r.image_path)}" alt="" loading="lazy"></div>`).join('')}
+          </div>
+        </div>
+      </section>`;
+    },
+    works(d, ctx, idx) {
+      const photos = Array.isArray(d.photos) ? d.photos : [];
+      if (!photos.length) return '';
+      return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
+        <div class="cs__inner cs__inner--wide">
+          <h2 class="cs__title">${esc(d.title || 'Роботи')} <span>учнів</span></h2>
+          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
+          <div class="works-grid">
+            ${photos.map(p => {
+              const url = p.startsWith('http') ? p : '/' + p;
+              return `<div class="works-grid__item" onclick="window.openLightbox('${escAttr(url)}')"><img src="${escAttr(url)}" alt="" loading="lazy"></div>`;
+            }).join('')}
+          </div>
+        </div>
+      </section>`;
+    },
+    author(d, ctx, idx) {
+      const photo = (d.use_landing && ctx.settings.author_photo)
+        ? (ctx.settings.author_photo.startsWith('http') ? ctx.settings.author_photo : '/' + ctx.settings.author_photo)
+        : (d.photo ? (d.photo.startsWith('http') ? d.photo : '/' + d.photo) : '');
+      const text = d.text || ctx.settings.author_sub || '';
+      const items = (d.use_landing
+        ? ['author_item_1','author_item_2','author_item_3','author_item_4'].map(k => ctx.settings[k]).filter(Boolean)
+        : (Array.isArray(d.items) ? d.items : []));
+      return `<section class="cs ${idx % 2 ? 'cs--alt' : ''}">
+        <div class="cs__inner">
+          <h2 class="cs__title">${esc(d.title || 'Про')} <span>автора</span></h2>
+          <div class="author-block">
+            ${photo ? `<div class="author-block__photo"><img src="${escAttr(photo)}" alt="" loading="lazy"></div>` : ''}
+            <div>
+              ${d.name ? `<p class="author-block__name">${esc(d.name)}</p>` : ''}
+              ${text ? `<p class="author-block__text">${formatRichText(text)}</p>` : ''}
+              ${items.length ? `<ul class="author-block__list">${items.map(i => `<li>${formatRichText(i).replace(/^<p>|<\/p>$/g, '')}</li>`).join('')}</ul>` : ''}
+            </div>
+          </div>
+        </div>
+      </section>`;
+    },
+    info(d, ctx, idx) {
+      const items = Array.isArray(d.items) ? d.items : [];
+      return `<section class="cs ${idx % 2 ? 'cs--alt' : 'cs--accent'}">
+        <div class="cs__inner">
+          ${d.title ? `<h2 class="cs__title">${esc(d.title)}</h2>` : ''}
+          ${d.subtitle ? `<p class="cs__sub">${esc(d.subtitle)}</p>` : ''}
+          <div class="info-grid">
+            ${items.map(i => `
+              <div class="info-item">
+                <div class="info-item__icon">${esc(i.icon || '✦')}</div>
+                <div class="info-item__text">${esc(i.text || '')}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </section>`;
+    },
+    cta(d, ctx) {
+      return `<section class="cs">
+        <div class="cs__inner">
+          <div class="cta-block">
+            <h2 class="cta-block__title">${esc(d.title || 'Готові почати?')}</h2>
+            ${d.subtitle ? `<p class="cta-block__sub">${esc(d.subtitle)}</p>` : ''}
+            <a href="#order" class="cta-btn">${esc(d.button_text || 'Обрати цей курс')}</a>
+          </div>
+        </div>
+      </section>`;
+    }
+  };
+
+  window.openLightbox = function(url) {
+    document.getElementById('lightbox-img').src = url;
+    document.getElementById('lightbox').classList.add('open');
+  };
+
+  // ====== LOAD DATA ======
+  if (!slug) {
+    showError('У URL не вказано курс');
+    return;
+  }
+
+  Promise.all([
+    fetch(`${SUPABASE_URL}/rest/v1/landing_courses?select=*&slug=eq.${encodeURIComponent(slug)}`, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY }
+    }).then(r => r.json()),
+    fetch(`${SUPABASE_URL}/rest/v1/landing_reviews?select=*&is_visible=eq.true&order=sort_order`, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY }
+    }).then(r => r.json()).catch(() => []),
+    fetch(`${SUPABASE_URL}/rest/v1/site_settings?select=*`, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY }
+    }).then(r => r.json()).catch(() => [])
+  ])
+  .then(([courses, reviews, settings]) => {
+    if (!courses || !courses.length) {
+      showError('Курс не знайдений');
+      return;
+    }
+    const course = courses[0];
+    if (!course.page_enabled) {
+      // Якщо сторінка курсу не активована — повертаємо на лендинг до якоря
+      window.location.href = `index.html#${course.slug}`;
+      return;
+    }
+    const settingsMap = {};
+    (settings || []).forEach(s => { settingsMap[s.key] = s.value; });
+
+    const ctx = { course, allReviews: reviews || [], settings: settingsMap };
+    const blocks = Array.isArray(course.page_blocks) ? course.page_blocks : [];
+
+    // Якщо немає блоків — створюємо мінімум: hero + cta
+    const renderBlocks = blocks.length ? blocks : [
+      { id: 'auto-hero', type: 'hero', visible: true, data: {} },
+      { id: 'auto-cta', type: 'cta', visible: true, data: { title: 'Готові почати курс?', subtitle: 'Натисніть кнопку нижче, щоб оформити доступ.' } }
+    ];
+
+    const html = renderBlocks
+      .filter(b => b.visible !== false)
+      .map((b, i) => {
+        const fn = renderers[b.type];
+        if (!fn) return '';
+        try { return fn(b.data || {}, ctx, i); } catch (e) { console.warn('block render error', b.type, e); return ''; }
+      })
+      .join('');
+
+    // Додаємо order-modal та sticky-buy
+    const price = Number(course.price || 0).toLocaleString('uk-UA').replace(/,/g, ' ');
+    const orderModal = `
+      <div id="order" class="modal">
+        <a href="#x" class="modal__overlay" aria-label="Закрити"></a>
+        <div class="modal__box">
+          <a href="#x" class="modal__close" aria-label="Закрити">×</a>
+          <p class="modal__title">${esc(course.title)}</p>
+          <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові — решту уточнимо по телефону</p>
+          <form class="modal__grid" action="/api/send-form" method="POST">
+            <input type="hidden" name="_subject" value="${escAttr('Заявка на курс: ' + course.title)}">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="text" name="_honey" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none" aria-hidden="true">
+            ${course.payment_url ? `<input type="hidden" name="_next" value="${escAttr(course.payment_url)}">` : ''}
+            <input type="hidden" name="Курс" value="${escAttr(course.title)}">
+            <input type="hidden" name="_return_url" value="/course.html?slug=${escAttr(course.slug)}">
+            <div class="field field--wide">
+              <label>Телефон <span style="color:#D14A3F">*</span></label>
+              <input type="tel" name="Телефон" placeholder="+380..." required>
+            </div>
+            <div class="field field--wide">
+              <label>Email <span style="color:#D14A3F">*</span></label>
+              <input type="email" name="Email" placeholder="email@..." required>
+            </div>
+            <div class="field field--wide">
+              <label>Імʼя</label>
+              <input type="text" name="Імʼя" placeholder="Ваше імʼя">
+            </div>
+            <button class="submit" type="submit">${course.payment_url ? 'Перейти до оплати →' : 'Надіслати заявку'}</button>
+          </form>
+        </div>
+      </div>
+    `;
+    const stickyBuy = `
+      <div class="sticky-buy">
+        <span class="sticky-buy__price">${price} ₴</span>
+        <a href="#order" class="cta-btn">Купити курс</a>
+      </div>
+    `;
+
+    root.innerHTML = html + orderModal + stickyBuy;
+    document.title = course.title + ' — 100candle.shop';
+    if (course.page_meta_description) {
+      let m = document.querySelector('meta[name="description"]');
+      if (!m) { m = document.createElement('meta'); m.name = 'description'; document.head.appendChild(m); }
+      m.content = course.page_meta_description;
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    showError('Помилка завантаження сторінки');
+  });
+})();
+</script>
+
+</body>
+</html>
