@@ -3405,7 +3405,7 @@ window.openCoursePageEditor = async function(courseId) {
 
   // Завантажуємо відгуки, щоб показати у блоці reviews
   try {
-    const { data } = await supa.from('landing_reviews').select('id,image_path').order('sort_order');
+    const { data } = await supa.from('landing_reviews').select('id,photo_url,author_name').eq('status', 'published').order('sort_order');
     cpe.allReviews = data || [];
   } catch { cpe.allReviews = []; }
 
@@ -3659,7 +3659,8 @@ function renderReviewsPicker(idx, selectedIds) {
       </label>
       ${isAll ? '' : `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;padding:8px;background:#f8f6f3;border-radius:8px;max-height:240px;overflow-y:auto">
         ${cpe.allReviews.map(r => {
-          const url = r.image_path && (r.image_path.startsWith('http') ? r.image_path : '/' + r.image_path);
+          const path = r.photo_url || '';
+          const url = path && (path.startsWith('http') ? path : '/' + path);
           const checked = selectedIds.includes(r.id);
           return `<label style="cursor:pointer;display:block;position:relative;border:2px solid ${checked ? 'var(--accent)' : 'transparent'};border-radius:6px;overflow:hidden">
             <input type="checkbox" ${checked ? 'checked' : ''} style="position:absolute;top:4px;left:4px;z-index:2" onchange="toggleReview(${idx},${r.id},this.checked)">
