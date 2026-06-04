@@ -3746,11 +3746,11 @@ window.uploadWorks = async function(idx, files) {
     for (const file of files) {
       const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
       const path = `course-works/${cpe.course.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
-      const { error } = await supa.storage.from('public').upload(path, file, { contentType: file.type, upsert: false });
+      const { error } = await supa.storage.from('product-photos').upload(path, file, { cacheControl: '3600', upsert: false });
       if (error) throw error;
-      const { data: pub } = supa.storage.from('public').getPublicUrl(path);
+      const { data: { publicUrl } } = supa.storage.from('product-photos').getPublicUrl(path);
       if (!cpe.blocks[idx].data.photos) cpe.blocks[idx].data.photos = [];
-      cpe.blocks[idx].data.photos.push(pub.publicUrl);
+      cpe.blocks[idx].data.photos.push(publicUrl);
     }
     cpe.blocks[idx]._expanded = true;
     renderBlocksList();
