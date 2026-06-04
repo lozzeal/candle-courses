@@ -143,6 +143,22 @@ async function sendCourseEmail({ to, course }) {
 
 // ====================== HANDLER ======================
 
+// Лог-helper: записуємо КОЖЕН вхідний webhook у payment_webhooks
+async function logWebhook(row) {
+  try {
+    await fetch(`${process.env.SUPABASE_URL}/rest/v1/payment_webhooks`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: process.env.SUPABASE_SERVICE_KEY,
+        Authorization: 'Bearer ' + process.env.SUPABASE_SERVICE_KEY,
+        Prefer: 'return=minimal'
+      },
+      body: JSON.stringify(row)
+    });
+  } catch (e) { console.warn('logWebhook failed:', e.message); }
+}
+
 export default async function handler(req, res) {
   // WayForPay шле тільки POST, але приймемо GET для health-check
   if (req.method === 'GET') {
@@ -152,27 +168,43 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0].trim()
+    || req.headers['x-real-ip'] || req.socket?.remoteAddress || 'unknown';
+
+  // Спершу читаємо raw-body — щоб мати його у логах навіть при помилках
+  let rawBody = '';
+  try { rawBody = await readRawBody(req); } catch {}
+
   const SECRET = process.env.WAYFORPAY_SECRET;
   if (!SECRET) {
     console.error('WAYFORPAY_SECRET не налаштовано');
+    await logWebhook({ method: req.method, raw_body: rawBody, client_ip: clientIp, error: 'WAYFORPAY_SECRET not set' });
     return res.status(500).json({ error: 'Server misconfigured' });
   }
 
   let data;
   try {
-    const raw = await readRawBody(req);
-    data = JSON.parse(raw);
+    data = JSON.parse(rawBody);
   } catch (err) {
     console.error('Bad webhook body:', err.message);
+    await logWebhook({ method: req.method, raw_body: rawBody, client_ip: clientIp, error: 'JSON parse: ' + err.message });
     return res.status(400).json({ error: 'Bad body' });
   }
 
   // ===== Перевірка підпису =====
   const expectedSig = buildWebhookSignature(SECRET, data);
-  if (!safeEqual(expectedSig, data.merchantSignature)) {
+  const sigValid = safeEqual(expectedSig, data.merchantSignature);
+  if (!sigValid) {
     console.warn('Invalid WayForPay signature', {
       orderReference: data.orderReference,
       transactionStatus: data.transactionStatus
+    });
+    await logWebhook({
+      method: req.method, raw_body: rawBody, parsed_body: data,
+      order_reference: data.orderReference, transaction_status: data.transactionStatus,
+      amount: Number(data.amount) || null,
+      signature_valid: false, client_ip: clientIp,
+      error: `Invalid signature. Expected: ${expectedSig.slice(0, 8)}..., got: ${String(data.merchantSignature || '').slice(0, 8)}...`
     });
     return res.status(403).json({ error: 'Invalid signature' });
   }
@@ -194,11 +226,23 @@ export default async function handler(req, res) {
   // Обробляємо тільки успішні оплати; для інших — просто accept без email
   if (status !== 'Approved') {
     console.log(`Webhook ${orderRef}: status=${status} — skipping email`);
+    await logWebhook({
+      method: req.method, raw_body: rawBody, parsed_body: data,
+      order_reference: orderRef, transaction_status: status, amount,
+      signature_valid: true, client_ip: clientIp,
+      error: `Skipped: status=${status} (не Approved)`
+    });
     return res.status(200).json(respPayload);
   }
 
   if (!clientEmail) {
     console.warn(`Webhook ${orderRef}: Approved але немає email`);
+    await logWebhook({
+      method: req.method, raw_body: rawBody, parsed_body: data,
+      order_reference: orderRef, transaction_status: status, amount,
+      signature_valid: true, client_ip: clientIp,
+      error: 'Немає clientEmail у webhook'
+    });
     return res.status(200).json(respPayload);
   }
 
@@ -256,6 +300,14 @@ export default async function handler(req, res) {
     emailError = err.message;
     console.error(`Webhook ${orderRef}: помилка SMTP:`, err.message);
   }
+
+  // Лог фінального результату
+  await logWebhook({
+    method: req.method, raw_body: rawBody, parsed_body: data,
+    order_reference: orderRef, transaction_status: status, amount,
+    signature_valid: true, email_attempted: true,
+    email_sent: !emailError, error: emailError, client_ip: clientIp
+  });
 
   // ===== Фіксуємо у БД =====
   try {
