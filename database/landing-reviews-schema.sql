@@ -1,12 +1,12 @@
 -- ============================================================
--- Таблиця landing_reviews — скріншоти відгуків учнів
+-- Таблиця landing_reviews - скріншоти відгуків учнів
 -- Запустити у Supabase SQL Editor
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS landing_reviews (
   id BIGSERIAL PRIMARY KEY,
   photo_url TEXT NOT NULL,        -- URL зображення (Supabase Storage або assets/)
-  author_name TEXT,                -- опційно — імʼя автора
+  author_name TEXT,                -- опційно - імʼя автора
   status TEXT NOT NULL DEFAULT 'published' CHECK (status IN ('published', 'draft')),
   sort_order INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW(),

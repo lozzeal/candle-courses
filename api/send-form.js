@@ -1,7 +1,7 @@
-// Vercel serverless function — приймає форму, шле у Telegram, опційно редиректить
+// Vercel serverless function - приймає форму, шле у Telegram, опційно редиректить
 // Env vars: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 
-// Вимикаємо автопарсинг — самі читаємо у UTF-8
+// Вимикаємо автопарсинг - самі читаємо у UTF-8
 export const config = {
   api: { bodyParser: false }
 };
@@ -23,7 +23,7 @@ function isAllowedOrigin(originOrReferer) {
   }
 }
 
-// 2. Rate limit — в памʼяті (скидається при cold start, це ок)
+// 2. Rate limit - в памʼяті (скидається при cold start, це ок)
 const RL_MAX = 5;            // макс запитів
 const RL_WINDOW = 60 * 1000; // у вікні 1 хвилина
 const rlMap = new Map();
@@ -106,7 +106,7 @@ export default async function handler(req, res) {
     return res.status(400).send('Bad request: cannot read body');
   }
 
-  // 🛡️ ШАР 3: honeypot — якщо поле _honey заповнене, це бот
+  // 🛡️ ШАР 3: honeypot - якщо поле _honey заповнене, це бот
   if (body._honey && String(body._honey).trim() !== '') {
     // Тихо вдаємо успіх, не повідомляючи Telegram
     return res.status(200).send('OK');
@@ -232,7 +232,7 @@ export default async function handler(req, res) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Дякуємо! — Крафт-свічки</title>
+<title>Дякуємо! - Крафт-свічки</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">

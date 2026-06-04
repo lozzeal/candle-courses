@@ -55,7 +55,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Прибране меню — залишаємо тільки логотип + CTA */
+/* Прибране меню - залишаємо тільки логотип + CTA */
 .site-header__nav,
 .nav__burger,
 .nav__drawer,
@@ -150,8 +150,8 @@ section[id] { scroll-margin-top: 72px; }
   }
   .hero { padding: 0 !important; }
   [class$="__inner"] { min-height: auto !important; max-width: 100%; }
-  /* .courses__grid тепер вертикальний — touch-action не потрібен */
-  /* пелюстки з inline-style — обмежити */
+  /* .courses__grid тепер вертикальний - touch-action не потрібен */
+  /* пелюстки з inline-style - обмежити */
   .petal { width: 130px !important; height: 130px !important; pointer-events: none !important; }
   .petal-decor { display: none !important; }
 }
@@ -356,7 +356,7 @@ section[id] { scroll-margin-top: 72px; }
     background: url('assets/hero-mobile.png') 0 0 / 100% 100% no-repeat;
   }
 
-  /* Сховати десктопні шари — все вже на фон-картинці */
+  /* Сховати десктопні шари - все вже на фон-картинці */
   .hero__bouquet-bg,
   .hero__visual,
   .hero__petals--1,
@@ -376,7 +376,7 @@ section[id] { scroll-margin-top: 72px; }
     align-items: stretch;
   }
 
-  /* Текстові шари — координати з editor-mobile.html */
+  /* Текстові шари - координати з editor-mobile.html */
   .hero__title {
     position: absolute;
     top: 60px;
@@ -1406,7 +1406,7 @@ p.course-card__price { margin-top: auto; }
   border-bottom: 1px solid rgba(38,38,38,0.08);
 }
 
-/* Прихований чекбокс — керує мобільним меню */
+/* Прихований чекбокс - керує мобільним меню */
 .nav__toggle-cb { display: none; }
 
 .site-header__bar {
@@ -1662,7 +1662,7 @@ p.course-card__price { margin-top: auto; }
 .top-nav__link--active { background: linear-gradient(180deg, #49C318, #38A30D); color: #fff; box-shadow: 0 6px 18px rgba(56,163,13,0.45); }
 .top-nav__link--active:hover { color: #fff; background: linear-gradient(180deg, #49C318, #38A30D); }
 @media (max-width: 600px) {
-  /* На мобільному — статичні кнопки на коричневому фоні body, прямокутні */
+  /* На мобільному - статичні кнопки на коричневому фоні body, прямокутні */
   .top-nav {
     position: static;
     transform: none;
@@ -1845,7 +1845,7 @@ p.course-card__price { margin-top: auto; }
     <h2 class="howto__title">
       Як <span class="howto__title--accent">проходить навчання</span>
     </h2>
-    <p class="howto__intro">Все навчання — це відеоуроки в записі в Telegram.</p>
+    <p class="howto__intro">Все навчання - це відеоуроки в записі в Telegram.</p>
 
     <div class="howto__body">
       <div class="howto__list">
@@ -3018,7 +3018,7 @@ p.course-card__price { margin-top: auto; }
   margin-bottom: 14px;
 }
 
-/* Швидке замовлення — розкривається через <details> */
+/* Швидке замовлення - розкривається через <details> */
 .quick-order { margin-top: 0; }
 .quick-order > summary {
   list-style: none;
@@ -3210,7 +3210,7 @@ body:has(.modal:target) { overflow: hidden; }
   <div class="petal" style="bottom: 60px; right: 8%; transform: rotate(40deg) scaleX(-1); width: 160px; height: 160px;"></div>
   <div class="shop__inner">
     <h2 class="shop__title">Популярні <span class="shop__title--accent">товари</span></h2>
-    <p class="shop__lead">Готові вироби ручної роботи. Це лише обрані позиції — дивіться повний каталог.</p>
+    <p class="shop__lead">Готові вироби ручної роботи. Це лише обрані позиції - дивіться повний каталог.</p>
 
     <a href="shop.html" class="shop__catalog-cta">
       <span>Перейти в каталог товарів</span>
@@ -3231,7 +3231,7 @@ body:has(.modal:target) { overflow: hidden; }
   <div class="petal" style="top: 40px; left: -30px; transform: rotate(80deg); width: 200px; height: 200px;"></div>
   <div class="petal" style="bottom: 60px; right: -40px; transform: rotate(-100deg); width: 220px; height: 220px;"></div>
   <div class="faq__inner">
-    <h2 class="faq__title">Питання — <span class="faq__title--accent">відповіді</span></h2>
+    <h2 class="faq__title">Питання - <span class="faq__title--accent">відповіді</span></h2>
 
     <div class="faq__list" id="faq-list-dynamic">
       <!-- генерується JS з БД -->
@@ -3263,17 +3263,17 @@ body:has(.modal:target) { overflow: hidden; }
   <div class="modal__box">
     <a href="#x" class="modal__close" aria-label="Закрити">×</a>
     <p class="modal__title">Отримати доступ</p>
-    <p class="modal__sub">Залиште контакти — ми напишемо вам з деталями та посиланням на оплату</p>
+    <p class="modal__sub">Залиште контакти - ми напишемо вам з деталями та посиланням на оплату</p>
     <form class="modal__form" action="/api/send-form" method="POST">
       <input type="hidden" name="_subject" value="Запит: Отримати доступ до курсу">
       <input type="hidden" name="_captcha" value="false">
       <input type="text" name="_honey" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none" aria-hidden="true">
-      <input type="hidden" name="Джерело" value="Блок — Що ви отримуєте">
+      <input type="hidden" name="Джерело" value="Блок - Що ви отримуєте">
       <div class="modal__grid">
         <div class="form-field"><label class="form-label">Ім'я</label><input class="form-input" type="text" name="Імʼя" placeholder="Ваше ім'я"></div>
         <div class="form-field"><label class="form-label">Телефон <span style="color:#D14A3F">*</span></label><input class="form-input" type="tel" name="Телефон" placeholder="+380..." required></div>
         <div class="form-field form-field--wide"><label class="form-label">Email <span style="color:#D14A3F">*</span></label><input class="form-input" type="email" name="Email" placeholder="email@..." required></div>
-        <div class="form-field form-field--wide"><label class="form-label">Який курс вас цікавить?</label><input class="form-input" type="text" name="Курс" placeholder="або залиште порожнім — підберемо разом"></div>
+        <div class="form-field form-field--wide"><label class="form-label">Який курс вас цікавить?</label><input class="form-input" type="text" name="Курс" placeholder="або залиште порожнім - підберемо разом"></div>
         <button class="form-submit" type="submit">Надіслати заявку</button>
       </div>
     </form>
@@ -3287,7 +3287,7 @@ body:has(.modal:target) { overflow: hidden; }
   <div class="modal__box">
     <a href="#x" class="modal__close" aria-label="Закрити">×</a>
     <p class="modal__title">Оформити замовлення</p>
-    <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові — решту уточнимо по телефону</p>
+    <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові - решту уточнимо по телефону</p>
     <form class="modal__form" action="/api/send-form" method="POST">
       <input type="hidden" name="_subject" value="Замовлення товару з лендингу">
       <input type="hidden" name="_captcha" value="false">
@@ -3311,7 +3311,7 @@ body:has(.modal:target) { overflow: hidden; }
   <div class="modal__box">
     <a href="#x" class="modal__close" aria-label="Закрити">×</a>
     <p class="modal__title">Оформити замовлення</p>
-    <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові — решту уточнимо по телефону</p>
+    <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові - решту уточнимо по телефону</p>
     <form class="modal__form" action="/api/send-form" method="POST">
       <input type="hidden" name="_subject" value="Замовлення товару з лендингу">
       <input type="hidden" name="_captcha" value="false">
@@ -3335,7 +3335,7 @@ body:has(.modal:target) { overflow: hidden; }
   <div class="modal__box">
     <a href="#x" class="modal__close" aria-label="Закрити">×</a>
     <p class="modal__title">Оформити замовлення</p>
-    <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові — решту уточнимо по телефону</p>
+    <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові - решту уточнимо по телефону</p>
     <form class="modal__form" action="/api/send-form" method="POST">
       <input type="hidden" name="_subject" value="Замовлення товару з лендингу">
       <input type="hidden" name="_captcha" value="false">
@@ -3359,7 +3359,7 @@ body:has(.modal:target) { overflow: hidden; }
   <div class="modal__box">
     <a href="#x" class="modal__close" aria-label="Закрити">×</a>
     <p class="modal__title">Оформити замовлення</p>
-    <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові — решту уточнимо по телефону</p>
+    <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові - решту уточнимо по телефону</p>
     <form class="modal__form" action="/api/send-form" method="POST">
       <input type="hidden" name="_subject" value="Замовлення товару з лендингу">
       <input type="hidden" name="_captcha" value="false">
@@ -3383,7 +3383,7 @@ body:has(.modal:target) { overflow: hidden; }
   <div class="modal__box">
     <a href="#x" class="modal__close" aria-label="Закрити">×</a>
     <p class="modal__title">Оформити замовлення</p>
-    <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові — решту уточнимо по телефону</p>
+    <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові - решту уточнимо по телефону</p>
     <form class="modal__form" action="/api/send-form" method="POST">
       <input type="hidden" name="_subject" value="Замовлення товару з лендингу">
       <input type="hidden" name="_captcha" value="false">
@@ -3407,7 +3407,7 @@ body:has(.modal:target) { overflow: hidden; }
   <div class="modal__box">
     <a href="#x" class="modal__close" aria-label="Закрити">×</a>
     <p class="modal__title">Оформити замовлення</p>
-    <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові — решту уточнимо по телефону</p>
+    <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові - решту уточнимо по телефону</p>
     <form class="modal__form" action="/api/send-form" method="POST">
       <input type="hidden" name="_subject" value="Замовлення товару з лендингу">
       <input type="hidden" name="_captcha" value="false">
@@ -3859,7 +3859,7 @@ body:has(.modal:target) { overflow: hidden; }
           return `<p class="course-card__price">${p} ₴</p>`;
         })()}
         ${(() => {
-          // Якщо текст кнопки вже містить стрілку — не додаємо ще одну
+          // Якщо текст кнопки вже містить стрілку - не додаємо ще одну
           const rawText = (c.cta_text || (c.page_enabled ? 'Детальніше про курс' : 'Обрати цей курс')).trim();
           const hasArrow = /[→➜⟶➔]/.test(rawText);
           const text = rawText.replace(/\s*[→➜⟶➔]\s*$/, '');
@@ -3882,7 +3882,7 @@ body:has(.modal:target) { overflow: hidden; }
         <div class="modal__box">
           <a href="#x" class="modal__close" aria-label="Закрити">×</a>
           <p class="modal__title">${esc(c.title)}</p>
-          <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові — решту уточнимо по телефону</p>
+          <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові - решту уточнимо по телефону</p>
           <form class="modal__form" action="/api/send-form" method="POST">
             <input type="hidden" name="_subject" value="${escAttr(subject)}">
             <input type="hidden" name="_captcha" value="false">
@@ -3946,7 +3946,7 @@ body:has(.modal:target) { overflow: hidden; }
       const tagged = withTags.data || [];
       const all = allRes.data || [];
       const cats = catsRes.data || [];
-      // Збираємо 4 — спочатку з тегом, потім інші
+      // Збираємо 4 - спочатку з тегом, потім інші
       const ids = new Set();
       const featured = [];
       tagged.forEach(p => { if (featured.length < 4 && !ids.has(p.id)) { featured.push(p); ids.add(p.id); } });

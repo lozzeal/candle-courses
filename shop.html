@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Магазин — Крафт-свічки та арома-професія</title>
+<title>Магазин - Крафт-свічки та арома-професія</title>
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="apple-touch-icon" href="/assets/favicon.svg">
 <meta name="theme-color" content="#38A30D">
@@ -29,7 +29,7 @@ html, body {
   min-height: 100vh;
 }
 
-/* Прибране меню — залишаємо тільки логотип + CTA */
+/* Прибране меню - залишаємо тільки логотип + CTA */
 .site-header__nav,
 .nav__burger,
 .nav__drawer,
@@ -813,7 +813,7 @@ body:has(.modal:target) { overflow: hidden; }
     <!-- Toggle сайдбару на мобільному -->
     <input type="checkbox" id="filter-toggle" class="filter-toggle-cb">
 
-    <!-- Sidebar — генерується з БД -->
+    <!-- Sidebar - генерується з БД -->
     <aside class="sidebar">
       <label for="filter-toggle" class="filter-close-btn" aria-label="Закрити фільтр">×</label>
       <div class="sidebar__section">
@@ -1129,7 +1129,7 @@ body:has(.modal:target) { overflow: hidden; }
 })();
 </script>
 
-<!-- ====================== SHOP — динамічне завантаження з Supabase ====================== -->
+<!-- ====================== SHOP - динамічне завантаження з Supabase ====================== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function() {
@@ -1224,7 +1224,7 @@ body:has(.modal:target) { overflow: hidden; }
       </a>
     `).join('');
 
-    // Обробник клікa на плитку — фільтр + скрол
+    // Обробник клікa на плитку - фільтр + скрол
     grid.querySelectorAll('.js-cat-tile').forEach(tile => {
       tile.addEventListener('click', e => {
         e.preventDefault();

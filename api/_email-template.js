@@ -1,6 +1,6 @@
 // HTML-шаблон листа з посиланням на Telegram-групу після оплати курсу.
 // Підтримує всі основні поштові клієнти (Gmail, Outlook, Mail.ru, iCloud).
-// Inline CSS, table-based layout — стандарт для email.
+// Inline CSS, table-based layout - стандарт для email.
 
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g,
@@ -20,7 +20,7 @@ export function renderEmailTemplate({ course }) {
     `Ваш доступ до приватної Telegram-групи з усіма матеріалами:`,
     tgUrl,
     ``,
-    `Якщо посилання не відкривається — скопіюйте його у браузер або натисніть пряму кнопку у листі.`,
+    `Якщо посилання не відкривається - скопіюйте його у браузер або натисніть пряму кнопку у листі.`,
     ``,
     `Виникли питання? Напишіть нам у Telegram @GalunaSpeak або на okvozuk@gmail.com.`,
     ``,
@@ -114,7 +114,7 @@ export function renderEmailTemplate({ course }) {
           <td class="px-md" style="padding:24px 40px 8px;font-size:15px;line-height:1.65;color:#444">
             <p style="margin:0 0 14px">Вітаємо!</p>
             <p style="margin:0 0 14px">
-              Ваш доступ до приватної Telegram-групи з усіма матеріалами курсу — готовий.
+              Ваш доступ до приватної Telegram-групи з усіма матеріалами курсу - готовий.
               Натисніть кнопку нижче, щоб приєднатись:
             </p>
           </td>
@@ -150,7 +150,7 @@ export function renderEmailTemplate({ course }) {
             <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%" style="background-color:#fbf7f4;border-radius:12px">
               <tr>
                 <td style="padding:18px 22px;font-size:13.5px;line-height:1.6;color:#555">
-                  <strong style="color:#262626">Порада:</strong> збережіть цей лист у закладки —
+                  <strong style="color:#262626">Порада:</strong> збережіть цей лист у закладки -
                   посилання на групу працює з будь-якого пристрою. Усередині групи ви знайдете
                   всі відео-уроки, конспекти та зможете ставити запитання.
                 </td>
@@ -190,7 +190,7 @@ export function renderEmailTemplate({ course }) {
             </p>
             <p style="margin:8px 0 0;font-size:11px;color:#bbb">
               Цей лист надіслано автоматично після успішної оплати.
-              Якщо ви не оплачували курс — повідомте нам.
+              Якщо ви не оплачували курс - повідомте нам.
             </p>
           </td>
         </tr>

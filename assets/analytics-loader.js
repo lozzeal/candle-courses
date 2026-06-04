@@ -1,7 +1,7 @@
 // Завантажувач трекінг-кодів + власна аналітика
 // Включається у <head> усіх публічних сторінок
 (function() {
-  // ====== Власна аналітика — pageview tracking ======
+  // ====== Власна аналітика - pageview tracking ======
   function getSessionId() {
     let sid = sessionStorage.getItem('_sid');
     if (!sid) {
@@ -21,7 +21,7 @@
       utm_medium: params.get('utm_medium') || null,
       utm_campaign: params.get('utm_campaign') || null
     };
-    // Не блокуємо рендер — sendBeacon якщо доступний
+    // Не блокуємо рендер - sendBeacon якщо доступний
     try {
       if (navigator.sendBeacon) {
         const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
@@ -94,7 +94,7 @@
     container.innerHTML = html;
     const nodes = Array.from(container.childNodes);
     nodes.forEach(node => {
-      // Якщо це <script> — створюємо новий script-елемент, бо innerHTML не виконує
+      // Якщо це <script> - створюємо новий script-елемент, бо innerHTML не виконує
       if (node.nodeType === 1 && node.tagName === 'SCRIPT') {
         const s = document.createElement('script');
         Array.from(node.attributes).forEach(a => s.setAttribute(a.name, a.value));
@@ -127,7 +127,7 @@
     if (settings.custom_head_html) injectHTML(settings.custom_head_html, document.head);
     if (settings.custom_css) injectCustomCSS(settings.custom_css);
 
-    // 3. body_start і body_end — якщо body вже доступний
+    // 3. body_start і body_end - якщо body вже доступний
     const applyBody = () => {
       if (settings.custom_body_start) injectHTML(settings.custom_body_start, document.body, 'prepend');
       if (settings.custom_body_end) injectHTML(settings.custom_body_end, document.body);
@@ -136,7 +136,7 @@
     else document.addEventListener('DOMContentLoaded', applyBody);
   }
 
-  // Кеш — миттєво з local, потім свіжі дані з БД
+  // Кеш - миттєво з local, потім свіжі дані з БД
   const cached = readCache();
   if (cached) applySettings(cached);
 
@@ -148,7 +148,7 @@
     const settings = {};
     (rows || []).forEach(r => settings[r.key] = r.value || '');
     writeCache(settings);
-    // Якщо не було кешу — застосувати зараз
+    // Якщо не було кешу - застосувати зараз
     if (!cached) applySettings(settings);
   })
   .catch(e => console.warn('Analytics loader:', e));

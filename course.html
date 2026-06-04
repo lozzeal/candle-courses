@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Завантаження курсу… — 100candle.shop</title>
+<title>Завантаження курсу… - 100candle.shop</title>
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="apple-touch-icon" href="/assets/favicon.svg">
 <meta name="theme-color" content="#38A30D">
@@ -300,7 +300,7 @@ img, video { display: block; max-width: 100%; }
   color: #666;
 }
 
-/* ===== MARQUEE (бігаюча стрічка) — для відгуків і робіт ===== */
+/* ===== MARQUEE (бігаюча стрічка) - для відгуків і робіт ===== */
 .marquee-wrap {
   overflow: hidden;
   padding: 6px 0 18px;
@@ -747,7 +747,7 @@ body:has(.modal:target) { overflow: hidden; }
   <a href="shop.html" class="top-nav__link">Товари</a>
 </nav>
 
-<!-- Container — заповнюється JS -->
+<!-- Container - заповнюється JS -->
 <main id="page-root">
   <div class="page-loader">Завантаження…</div>
 </main>
@@ -818,7 +818,7 @@ body:has(.modal:target) { overflow: hidden; }
       <h1 style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#262626">${esc(msg)}</h1>
       <a href="index.html" style="color:var(--accent);text-decoration:none;font-weight:600">← На головну</a>
     </div>`;
-    document.title = 'Курс не знайдений — 100candle.shop';
+    document.title = 'Курс не знайдений - 100candle.shop';
   }
 
   // ====== Mini-markdown (як на /product.html) ======
@@ -864,7 +864,7 @@ body:has(.modal:target) { overflow: hidden; }
   }
 
   // ====== Helper: рендер заголовка з зеленим акцентом ======
-  // title — основний текст (темний), title_accent — зелена частина
+  // title - основний текст (темний), title_accent - зелена частина
   // Можна додавати accent_position: 'before' | 'after' (default after)
   function renderSectionTitle(d, defaults = {}) {
     const t = (d.title !== undefined && d.title !== '') ? d.title : (defaults.title || '');
@@ -1190,7 +1190,7 @@ body:has(.modal:target) { overflow: hidden; }
     }
     const course = courses[0];
     if (!course.page_enabled) {
-      // Якщо сторінка курсу не активована — повертаємо на лендинг до якоря
+      // Якщо сторінка курсу не активована - повертаємо на лендинг до якоря
       window.location.href = `index.html#${course.slug}`;
       return;
     }
@@ -1200,7 +1200,7 @@ body:has(.modal:target) { overflow: hidden; }
     const ctx = { course, allReviews: reviews || [], settings: settingsMap };
     const blocks = Array.isArray(course.page_blocks) ? course.page_blocks : [];
 
-    // Якщо немає блоків — створюємо мінімум: hero + cta
+    // Якщо немає блоків - створюємо мінімум: hero + cta
     const renderBlocks = blocks.length ? blocks : [
       { id: 'auto-hero', type: 'hero', visible: true, data: {} },
       { id: 'auto-cta', type: 'cta', visible: true, data: { title: 'Готові почати курс?', subtitle: 'Натисніть кнопку нижче, щоб оформити доступ.' } }
@@ -1223,7 +1223,7 @@ body:has(.modal:target) { overflow: hidden; }
         <div class="modal__box">
           <a href="#x" class="modal__close" aria-label="Закрити">×</a>
           <p class="modal__title">${esc(course.title)}</p>
-          <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові — решту уточнимо по телефону</p>
+          <p class="modal__sub">Поля з <span style="color:#D14A3F">*</span> обовʼязкові - решту уточнимо по телефону</p>
           <form class="modal__grid" action="/api/send-form" method="POST">
             <input type="hidden" name="_subject" value="${escAttr('Заявка на курс: ' + course.title)}">
             <input type="hidden" name="_captcha" value="false">
@@ -1256,7 +1256,7 @@ body:has(.modal:target) { overflow: hidden; }
     `;
 
     root.innerHTML = html + orderModal + stickyBuy;
-    document.title = course.title + ' — 100candle.shop';
+    document.title = course.title + ' - 100candle.shop';
     if (course.page_meta_description) {
       let m = document.querySelector('meta[name="description"]');
       if (!m) { m = document.createElement('meta'); m.name = 'description'; document.head.appendChild(m); }

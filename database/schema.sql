@@ -1,5 +1,5 @@
 -- ============================================================
--- 100candle.shop — повна схема БД
+-- 100candle.shop - повна схема БД
 -- Запустити у Supabase Dashboard → SQL Editor → Run
 -- ============================================================
 
@@ -119,7 +119,7 @@ CREATE TRIGGER settings_updated_at BEFORE UPDATE ON site_settings
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- ============================================================
--- 7. ROW LEVEL SECURITY (RLS) — хто що бачить
+-- 7. ROW LEVEL SECURITY (RLS) - хто що бачить
 -- ============================================================
 
 -- CATEGORIES: публічно читати, тільки auth писати
@@ -129,14 +129,14 @@ DROP POLICY IF EXISTS "auth_write_categories" ON categories;
 CREATE POLICY "public_read_categories" ON categories FOR SELECT USING (true);
 CREATE POLICY "auth_write_categories" ON categories FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
--- PRODUCTS: публічно читати тільки published, auth — все
+-- PRODUCTS: публічно читати тільки published, auth - все
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "public_read_published_products" ON products;
 DROP POLICY IF EXISTS "auth_full_access_products" ON products;
 CREATE POLICY "public_read_published_products" ON products FOR SELECT USING (status = 'published');
 CREATE POLICY "auth_full_access_products" ON products FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
--- PRODUCT_MEDIA: публічно — тільки для published товарів, auth — все
+-- PRODUCT_MEDIA: публічно - тільки для published товарів, auth - все
 ALTER TABLE product_media ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "public_read_media_published" ON product_media;
 DROP POLICY IF EXISTS "auth_full_access_media" ON product_media;
@@ -145,7 +145,7 @@ CREATE POLICY "public_read_media_published" ON product_media FOR SELECT USING (
 );
 CREATE POLICY "auth_full_access_media" ON product_media FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
--- ORDERS: будь-хто може INSERT (через service_role з API), auth — читає/змінює
+-- ORDERS: будь-хто може INSERT (через service_role з API), auth - читає/змінює
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "anyone_can_insert_orders" ON orders;
 DROP POLICY IF EXISTS "auth_can_read_orders" ON orders;
@@ -162,7 +162,7 @@ CREATE POLICY "public_read_settings" ON site_settings FOR SELECT USING (true);
 CREATE POLICY "auth_write_settings" ON site_settings FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- ============================================================
--- 8. SEED DATA — категорії
+-- 8. SEED DATA - категорії
 -- ============================================================
 INSERT INTO categories (name, slug, sort_order, icon_svg) VALUES
   ('Свічки', 'svichky', 1, '<svg viewBox="0 0 24 24" fill="none"><path d="M12 3v10M9 6c0-1.657 1.343-3 3-3s3 1.343 3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="7" y="13" width="10" height="8" rx="2" stroke="currentColor" stroke-width="1.8"/></svg>'),
@@ -186,7 +186,7 @@ SELECT n, s, p.id, o FROM (VALUES
 ON CONFLICT (slug) DO NOTHING;
 
 -- ============================================================
--- 9. SEED DATA — 11 поточних товарів (як приклад)
+-- 9. SEED DATA - 11 поточних товарів (як приклад)
 -- ============================================================
 INSERT INTO products (name, slug, short_description, price, old_price, category_id, status, tag, sort_order)
 SELECT n, s, sd, p, op, c.id, 'published', t, o FROM (VALUES
@@ -205,7 +205,7 @@ SELECT n, s, sd, p, op, c.id, 'published', t, o FROM (VALUES
 ON CONFLICT (slug) DO NOTHING;
 
 -- ============================================================
--- 10. SEED DATA — налаштування за замовчуванням
+-- 10. SEED DATA - налаштування за замовчуванням
 -- ============================================================
 INSERT INTO site_settings (key, value) VALUES
   ('contact_telegram', '@GalunaSpeak'),

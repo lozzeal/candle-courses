@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Букет «Полуничний рай» — Магазин</title>
+<title>Букет «Полуничний рай» - Магазин</title>
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="apple-touch-icon" href="/assets/favicon.svg">
 <meta name="theme-color" content="#38A30D">
@@ -274,7 +274,7 @@ input[type="radio"][name="color"]:checked + .swatch { box-shadow: 0 0 0 2px var(
   max-width: 880px;
   margin: 0 auto;
 }
-/* Якщо відео одне — центруємо і обмежуємо ширину */
+/* Якщо відео одне - центруємо і обмежуємо ширину */
 .videos-grid:has(video:only-child) {
   grid-template-columns: minmax(0, 420px);
   justify-content: center;
@@ -510,7 +510,7 @@ body:has(.modal:target) { overflow: hidden; }
         </div>
 
         <ul class="product__features">
-          <li>Доставка Новою Поштою по всій Україні — 1-3 дні</li>
+          <li>Доставка Новою Поштою по всій Україні - 1-3 дні</li>
           <li>Безкоштовна подарункова упаковка</li>
           <li>100% натуральний соєвий віск, без шкідливих добавок</li>
           <li>Виготовлення під замовлення</li>
@@ -614,7 +614,7 @@ body:has(.modal:target) { overflow: hidden; }
 </footer>
 
 <!-- ============================================================
-     МОДАЛКА — ЗАМОВЛЕННЯ
+     МОДАЛКА - ЗАМОВЛЕННЯ
      ============================================================ -->
 <div id="order" class="modal">
   <a href="#" class="modal__overlay" aria-label="Закрити"></a>
@@ -654,7 +654,7 @@ body:has(.modal:target) { overflow: hidden; }
 </div>
 
 <!-- ============================================================
-     МОДАЛКА — ПИТАННЯ ПРО ТОВАР
+     МОДАЛКА - ПИТАННЯ ПРО ТОВАР
      ============================================================ -->
 <div id="ask" class="modal">
   <a href="#" class="modal__overlay" aria-label="Закрити"></a>
@@ -713,7 +713,7 @@ body:has(.modal:target) { overflow: hidden; }
 })();
 </script>
 
-<!-- ====================== PRODUCT — динамічне завантаження з Supabase ====================== -->
+<!-- ====================== PRODUCT - динамічне завантаження з Supabase ====================== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function() {
@@ -725,8 +725,8 @@ body:has(.modal:target) { overflow: hidden; }
   function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
   // Mini-markdown: # h2, ## h3, ### h4, **bold**, *italic*, [text](url),
-  // - / • / ◆ / ✓ — список, > blockquote, --- — hr,
-  // \n\n — новий параграф, \n всередині — <br>
+  // - / • / ◆ / ✓ - список, > blockquote, --- - hr,
+  // \n\n - новий параграф, \n всередині - <br>
   function formatRichText(raw) {
     if (!raw) return '';
     const inline = (s) => {
@@ -787,7 +787,7 @@ body:has(.modal:target) { overflow: hidden; }
         ).join('') + '</ol>');
         continue;
       }
-      // Звичайний параграф — одинарні \n → <br>
+      // Звичайний параграф - одинарні \n → <br>
       out.push('<p>' + lines.map(inline).join('<br>') + '</p>');
     }
     return out.join('');
@@ -837,7 +837,7 @@ body:has(.modal:target) { overflow: hidden; }
         renderRelated(related, relPhotoMap);
       }
 
-      document.title = product.name + ' — 100candle.shop';
+      document.title = product.name + ' - 100candle.shop';
     } catch (err) {
       show404('Помилка завантаження: ' + err.message);
     }
@@ -849,7 +849,7 @@ body:has(.modal:target) { overflow: hidden; }
     $('#product-cat').textContent = '';
     $('#product-short-desc').textContent = '';
     $('#product-gallery').innerHTML = '<div style="aspect-ratio:1;background:#f0eae6;display:flex;align-items:center;justify-content:center;font-size:80px">🔍</div>';
-    document.title = 'Товар не знайдений — 100candle.shop';
+    document.title = 'Товар не знайдений - 100candle.shop';
   }
 
   function renderProduct(p, media, category) {
@@ -884,7 +884,7 @@ body:has(.modal:target) { overflow: hidden; }
     const videos = media.filter(m => m.type === 'video');
     if (videos.length > 0) {
       $('#product-videos-section').style.display = 'block';
-      // #t=0.5 — підказує браузеру показати кадр на 0.5 сек замість чорного нульового
+      // #t=0.5 - підказує браузеру показати кадр на 0.5 сек замість чорного нульового
       $('#product-videos-grid').innerHTML = videos.map((v, idx) => {
         const url = v.url + (v.url.includes('#') ? '' : '#t=0.5');
         return `
@@ -916,7 +916,7 @@ body:has(.modal:target) { overflow: hidden; }
       });
     }
 
-    // Повний опис — підтримує Markdown-формат (списки, заголовки, жирний, посилання, переноси)
+    // Повний опис - підтримує Markdown-формат (списки, заголовки, жирний, посилання, переноси)
     if (p.description) {
       $('#product-desc-section').style.display = 'block';
       $('#product-description').innerHTML = formatRichText(p.description);
@@ -935,7 +935,7 @@ body:has(.modal:target) { overflow: hidden; }
     // Order form: prefill product name
     $('#order-modal-title').textContent = 'Замовити: ' + p.name;
     $('#order-subject').value = 'Замовлення: ' + p.name;
-    $('#order-product-value').value = p.name + ' — ' + p.price + ' ₴';
+    $('#order-product-value').value = p.name + ' - ' + p.price + ' ₴';
     $('#order-return-url').value = '/product.html?id=' + p.id;
   }
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Дякуємо за оплату! — 100candle.shop</title>
+<title>Дякуємо за оплату! - 100candle.shop</title>
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="apple-touch-icon" href="/assets/favicon.svg">
 <meta name="theme-color" content="#38A30D">
@@ -188,7 +188,7 @@ h1 {
 
   function showSuccess(course) {
     if (!course.telegram_url) {
-      showError('Доступ ще не налаштований', 'Будь ласка, звʼяжіться з нами у Telegram @GalunaSpeak — ми надішлемо посилання вручну.');
+      showError('Доступ ще не налаштований', 'Будь ласка, звʼяжіться з нами у Telegram @GalunaSpeak - ми надішлемо посилання вручну.');
       return;
     }
     card.innerHTML = `
@@ -222,7 +222,7 @@ h1 {
   } else if (courseSlug) {
     url = `${SUPABASE_URL}/rest/v1/landing_courses?select=*&slug=eq.${encodeURIComponent(courseSlug)}`;
   } else {
-    showError('Курс не вказаний', 'У URL відсутній параметр ?course=ID. Будь ласка, напишіть нам у Telegram @GalunaSpeak — ми надішлемо посилання.');
+    showError('Курс не вказаний', 'У URL відсутній параметр ?course=ID. Будь ласка, напишіть нам у Telegram @GalunaSpeak - ми надішлемо посилання.');
     return;
   }
 

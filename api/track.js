@@ -1,4 +1,4 @@
-// /api/track — приймає pageview події і пише у БД page_views
+// /api/track - приймає pageview події і пише у БД page_views
 // Працює серверно, тому має доступ до x-vercel-ip-country, IP тощо
 
 export const config = { api: { bodyParser: false } };

@@ -1,18 +1,18 @@
-// Vercel serverless function — WayForPay Service URL webhook
+// Vercel serverless function - WayForPay Service URL webhook
 // Викликається сервером WayForPay після оплати.
 // Перевіряє підпис, знаходить курс, надсилає клієнту email з посиланням на Telegram-групу.
 //
 // Env vars (Vercel → Settings → Environment Variables):
-//   WAYFORPAY_SECRET        — Merchant Secret Key з кабінету WayForPay
-//   WAYFORPAY_ACCOUNT       — Merchant Account (напр. "100candle_shop") — опційно для додаткової перевірки
-//   SMTP_HOST               — smtp-pulse.com
-//   SMTP_PORT               — 2525 (або 465 для SSL)
-//   SMTP_USER               — логін SendPulse SMTP (напр. okvozuk@gmail.com)
-//   SMTP_PASS               — пароль SendPulse SMTP
-//   SMTP_FROM               — noreply@100candle.shop (верифікований у SendPulse)
-//   SMTP_FROM_NAME          — "Крафт-свічки та арома-професія" (опційно)
-//   SUPABASE_URL            — вже є
-//   SUPABASE_SERVICE_KEY    — вже є
+//   WAYFORPAY_SECRET        - Merchant Secret Key з кабінету WayForPay
+//   WAYFORPAY_ACCOUNT       - Merchant Account (напр. "100candle_shop") - опційно для додаткової перевірки
+//   SMTP_HOST               - smtp-pulse.com
+//   SMTP_PORT               - 2525 (або 465 для SSL)
+//   SMTP_USER               - логін SendPulse SMTP (напр. okvozuk@gmail.com)
+//   SMTP_PASS               - пароль SendPulse SMTP
+//   SMTP_FROM               - noreply@100candle.shop (верифікований у SendPulse)
+//   SMTP_FROM_NAME          - "Крафт-свічки та арома-професія" (опційно)
+//   SUPABASE_URL            - вже є
+//   SUPABASE_SERVICE_KEY    - вже є
 
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
@@ -97,7 +97,7 @@ async function supabaseUpdate(table, params, body) {
 }
 
 // Знаходимо курс за webhook-даними. Стратегії в порядку надійності:
-//   1) Унікальне співпадіння ціни (наш міні-курс 550 ₴ — єдиний)
+//   1) Унікальне співпадіння ціни (наш міні-курс 550 ₴ - єдиний)
 //   2) productName з WayForPay містить title курсу (або навпаки)
 //   3) Останнє замовлення по email → product_or_course містить title курсу
 async function findCourse({ amount, productName, email }) {
@@ -118,7 +118,7 @@ async function findCourse({ amount, productName, email }) {
     return h.includes(n) || n.includes(h);
   };
 
-  // Беремо кандидатів — або всі курси, або тільки ті, що з цією ціною
+  // Беремо кандидатів - або всі курси, або тільки ті, що з цією ціною
   const candidates = byPrice.length
     ? byPrice
     : await supabaseSelect('landing_courses', 'select=*');
@@ -154,7 +154,7 @@ async function findCourse({ amount, productName, email }) {
     }
   }
 
-  console.warn(`findCourse: ❌ не вдалось визначити курс — amount=${amount}, productName=${productName}, email=${email}, candidates=${candidates.length}`);
+  console.warn(`findCourse: ❌ не вдалось визначити курс - amount=${amount}, productName=${productName}, email=${email}, candidates=${candidates.length}`);
   return null;
 }
 
@@ -222,7 +222,7 @@ export default async function handler(req, res) {
   const clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0].trim()
     || req.headers['x-real-ip'] || req.socket?.remoteAddress || 'unknown';
 
-  // Спершу читаємо raw-body — щоб мати його у логах навіть при помилках
+  // Спершу читаємо raw-body - щоб мати його у логах навіть при помилках
   let rawBody = '';
   try { rawBody = await readRawBody(req); } catch {}
 
@@ -274,9 +274,9 @@ export default async function handler(req, res) {
     signature: buildAcceptSignature(SECRET, orderRef, 'accept', respTime)
   };
 
-  // Обробляємо тільки успішні оплати; для інших — просто accept без email
+  // Обробляємо тільки успішні оплати; для інших - просто accept без email
   if (status !== 'Approved') {
-    console.log(`Webhook ${orderRef}: status=${status} — skipping email`);
+    console.log(`Webhook ${orderRef}: status=${status} - skipping email`);
     await logWebhook({
       method: req.method, raw_body: rawBody, parsed_body: data,
       order_reference: orderRef, transaction_status: status, amount,
@@ -304,7 +304,7 @@ export default async function handler(req, res) {
       `select=id,email_sent&payment_order_ref=eq.${encodeURIComponent(orderRef)}&limit=1`
     );
     if (existing.length && existing[0].email_sent) {
-      console.log(`Webhook ${orderRef}: email вже надіслано — skip`);
+      console.log(`Webhook ${orderRef}: email вже надіслано - skip`);
       return res.status(200).json(respPayload);
     }
   } catch (err) {
@@ -325,7 +325,7 @@ export default async function handler(req, res) {
 
   if (!course) {
     console.warn(`Webhook ${orderRef}: курс не знайдено за amount=${amount}`);
-    // Записуємо у БД, що оплата була, але курс не визначено — клієнтка побачить в адмінці
+    // Записуємо у БД, що оплата була, але курс не визначено - клієнтка побачить в адмінці
     try {
       await supabaseUpdate('orders',
         `customer_email=eq.${encodeURIComponent(clientEmail)}&order=created_at.desc&limit=1`,
