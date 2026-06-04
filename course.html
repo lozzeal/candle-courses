@@ -464,6 +464,8 @@ img, video { display: block; max-width: 100%; }
     0 0 0 1px rgba(255,255,255,0.1) inset,
     0 -2px 0 rgba(0,0,0,0.15) inset;
   position: relative;
+  white-space: nowrap;
+  max-width: 100%;
 }
 .cta-block .cta-btn::after {
   content: '→';
@@ -488,9 +490,18 @@ img, video { display: block; max-width: 100%; }
   color: rgba(255,255,255,0.55);
 }
 @media (max-width: 600px) {
-  .cta-block { padding: 50px 22px 56px; border-radius: 24px; margin: 0 12px; }
-  .cta-block .cta-btn { font-size: 14px; padding: 14px 28px; border-radius: 12px; }
-  .cta-block__guarantee { font-size: 12px; flex-wrap: wrap; text-align: center; }
+  .cta-block { padding: 50px 18px 56px; border-radius: 24px; margin: 0 12px; }
+  .cta-block .cta-btn {
+    font-size: 13px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    letter-spacing: 0.01em;
+  }
+  .cta-block .cta-btn::after { margin-left: 6px; }
+  .cta-block__guarantee { font-size: 12px; flex-wrap: wrap; text-align: center; padding: 0 8px; }
+}
+@media (max-width: 380px) {
+  .cta-block .cta-btn { font-size: 12px; padding: 13px 18px; }
 }
 
 /* ===== LOADER ===== */

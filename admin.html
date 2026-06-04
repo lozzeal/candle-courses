@@ -3156,6 +3156,7 @@ function renderLandingCourses() {
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn-action" onclick="copyCourseThanksLink(${c.id}, '${escapeAttr(c.slug || '')}', event)" title="Скопіювати посилання на сторінку доступу">🔗 Доступ</button>
           <button class="btn-action" onclick="openCoursePageEditor(${c.id})" title="Редагувати окрему сторінку курсу">📄 Сторінка${c.page_enabled ? ' ✅' : ''}</button>
+          ${c.page_enabled ? `<a class="btn-action" href="/course.html?slug=${escapeAttr(c.slug || '')}" target="_blank" rel="noopener" title="Подивитись сторінку у новій вкладці" style="text-decoration:none">👁️ Переглянути</a>` : ''}
           <button class="btn-action" onclick="toggleCourseVisibility(${c.id})" title="${toggleTitle}">${toggleEmoji} ${isPublished ? 'Приховати' : 'Опублікувати'}</button>
           <button class="btn-action" onclick="editLandingCourse(${c.id})">✏️ Редагувати</button>
           <button class="btn-action btn-action--danger" onclick="deleteLandingCourse(${c.id})">🗑️</button>
@@ -3530,7 +3531,7 @@ function renderBlockEditor(b, idx) {
     case 'video':
       return t('Заголовок', 'title', d.title)
         + t('Підзаголовок', 'subtitle', d.subtitle)
-        + t('URL відео (YouTube або mp4)', 'url', d.url)
+        + renderVideoUploader(idx, d.url || '')
         + t('Підпис під відео (опц.)', 'caption', d.caption);
     case 'reviews':
       return t('Заголовок', 'title', d.title)
@@ -3737,6 +3738,77 @@ window.addWorkByUrl = function(idx) {
   cpe.blocks[idx].data.photos.push(url);
   cpe.blocks[idx]._expanded = true;
   renderBlocksList();
+};
+
+// ===== Video uploader (для блоку video) =====
+function renderVideoUploader(idx, currentUrl) {
+  const hasFile = currentUrl && (currentUrl.includes('supabase.co') || currentUrl.endsWith('.mp4') || currentUrl.endsWith('.webm') || currentUrl.endsWith('.mov'));
+  return `<div class="form-group" style="margin-top:10px">
+    <label style="font-size:12px;color:#666">Відео</label>
+    ${currentUrl ? `
+      <div style="background:#f8f6f3;padding:10px 12px;border-radius:8px;margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-size:13px;color:#444">${hasFile ? '📁 Завантажене відео' : '🔗 URL'}</span>
+        <input type="text" value="${escapeAttr(currentUrl)}" readonly style="flex:1;min-width:200px;padding:6px 8px;border:1px solid #e0dbd8;border-radius:6px;font-size:12px;color:#666;background:#fff" onclick="this.select()">
+        <button type="button" class="btn-action btn-action--danger" onclick="updateBlockField(${idx},'url','');renderBlocksList()" style="padding:4px 10px">Видалити</button>
+      </div>
+    ` : ''}
+    <div id="cpe-video-drop-${idx}"
+      ondrop="onVideoDrop(event, ${idx})"
+      ondragover="event.preventDefault();this.style.borderColor='var(--accent)';this.style.background='#f0f8ec'"
+      ondragleave="this.style.borderColor='#d0c8c0';this.style.background='#fbf8f5'"
+      style="border:2px dashed #d0c8c0;border-radius:12px;padding:24px 16px;text-align:center;background:#fbf8f5;cursor:pointer;transition:all 0.2s"
+      onclick="document.getElementById('cpe-video-input-${idx}').click()">
+      <div style="font-size:28px;margin-bottom:6px">🎥</div>
+      <div style="font-size:13px;font-weight:600;color:#444;margin-bottom:4px">Перетягніть відео сюди або клікніть</div>
+      <div style="font-size:11px;color:#999">MP4, WebM, MOV · до 100 MB</div>
+    </div>
+    <input type="file" id="cpe-video-input-${idx}" accept="video/mp4,video/webm,video/quicktime,video/*" style="display:none" onchange="uploadVideo(${idx}, this.files)">
+    <div style="margin-top:10px;font-size:12px;color:#888;text-align:center">— або —</div>
+    <input type="text" placeholder="Вставте URL YouTube/Vimeo (https://...)" value="${currentUrl && !hasFile ? escapeAttr(currentUrl) : ''}" oninput="updateBlockField(${idx},'url',this.value)" style="margin-top:8px;width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:13px">
+    <div id="cpe-video-progress-${idx}" style="display:none;margin-top:10px"></div>
+  </div>`;
+}
+
+window.onVideoDrop = function(e, idx) {
+  e.preventDefault();
+  e.currentTarget.style.borderColor = '#d0c8c0';
+  e.currentTarget.style.background = '#fbf8f5';
+  const files = e.dataTransfer?.files;
+  if (files && files.length) uploadVideo(idx, files);
+};
+
+window.uploadVideo = async function(idx, files) {
+  if (!files || !files.length) return;
+  const file = files[0];
+  if (!file.type.startsWith('video/')) {
+    alert('Це не відеофайл');
+    return;
+  }
+  const MAX = 100 * 1024 * 1024;  // 100 MB
+  if (file.size > MAX) {
+    alert(`Файл ${(file.size/1024/1024).toFixed(1)} MB перевищує ліміт 100 MB`);
+    return;
+  }
+  const progressEl = document.getElementById(`cpe-video-progress-${idx}`);
+  if (progressEl) {
+    progressEl.style.display = 'block';
+    progressEl.innerHTML = `<div style="background:#f0f8ec;padding:8px 12px;border-radius:8px;font-size:13px;color:var(--accent)">⏳ Завантажуємо ${(file.size/1024/1024).toFixed(1)} MB…</div>`;
+  }
+  try {
+    const ext = (file.name.split('.').pop() || 'mp4').toLowerCase();
+    const path = `course-videos/${cpe.course.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+    const { error } = await supa.storage.from('product-videos').upload(path, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+    if (error) throw error;
+    const { data: { publicUrl } } = supa.storage.from('product-videos').getPublicUrl(path);
+    if (!cpe.blocks[idx].data) cpe.blocks[idx].data = {};
+    cpe.blocks[idx].data.url = publicUrl;
+    cpe.blocks[idx]._expanded = true;
+    if (progressEl) progressEl.style.display = 'none';
+    renderBlocksList();
+  } catch (e) {
+    alert('Помилка завантаження: ' + e.message);
+    if (progressEl) progressEl.style.display = 'none';
+  }
 };
 
 window.uploadWorks = async function(idx, files) {
