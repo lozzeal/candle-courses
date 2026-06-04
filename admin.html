@@ -1483,7 +1483,15 @@ html, body {
 <aside class="drawer" id="drawer-course-page" style="max-width:780px">
   <div class="drawer-header">
     <div class="drawer-title">📄 Сторінка курсу: <span id="cpe-course-title">…</span></div>
-    <button class="drawer-close" id="cpe-close" type="button">&times;</button>
+    <div style="display:flex;align-items:center;gap:8px">
+      <a id="cpe-preview" href="#" target="_blank" rel="noopener"
+         style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;border:1.5px solid var(--accent);color:var(--accent);border-radius:10px;font-size:13px;font-weight:600;text-decoration:none;transition:all 0.15s"
+         onmouseover="this.style.background='var(--accent)';this.style.color='#fff'"
+         onmouseout="this.style.background='#fff';this.style.color='var(--accent)'">
+        👁️ Переглянути сторінку
+      </a>
+      <button class="drawer-close" id="cpe-close" type="button">&times;</button>
+    </div>
   </div>
   <div class="drawer-body">
     <!-- Page enabled toggle -->
@@ -1531,7 +1539,6 @@ html, body {
     </div>
   </div>
   <div class="drawer-footer">
-    <a id="cpe-preview" href="#" target="_blank" rel="noopener" class="btn-secondary" style="text-decoration:none">👁️ Переглянути сторінку</a>
     <div style="flex:1"></div>
     <button class="btn-secondary" id="cpe-cancel" type="button">Скасувати</button>
     <button class="btn-save" id="cpe-save" type="button">Зберегти</button>
@@ -3156,7 +3163,6 @@ function renderLandingCourses() {
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn-action" onclick="copyCourseThanksLink(${c.id}, '${escapeAttr(c.slug || '')}', event)" title="Скопіювати посилання на сторінку доступу">🔗 Доступ</button>
           <button class="btn-action" onclick="openCoursePageEditor(${c.id})" title="Редагувати окрему сторінку курсу">📄 Сторінка${c.page_enabled ? ' ✅' : ''}</button>
-          ${c.page_enabled ? `<a class="btn-action" href="/course.html?slug=${escapeAttr(c.slug || '')}" target="_blank" rel="noopener" title="Подивитись сторінку у новій вкладці" style="text-decoration:none">👁️ Переглянути</a>` : ''}
           <button class="btn-action" onclick="toggleCourseVisibility(${c.id})" title="${toggleTitle}">${toggleEmoji} ${isPublished ? 'Приховати' : 'Опублікувати'}</button>
           <button class="btn-action" onclick="editLandingCourse(${c.id})">✏️ Редагувати</button>
           <button class="btn-action btn-action--danger" onclick="deleteLandingCourse(${c.id})">🗑️</button>
