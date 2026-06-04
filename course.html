@@ -586,25 +586,27 @@ img, video { display: block; max-width: 100%; }
 .cta-block {
   text-align: center;
   background:
-    radial-gradient(circle at 20% 20%, rgba(73,195,24,0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(245,217,208,0.12) 0%, transparent 50%),
-    linear-gradient(135deg, #2A1F1C 0%, #3D2D29 100%);
-  color: #fff;
+    radial-gradient(circle at 20% 20%, rgba(73,195,24,0.10) 0%, transparent 55%),
+    radial-gradient(circle at 80% 80%, rgba(255,200,180,0.35) 0%, transparent 60%),
+    linear-gradient(135deg, #fbf7f4 0%, #f5e6e0 100%);
+  color: #262626;
   padding: 70px 32px 76px;
   border-radius: 32px;
   margin: 0 16px;
   position: relative;
   overflow: hidden;
+  border: 1px solid rgba(56,163,13,0.10);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.06);
 }
 .cta-block::before {
   content: '';
   position: absolute;
-  top: -60px; left: 50%;
+  top: -80px; left: 50%;
   transform: translateX(-50%);
-  width: 220px; height: 220px;
+  width: 260px; height: 260px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(73,195,24,0.4) 0%, transparent 70%);
-  filter: blur(50px);
+  background: radial-gradient(circle, rgba(73,195,24,0.25) 0%, transparent 70%);
+  filter: blur(60px);
   pointer-events: none;
 }
 .cta-block__inner { position: relative; z-index: 1; }
@@ -615,8 +617,9 @@ img, video { display: block; max-width: 100%; }
   margin-bottom: 16px;
   letter-spacing: 0.02em;
   line-height: 1.2;
+  color: #262626;
 }
-.cta-block__sub { color: rgba(255,255,255,0.75); font-size: 16px; margin-bottom: 32px; max-width: 520px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+.cta-block__sub { color: #555; font-size: 16px; margin-bottom: 32px; max-width: 520px; margin-left: auto; margin-right: auto; line-height: 1.6; }
 .cta-block__btn-wrap {
   display: flex;
   justify-content: center;
@@ -655,7 +658,7 @@ img, video { display: block; max-width: 100%; }
   justify-content: center;
   gap: 6px;
   font-size: 13px;
-  color: rgba(255,255,255,0.55);
+  color: #888;
 }
 @media (max-width: 600px) {
   .cta-block { padding: 50px 18px 56px; border-radius: 24px; margin: 0 12px; }
