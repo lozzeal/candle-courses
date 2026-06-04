@@ -278,8 +278,14 @@ img, video { display: block; max-width: 100%; }
 .marquee-wrap {
   overflow: hidden;
   padding: 6px 0 18px;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
-  mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
+}
+@media (max-width: 600px) {
+  .marquee-wrap {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 2%, #000 98%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 2%, #000 98%, transparent);
+  }
 }
 .marquee-track {
   display: flex;
