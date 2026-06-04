@@ -474,6 +474,60 @@ html, body {
   transition: opacity 0.25s, visibility 0.25s;
 }
 .drawer-overlay.is-open { opacity: 1; visibility: visible; }
+
+/* ===== Уніфіковані кнопки дій картки курсу ===== */
+.course-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.course-actions__btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 72px;
+  padding: 8px 10px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.course-actions__btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+.course-actions__btn--active {
+  background: #f0f8ec;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.course-actions__btn--primary:hover {
+  background: var(--accent);
+  color: #fff;
+}
+.course-actions__btn--danger { border-color: #fecaca; color: #d14a3f; }
+.course-actions__btn--danger:hover {
+  background: #d14a3f;
+  border-color: #d14a3f;
+  color: #fff;
+}
+.course-actions__icon { font-size: 18px; line-height: 1; }
+.course-actions__label { font-size: 11px; letter-spacing: 0.01em; }
+@media (max-width: 600px) {
+  .course-actions__btn { min-width: 60px; padding: 6px 8px; }
+  .course-actions__icon { font-size: 16px; }
+  .course-actions__label { font-size: 10px; }
+}
 .drawer {
   position: fixed;
   top: 0; right: 0;
@@ -484,10 +538,15 @@ html, body {
   display: flex;
   flex-direction: column;
   transform: translateX(100%);
-  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-  box-shadow: -10px 0 40px rgba(0,0,0,0.15);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s;
+  box-shadow: none;
+  visibility: hidden;
 }
-.drawer.is-open { transform: translateX(0); }
+.drawer.is-open {
+  transform: translateX(0);
+  box-shadow: -10px 0 40px rgba(0,0,0,0.15);
+  visibility: visible;
+}
 .drawer-header { padding: 18px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .drawer-title { font-size: 18px; font-weight: 700; }
 .drawer-close { background: none; border: none; cursor: pointer; padding: 6px; border-radius: 8px; color: var(--text-muted); font-size: 22px; line-height: 1; transition: background 0.15s; }
@@ -3160,12 +3219,27 @@ function renderLandingCourses() {
           </div>
         </div>
         <div style="font-weight:700;color:var(--accent);font-size:18px;font-family:'Cormorant Garamond',serif">${c.price} ₴</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn-action" onclick="copyCourseThanksLink(${c.id}, '${escapeAttr(c.slug || '')}', event)" title="Скопіювати посилання на сторінку доступу">🔗 Доступ</button>
-          <button class="btn-action" onclick="openCoursePageEditor(${c.id})" title="Редагувати окрему сторінку курсу">📄 Сторінка${c.page_enabled ? ' ✅' : ''}</button>
-          <button class="btn-action" onclick="toggleCourseVisibility(${c.id})" title="${toggleTitle}">${toggleEmoji} ${isPublished ? 'Приховати' : 'Опублікувати'}</button>
-          <button class="btn-action" onclick="editLandingCourse(${c.id})">✏️ Редагувати</button>
-          <button class="btn-action btn-action--danger" onclick="deleteLandingCourse(${c.id})">🗑️</button>
+        <div class="course-actions">
+          <button class="course-actions__btn" onclick="copyCourseThanksLink(${c.id}, '${escapeAttr(c.slug || '')}', event)" title="Скопіювати посилання на сторінку доступу">
+            <span class="course-actions__icon">🔗</span>
+            <span class="course-actions__label">Доступ</span>
+          </button>
+          <button class="course-actions__btn ${c.page_enabled ? 'course-actions__btn--active' : ''}" onclick="openCoursePageEditor(${c.id})" title="Редагувати окрему сторінку курсу">
+            <span class="course-actions__icon">📄</span>
+            <span class="course-actions__label">Сторінка${c.page_enabled ? ' ✓' : ''}</span>
+          </button>
+          <button class="course-actions__btn" onclick="toggleCourseVisibility(${c.id})" title="${toggleTitle}">
+            <span class="course-actions__icon">${toggleEmoji}</span>
+            <span class="course-actions__label">${isPublished ? 'Сховати' : 'Опубл.'}</span>
+          </button>
+          <button class="course-actions__btn course-actions__btn--primary" onclick="editLandingCourse(${c.id})">
+            <span class="course-actions__icon">✏️</span>
+            <span class="course-actions__label">Редагувати</span>
+          </button>
+          <button class="course-actions__btn course-actions__btn--danger" onclick="deleteLandingCourse(${c.id})" title="Видалити курс">
+            <span class="course-actions__icon">🗑️</span>
+            <span class="course-actions__label">Видалити</span>
+          </button>
         </div>
       </div>
     `;
