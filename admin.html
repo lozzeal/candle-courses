@@ -3460,19 +3460,21 @@ const cpe = {
   uploading: false
 };
 
+// 📐 СТАНДАРТИ заголовків і підзаголовків для всіх курсів.
+// Курсо-специфічну частину (items, лічильники тощо) заповнює клієнт.
 const BLOCK_DEFAULTS = {
   hero:     { badge: '', title: '', subtitle: '', button_text: 'Обрати цей курс' },
-  text:     { title: '', title_accent: '', accent_position: 'after', subtitle: '', body: '' },
-  program:  { title: 'Програма', title_accent: 'курсу', accent_position: 'after', subtitle: '', items: [{ title: '', details: '' }] },
-  video:    { title: 'Відео', title_accent: 'про курс', accent_position: 'after', subtitle: '', url: '', caption: '', aspect_ratio: 'auto', size: 'medium', object_fit: 'contain', autoplay: false, loop: false, muted: false, controls: true },
-  reviews:  { title: 'Сотні позитивних', title_accent: 'відгуків', accent_position: 'after', subtitle: '', review_ids: [] },
-  works:    { title: 'Роботи учнів', title_accent: 'після курсу', accent_position: 'after', subtitle: '', photos: [] },
+  text:     { title: 'Опис', title_accent: 'курсу', accent_position: 'after', subtitle: 'Що саме ви опануєте за курс', body: '' },
+  program:  { title: 'Програма', title_accent: 'курсу', accent_position: 'after', subtitle: 'Відеоуроки розділені на практичні теми', items: [{ title: '', details: '' }] },
+  video:    { title: 'Як проходить', title_accent: '', accent_position: 'after', subtitle: 'Подивіться короткий огляд курсу', url: '', caption: '', aspect_ratio: 'auto', size: 'medium', object_fit: 'contain', autoplay: false, loop: false, muted: false, controls: true },
+  reviews:  { title: 'Сотні позитивних', title_accent: 'відгуків', accent_position: 'after', subtitle: 'Відгуки учнів попередніх потоків', review_ids: [] },
+  works:    { title: 'Роботи учнів', title_accent: 'після курсу', accent_position: 'after', subtitle: 'У короткий термін наші учні навчаються якісно виготовляти свічки на продаж', photos: [] },
   author:   { title: 'Про', title_accent: 'автора', accent_position: 'after', use_landing: true, name: '', text: '', items: [], photo: '' },
-  info:     { title: 'Що', title_accent: 'отримуєте', accent_position: 'after', subtitle: '', items: [{ icon: '📚', text: '' }] },
-  audience: { title: 'Цей курс', title_accent: 'для вас', accent_position: 'after', subtitle: 'Якщо ви впізнаєте себе хоча б у двох пунктах - курс ваш', items: [{ icon: '✓', text: '' }] },
-  outcomes: { title: 'Після курсу', title_accent: 'ви зможете', accent_position: 'after', subtitle: 'Конкретні навички та результати, які отримаєте', items: [{ icon: '🕯️', text: '' }] },
+  info:     { title: 'Що', title_accent: 'отримуєте', accent_position: 'after', subtitle: 'Все, щоб ви впевнено створювали свічки на продаж', items: [{ icon: '📹', text: '' }] },
+  audience: { title: 'Цей курс', title_accent: 'для вас', accent_position: 'after', subtitle: 'Якщо ви впізнаєте себе хоча б у двох пунктах - курс точно ваш', items: [{ icon: '✓', text: '' }] },
+  outcomes: { title: 'Після курсу', title_accent: 'ви зможете', accent_position: 'after', subtitle: 'Конкретні навички та результати, які отримаєте за 2-4 тижні навчання', items: [{ icon: '🕯️', text: '' }] },
   faq:      { title: 'Питання', title_accent: 'та відповіді', accent_position: 'after', subtitle: 'Все що ви хотіли запитати перед покупкою', items: [{ question: '', answer: '' }] },
-  cta:      { title: 'Готові почати?', subtitle: '', button_text: 'Обрати цей курс' }
+  cta:      { title: 'Готові освоїти курс?', subtitle: 'Долучайтесь до курсу - отримаєте всі відеоуроки, доступ у записі і чат підтримки.', button_text: 'Так, хочу опанувати курс' }
 };
 
 const BLOCK_LABELS = {
