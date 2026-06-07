@@ -1,8 +1,8 @@
 -- ============================================================
 -- SEED: повна сторінка курсу "Десертна свічка" (course-desertna)
--- Структура аналогічна базовому курсу (course-svichkovarinnia):
---   Hero -> Audience -> Info -> Опис курсу -> Program ->
---   Outcomes -> Video -> Reviews -> Works -> Author -> FAQ -> CTA
+-- Порядок блоків як у базовому курсі (свічковаріння):
+--   Hero -> Audience -> Info -> Опис -> Program -> Works ->
+--   Outcomes -> Video -> Reviews -> Author -> FAQ -> CTA
 --
 -- Запустити у Supabase SQL Editor (нова вкладка).
 -- ============================================================
@@ -98,6 +98,18 @@ SET
       }
     },
     {
+      "id": "b-works",
+      "type": "works",
+      "visible": true,
+      "data": {
+        "title": "Роботи учнів",
+        "title_accent": "після курсу",
+        "accent_position": "after",
+        "subtitle": "Десертні свічки, які наші учні виготовили після проходження курсу",
+        "photos": []
+      }
+    },
+    {
       "id": "b-outcomes",
       "type": "outcomes",
       "visible": true,
@@ -144,18 +156,6 @@ SET
         "accent_position": "after",
         "subtitle": "Відгуки учнів попередніх потоків",
         "review_ids": []
-      }
-    },
-    {
-      "id": "b-works",
-      "type": "works",
-      "visible": true,
-      "data": {
-        "title": "Роботи учнів",
-        "title_accent": "після курсу",
-        "accent_position": "after",
-        "subtitle": "Десертні свічки, які наші учні виготовили після проходження курсу",
-        "photos": []
       }
     },
     {
