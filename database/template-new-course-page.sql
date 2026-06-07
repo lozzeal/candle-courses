@@ -150,7 +150,7 @@ SET
         "title": "Сотні позитивних",
         "title_accent": "відгуків",
         "accent_position": "after",
-        "subtitle": "Відгуки учнів попередніх потоків",
+        "subtitle": "Відгуки учнів, що пройшли курс",
         "review_ids": []
       }
     },
