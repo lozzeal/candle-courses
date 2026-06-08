@@ -1077,6 +1077,7 @@ body:has(.modal:target) { overflow: hidden; }
       const muted = autoplay || !!d.muted;
       const controls = d.controls !== false;
       const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]+)/);
+      const vimeoMatch = url.match(/(?:vimeo\.com\/(?:video\/|channels\/[^\/]+\/)?|player\.vimeo\.com\/video\/)(\d+)/);
       let frame = '';
       let ratioClass = `cs-video__frame--ratio-${ratio}`;
       if (ytMatch) {
@@ -1091,6 +1092,20 @@ body:has(.modal:target) { overflow: hidden; }
           controls: controls ? '1' : '0'
         }).toString();
         frame = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}?${params}" allowfullscreen allow="autoplay; encrypted-media" loading="lazy"></iframe>`;
+      } else if (vimeoMatch) {
+        // Vimeo: aspect-ratio 16:9 за замовч.
+        if (ratio === 'auto') ratioClass = 'cs-video__frame--ratio-16-9';
+        const params = new URLSearchParams({
+          autoplay: autoplay ? '1' : '0',
+          muted: muted ? '1' : '0',
+          loop: loop ? '1' : '0',
+          controls: controls ? '1' : '0',
+          title: '0',
+          byline: '0',
+          portrait: '0',
+          dnt: '1'   // do not track
+        }).toString();
+        frame = `<iframe src="https://player.vimeo.com/video/${vimeoMatch[1]}?${params}" allowfullscreen allow="autoplay; fullscreen; picture-in-picture" loading="lazy"></iframe>`;
       } else if (url) {
         const u = url + (url.includes('#') ? '' : '#t=0.5');
         const attrs = [

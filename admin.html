@@ -4052,7 +4052,10 @@ function renderVideoUploader(idx, currentUrl) {
     </div>
     <input type="file" id="cpe-video-input-${idx}" accept="video/mp4,video/webm,video/quicktime,video/*" style="display:none" onchange="uploadVideo(${idx}, this.files)">
     <div style="margin-top:10px;font-size:12px;color:#888;text-align:center">- або -</div>
-    <input type="text" placeholder="Вставте URL YouTube/Vimeo (https://...)" value="${currentUrl && !hasFile ? escapeAttr(currentUrl) : ''}" oninput="updateBlockField(${idx},'url',this.value)" style="margin-top:8px;width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:13px">
+    <input type="text" placeholder="https://youtube.com/watch?v=... або https://vimeo.com/..." value="${currentUrl && !hasFile ? escapeAttr(currentUrl) : ''}" oninput="updateBlockField(${idx},'url',this.value)" style="margin-top:8px;width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:13px">
+    <p style="margin:6px 0 0;font-size:11px;color:#888;line-height:1.5">
+      💡 <strong>Рекомендуємо</strong>: <a href="https://youtube.com" target="_blank" style="color:var(--accent)">YouTube</a> (безкоштовно) або <a href="https://vimeo.com" target="_blank" style="color:var(--accent)">Vimeo</a> (преміум-плеєр). Локальне завантаження - просто, але споживає ваш трафік Supabase Storage.
+    </p>
     <div id="cpe-video-progress-${idx}" style="display:none;margin-top:10px"></div>
   </div>`;
 }
