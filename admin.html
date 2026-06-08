@@ -3848,16 +3848,33 @@ window.addItem = function(blockIdx, fieldKeys) {
 
 // ===== Reviews picker =====
 function renderReviewsPicker(idx, selectedIds) {
-  if (!cpe.allReviews.length) {
-    return '<p class="form-help">Спочатку додайте відгуки на вкладці «Відгуки».</p>';
-  }
   const isAll = selectedIds.length === 0;
-  return `
+  const uploader = `
     <div class="form-group" style="margin-top:10px">
-      <label style="font-size:12px;color:#666">Які відгуки показувати</label>
+      <label style="font-size:12px;color:#666">Додати нові відгуки</label>
+      <div id="cpe-reviews-drop-${idx}"
+        ondrop="onReviewsDrop(event, ${idx})"
+        ondragover="event.preventDefault();this.style.borderColor='var(--accent)';this.style.background='#f0f8ec'"
+        ondragleave="this.style.borderColor='#d0c8c0';this.style.background='#fbf8f5'"
+        style="border:2px dashed #d0c8c0;border-radius:12px;padding:18px 16px;text-align:center;background:#fbf8f5;cursor:pointer;transition:all 0.2s"
+        onclick="document.getElementById('cpe-reviews-input-${idx}').click()">
+        <div style="font-size:22px;margin-bottom:4px">📸</div>
+        <div style="font-size:13px;font-weight:600;color:#444;margin-bottom:2px">Перетягніть фото або клікніть</div>
+        <div style="font-size:11px;color:#999">Можна одразу кілька. Нові додадуться у БД і автоматично будуть позначені для цього курсу.</div>
+      </div>
+      <input type="file" id="cpe-reviews-input-${idx}" accept="image/*" multiple style="display:none" onchange="uploadReviewsToBlock(${idx}, this.files)">
+      <div id="cpe-reviews-progress-${idx}" style="display:none;margin-top:8px"></div>
+    </div>
+  `;
+  if (!cpe.allReviews.length) {
+    return uploader + '<p class="form-help" style="margin-top:8px">Відгуків у системі ще немає. Завантажте перший вище.</p>';
+  }
+  const picker = `
+    <div class="form-group" style="margin-top:10px">
+      <label style="font-size:12px;color:#666">Які відгуки показувати на цій сторінці</label>
       <label style="display:block;margin-bottom:8px;cursor:pointer;font-size:13px">
         <input type="checkbox" ${isAll ? 'checked' : ''} onchange="setReviewsAll(${idx},this.checked)">
-        Усі відгуки (рекомендовано)
+        Усі відгуки (рекомендовано якщо немає курсо-специфічних)
       </label>
       ${isAll ? '' : `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;padding:8px;background:#f8f6f3;border-radius:8px;max-height:240px;overflow-y:auto">
         ${cpe.allReviews.map(r => {
@@ -3872,7 +3889,77 @@ function renderReviewsPicker(idx, selectedIds) {
       </div>`}
     </div>
   `;
+  return uploader + picker;
 }
+
+window.onReviewsDrop = function(e, idx) {
+  e.preventDefault();
+  e.currentTarget.style.borderColor = '#d0c8c0';
+  e.currentTarget.style.background = '#fbf8f5';
+  const files = e.dataTransfer?.files;
+  if (files && files.length) uploadReviewsToBlock(idx, files);
+};
+
+window.uploadReviewsToBlock = async function(idx, files) {
+  if (!files || !files.length) return;
+  const progressEl = document.getElementById(`cpe-reviews-progress-${idx}`);
+  const showProgress = (msg, type = 'info') => {
+    if (!progressEl) return;
+    const colors = { info: '#f0f8ec/#38A30D', error: '#fee/#d14a3f' };
+    const [bg, color] = (colors[type] || colors.info).split('/');
+    progressEl.style.display = 'block';
+    progressEl.innerHTML = `<div style="background:${bg};padding:8px 12px;border-radius:8px;font-size:13px;color:${color}">${msg}</div>`;
+  };
+
+  // Знаходимо найбільший sort_order, щоб нові додати в кінець
+  let maxSort = 0;
+  try {
+    const { data } = await supa.from('landing_reviews').select('sort_order').order('sort_order', { ascending: false }).limit(1);
+    if (data && data.length) maxSort = Number(data[0].sort_order) || 0;
+  } catch {}
+
+  const newIds = [];
+  let done = 0;
+  for (const file of files) {
+    if (!file.type.startsWith('image/')) continue;
+    showProgress(`⏳ Завантажую ${done + 1} з ${files.length}: ${file.name}`);
+    try {
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+      const path = `landing-reviews/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+      const { error: upErr } = await supa.storage.from('product-photos').upload(path, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+      if (upErr) throw upErr;
+      const { data: { publicUrl } } = supa.storage.from('product-photos').getPublicUrl(path);
+      maxSort += 1;
+      const { data: inserted, error: insErr } = await supa
+        .from('landing_reviews')
+        .insert({ photo_url: publicUrl, sort_order: maxSort, status: 'published' })
+        .select('id,photo_url,author_name')
+        .single();
+      if (insErr) throw insErr;
+      newIds.push(inserted.id);
+      cpe.allReviews.unshift(inserted);  // показуємо першими у picker-і
+      done++;
+    } catch (err) {
+      showProgress(`❌ Помилка: ${err.message}`, 'error');
+      return;
+    }
+  }
+
+  // Знімаємо "Усі відгуки" і додаємо нові у обрані
+  if (!cpe.blocks[idx].data.review_ids) cpe.blocks[idx].data.review_ids = [];
+  if (cpe.blocks[idx].data.review_ids.length === 0) {
+    // Якщо було "Усі" — переходимо у режим вибірки і ставимо тільки нові
+    cpe.blocks[idx].data.review_ids = newIds;
+  } else {
+    // Якщо вже фільтр — додаємо нові до існуючих
+    cpe.blocks[idx].data.review_ids.push(...newIds);
+  }
+  cpe.blocks[idx]._expanded = true;
+  if (progressEl) progressEl.style.display = 'none';
+  renderBlocksList();
+  showProgress(`✅ Додано ${done} нов${done === 1 ? 'ий' : 'их'} відгу${done === 1 ? 'к' : 'ків'} і позначено для цього курсу`);
+  setTimeout(() => { if (progressEl) progressEl.style.display = 'none'; }, 4000);
+};
 
 window.setReviewsAll = function(idx, isAll) {
   cpe.blocks[idx].data.review_ids = isAll ? [] : cpe.allReviews.map(r => r.id);
