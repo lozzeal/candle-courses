@@ -2,6 +2,7 @@
   "name": "candle-courses",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Лендинг + магазин + адмінка для курсів свічковаріння (100candle.shop)",
   "engines": {
     "node": "20.x"
