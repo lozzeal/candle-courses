@@ -3778,6 +3778,14 @@ body:has(.modal:target) { overflow: hidden; }
     // Дублікат для безшовної петлі
     const dup = items.map(r => `<div class="reviews__item" aria-hidden="true"><img src="${escAttr(urlOf(r))}" alt="" loading="lazy"></div>`).join('');
     gallery.innerHTML = main + dup;
+
+    // Адаптуємо швидкість анімації під кількість елементів (цільова швидкість ~50 px/s)
+    // Картка 320px + gap 18px = 338px (на мобілі 80vw + 14px = різна, але стабільна логіка)
+    const itemPx = 338;
+    const halfPx = items.length * itemPx;            // піввдовжини треку
+    const targetSpeed = 50;                          // px/s
+    const duration = Math.max(40, Math.round(halfPx / targetSpeed));
+    gallery.style.animationDuration = duration + 's';
   })
   .catch(err => { console.warn('Reviews load failed:', err); });
 })();
