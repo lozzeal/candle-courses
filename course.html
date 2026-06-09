@@ -1087,12 +1087,13 @@ body:has(.modal:target) { overflow: hidden; }
       const muted = autoplay || !!d.muted;
       const controls = d.controls !== false;
       const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/|v\/)|youtu\.be\/)([\w-]{6,})/);
+      const isShorts = /\/shorts\//.test(url);
       const vimeoMatch = url.match(/(?:vimeo\.com\/(?:video\/|channels\/[^\/]+\/)?|player\.vimeo\.com\/video\/)(\d+)/);
       let frame = '';
       let ratioClass = `cs-video__frame--ratio-${ratio}`;
       if (ytMatch) {
-        // YouTube: завжди заданий aspect-ratio (16:9 за замовч.)
-        if (ratio === 'auto') ratioClass = 'cs-video__frame--ratio-16-9';
+        // YouTube: aspect-ratio за замовч. - 16:9 для звичайних, 9:16 для Shorts
+        if (ratio === 'auto') ratioClass = isShorts ? 'cs-video__frame--ratio-9-16' : 'cs-video__frame--ratio-16-9';
         const params = new URLSearchParams({
           rel: '0', modestbranding: '1',
           autoplay: autoplay ? '1' : '0',
