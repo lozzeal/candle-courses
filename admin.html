@@ -3688,6 +3688,11 @@ function renderBlockEditor(b, idx) {
         + t('Підпис під відео (опц.)', 'caption', d.caption)
         + `<div style="background:#f5f7f3;padding:12px;border-radius:10px;margin-top:14px">
             <div style="font-size:12px;color:#555;font-weight:600;margin-bottom:6px">⚙️ Налаштування плеєра</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed rgba(0,0,0,0.1)">
+              <button type="button" class="btn-action" onclick="applyVideoPreset(${idx},'short')" style="font-size:11px;padding:5px 10px" title="Для коротких оглядів 5-15 сек: автозапуск без звуку, цикл, без керування">📱 Короткий огляд</button>
+              <button type="button" class="btn-action" onclick="applyVideoPreset(${idx},'medium')" style="font-size:11px;padding:5px 10px" title="Для відео 30-60 сек: autoplay + цикл + керування">🎬 Середній</button>
+              <button type="button" class="btn-action" onclick="applyVideoPreset(${idx},'lesson')" style="font-size:11px;padding:5px 10px" title="Для повноцінних уроків: ручний запуск, з керуванням">📚 Урок</button>
+            </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
               ${sel('Формат кадру', 'aspect_ratio', d.aspect_ratio || 'auto', [
                 {v:'auto', l:'Авто (за відео) - рекомендовано'},
@@ -4059,6 +4064,20 @@ function renderVideoUploader(idx, currentUrl) {
     <div id="cpe-video-progress-${idx}" style="display:none;margin-top:10px"></div>
   </div>`;
 }
+
+window.applyVideoPreset = function(idx, preset) {
+  const presets = {
+    short:  { aspect_ratio: 'auto', size: 'narrow', autoplay: true,  loop: true,  muted: true,  controls: false },
+    medium: { aspect_ratio: 'auto', size: 'medium', autoplay: true,  loop: true,  muted: true,  controls: true  },
+    lesson: { aspect_ratio: '16-9', size: 'medium', autoplay: false, loop: false, muted: false, controls: true  }
+  };
+  const p = presets[preset];
+  if (!p) return;
+  if (!cpe.blocks[idx].data) cpe.blocks[idx].data = {};
+  Object.assign(cpe.blocks[idx].data, p);
+  cpe.blocks[idx]._expanded = true;
+  renderBlocksList();
+};
 
 window.onVideoDrop = function(e, idx) {
   e.preventDefault();
