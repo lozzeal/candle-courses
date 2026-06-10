@@ -1319,7 +1319,11 @@ html, body {
       <div class="uploader-progress" id="photos-progress"></div>
 
       <p class="form-section-title">Відео</p>
-      <p class="form-help">До 50 MB на файл. Формати: MP4, WebM, MOV.</p>
+      <p class="form-help">Завантажте файл (до 50 MB · MP4/WebM/MOV) <strong>або</strong> вставте URL з YouTube/Vimeo (рекомендовано - не споживає трафік).</p>
+      <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;flex-wrap:wrap">
+        <input type="text" id="f-video-url" placeholder="https://youtube.com/... або https://vimeo.com/..." style="flex:1;min-width:200px;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:13px">
+        <button type="button" class="btn-secondary" id="btn-add-video-url" style="padding:9px 16px;font-size:13px">+ Додати URL</button>
+      </div>
       <div class="media-grid" id="videos-grid"></div>
       <div class="uploader-progress" id="videos-progress"></div>
 
@@ -2328,18 +2332,50 @@ $('#f-name').addEventListener('input', e => {
 $('#f-slug').addEventListener('input', e => { e.target.dataset.touched = '1'; });
 
 // ====== Media grid ======
+function detectVideoSource(url) {
+  if (!url) return 'file';
+  if (/youtube\.com|youtu\.be/.test(url)) return 'youtube';
+  if (/vimeo\.com/.test(url)) return 'vimeo';
+  return 'file';
+}
 function renderMediaGrid(type) {
   const gridId = type === 'photo' ? 'photos-grid' : 'videos-grid';
   const grid = $('#' + gridId);
   const items = type === 'photo' ? formMedia.photos : formMedia.videos;
-  grid.innerHTML = items.map((m, idx) => `
-    <div class="media-item">
-      ${type === 'photo'
-        ? `<img src="${m.url}" alt="">`
-        : `<video src="${m.url}" muted></video><span class="badge-video">▶ VIDEO</span>`}
-      <button type="button" class="media-remove" onclick="removeMedia('${type}', ${idx})">×</button>
-    </div>
-  `).join('') + `
+  grid.innerHTML = items.map((m, idx) => {
+    if (type === 'photo') {
+      return `
+        <div class="media-item">
+          <img src="${m.url}" alt="">
+          <button type="button" class="media-remove" onclick="removeMedia('photo', ${idx})">×</button>
+        </div>`;
+    }
+    // Video item
+    const src = detectVideoSource(m.url);
+    const srcLabel = { youtube: '📺 YouTube', vimeo: '🎬 Vimeo', file: '📁 Файл' }[src];
+    const expanded = m._expanded;
+    return `
+      <div class="media-item" style="${expanded ? 'grid-column:1/-1;aspect-ratio:auto;height:auto;background:#fff;border:1px solid var(--border)' : ''}">
+        ${expanded ? `
+          <div style="padding:12px;text-align:left">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+              <span style="font-size:12px;font-weight:600;color:var(--accent)">${srcLabel}</span>
+              <span style="flex:1;font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeAttr(m.url)}</span>
+              <button type="button" class="btn-action" onclick="toggleVideoExpand(${idx})" style="padding:3px 8px;font-size:11px">🔼 Згорнути</button>
+              <button type="button" class="btn-action btn-action--danger" onclick="removeMedia('video', ${idx})" style="padding:3px 8px;font-size:11px">🗑️</button>
+            </div>
+            ${renderProductVideoSettings(idx, m.metadata || {})}
+          </div>
+        ` : `
+          ${src === 'file'
+            ? `<video src="${m.url}" muted></video>`
+            : `<div style="display:flex;align-items:center;justify-content:center;background:#1a1a1a;color:#fff;font-size:32px;width:100%;height:100%">${src === 'youtube' ? '📺' : '🎬'}</div>`}
+          <span class="badge-video">${srcLabel}</span>
+          <button type="button" class="media-remove" onclick="removeMedia('video', ${idx})">×</button>
+          <button type="button" class="media-edit" onclick="toggleVideoExpand(${idx})" style="position:absolute;top:6px;left:6px;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.9);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px" title="Налаштування">⚙️</button>
+        `}
+      </div>`;
+  }).join('') + `
     <label class="media-upload">
       <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       <span>Додати ${type === 'photo' ? 'фото' : 'відео'}</span>
@@ -2347,6 +2383,72 @@ function renderMediaGrid(type) {
     </label>
   `;
 }
+
+function renderProductVideoSettings(idx, meta) {
+  const opt = (label, key, current, options) => `
+    <div style="display:flex;flex-direction:column;gap:3px">
+      <label style="font-size:11px;color:#666">${label}</label>
+      <select onchange="updateVideoMeta(${idx},'${key}',this.value)" style="padding:6px 8px;border:1px solid #e0dbd8;border-radius:6px;font-size:12px;background:#fff">
+        ${options.map(o => `<option value="${o.v}" ${current === o.v ? 'selected' : ''}>${o.l}</option>`).join('')}
+      </select>
+    </div>`;
+  const chk = (label, key, current) => `
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px">
+      <input type="checkbox" ${current ? 'checked' : ''} onchange="updateVideoMeta(${idx},'${key}',this.checked)">
+      <span>${label}</span>
+    </label>`;
+  return `
+    <div style="background:#f5f7f3;padding:10px;border-radius:8px">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding-bottom:8px;border-bottom:1px dashed rgba(0,0,0,0.1)">
+        <button type="button" class="btn-action" onclick="applyProductVideoPreset(${idx},'sound')" style="font-size:11px;padding:4px 8px">🔊 Зі звуком</button>
+        <button type="button" class="btn-action" onclick="applyProductVideoPreset(${idx},'silent')" style="font-size:11px;padding:4px 8px">🔇 Тихий цикл</button>
+        <button type="button" class="btn-action" onclick="applyProductVideoPreset(${idx},'lesson')" style="font-size:11px;padding:4px 8px">📚 Огляд 16:9</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px">
+        ${opt('Формат', 'aspect_ratio', meta.aspect_ratio || 'auto', [
+          {v:'auto',l:'Авто'},{v:'16-9',l:'16:9 горизонтальне'},{v:'9-16',l:'9:16 вертикальне'},
+          {v:'1-1',l:'1:1 квадрат'},{v:'4-3',l:'4:3'}
+        ])}
+        ${opt('Розмір', 'size', meta.size || 'medium', [
+          {v:'narrow',l:'Вузький (420)'},{v:'medium',l:'Середній (720)'},{v:'wide',l:'Широкий (980)'}
+        ])}
+        ${opt('Заповнення', 'object_fit', meta.object_fit || 'contain', [
+          {v:'contain',l:'Вписати'},{v:'cover',l:'Заповнити'}
+        ])}
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px">
+        ${chk('Автозапуск', 'autoplay', meta.autoplay)}
+        ${chk('Повторювати', 'loop', meta.loop)}
+        ${chk('Без звуку', 'muted', meta.muted)}
+        ${chk('Керування', 'controls', meta.controls !== false)}
+      </div>
+    </div>`;
+}
+
+window.toggleVideoExpand = function(idx) {
+  formMedia.videos.forEach((v, i) => { if (i !== idx) v._expanded = false; });
+  formMedia.videos[idx]._expanded = !formMedia.videos[idx]._expanded;
+  renderMediaGrid('video');
+};
+window.updateVideoMeta = function(idx, key, value) {
+  if (!formMedia.videos[idx].metadata) formMedia.videos[idx].metadata = {};
+  formMedia.videos[idx].metadata[key] = value;
+  formMedia.videos[idx]._expanded = true;
+  renderMediaGrid('video');
+};
+window.applyProductVideoPreset = function(idx, preset) {
+  const presets = {
+    sound:  { aspect_ratio: 'auto', size: 'medium', object_fit: 'contain', autoplay: false, loop: false, muted: false, controls: true },
+    silent: { aspect_ratio: 'auto', size: 'narrow', object_fit: 'contain', autoplay: true,  loop: true,  muted: true,  controls: false },
+    lesson: { aspect_ratio: '16-9', size: 'medium', object_fit: 'contain', autoplay: false, loop: false, muted: false, controls: true }
+  };
+  const p = presets[preset];
+  if (!p) return;
+  if (!formMedia.videos[idx].metadata) formMedia.videos[idx].metadata = {};
+  Object.assign(formMedia.videos[idx].metadata, p);
+  formMedia.videos[idx]._expanded = true;
+  renderMediaGrid('video');
+};
 
 window.removeMedia = (type, idx) => {
   if (!confirm('Прибрати з товару?')) return;
@@ -2394,6 +2496,20 @@ function renderSpecs(specs) {
   `).join('');
   list.dataset.json = JSON.stringify(specs);
 }
+// Кнопка "+ Додати URL" для відео
+$('#btn-add-video-url').addEventListener('click', () => {
+  const input = $('#f-video-url');
+  const url = (input.value || '').trim();
+  if (!url) return;
+  if (!/^https?:\/\//.test(url)) {
+    alert('URL має починатись з http:// або https://');
+    return;
+  }
+  formMedia.videos.push({ url, storage_path: null, isNew: true, metadata: { aspect_ratio: 'auto', size: 'medium', object_fit: 'contain', autoplay: false, loop: false, muted: false, controls: true } });
+  input.value = '';
+  renderMediaGrid('video');
+});
+
 $('#spec-add').addEventListener('click', () => {
   const cur = JSON.parse($('#specs-list').dataset.json || '[]');
   cur.push({ key: '', value: '' });
@@ -2460,7 +2576,8 @@ $('#btn-save').addEventListener('click', async () => {
       product_id: productId, type: 'photo', url: m.url, storage_path: m.storage_path, sort_order: idx
     }));
     formMedia.videos.forEach((m, idx) => allMedia.push({
-      product_id: productId, type: 'video', url: m.url, storage_path: m.storage_path, sort_order: idx
+      product_id: productId, type: 'video', url: m.url, storage_path: m.storage_path || null, sort_order: idx,
+      metadata: m.metadata || {}
     }));
     if (allMedia.length > 0) {
       const { error: mErr } = await supa.from('product_media').insert(allMedia);
