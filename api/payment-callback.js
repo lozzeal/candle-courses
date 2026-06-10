@@ -179,14 +179,21 @@ async function sendCourseEmail({ to, course }) {
   const fromName = process.env.SMTP_FROM_NAME || 'Крафт-свічки та арома-професія';
   const fromAddr = process.env.SMTP_FROM || 'noreply@100candle.shop';
   const { html, text } = renderEmailTemplate({ course });
+  const replyTo = process.env.SMTP_REPLY_TO || 'okvozuk@gmail.com';
+  const unsubMailto = `mailto:${replyTo}?subject=Unsubscribe%20from%20100candle.shop`;
   const info = await transporter.sendMail({
     from: `"${fromName}" <${fromAddr}>`,
     to,
+    replyTo,
     subject: `Доступ до курсу: ${course.title}`,
     text,
     html,
     headers: {
-      'X-Entity-Ref-ID': course.id + '-' + Date.now()
+      'X-Entity-Ref-ID': course.id + '-' + Date.now(),
+      'List-Unsubscribe': `<${unsubMailto}>`,
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      'X-Mailer': '100candle.shop',
+      'Precedence': 'bulk'
     }
   });
   return info;

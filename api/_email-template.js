@@ -180,17 +180,24 @@ export function renderEmailTemplate({ course }) {
 
         <!-- Footer -->
         <tr>
-          <td align="center" style="padding:24px 40px 32px;font-size:12px;color:#999;line-height:1.6">
+          <td align="center" style="padding:24px 40px 18px;font-size:12px;color:#999;line-height:1.6">
             <p style="margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;font-size:13px;color:#262626;text-transform:uppercase;letter-spacing:1px;font-weight:600">
               Крафт-свічки та арома-професія
             </p>
             <p style="margin:0">
               <a href="https://100candle.shop" style="color:#999;text-decoration:none">100candle.shop</a>
-              · ФОП Барзій Галина Йосифівна
             </p>
-            <p style="margin:8px 0 0;font-size:11px;color:#bbb">
-              Цей лист надіслано автоматично після успішної оплати.
-              Якщо ви не оплачували курс - повідомте нам.
+            <p style="margin:6px 0 0;font-size:11px;color:#999">
+              ФОП Барзій Галина Йосифівна<br>
+              Україна, Львівська обл., м. Львів
+            </p>
+            <p style="margin:10px 0 0;font-size:11px;color:#bbb">
+              Цей транзакційний лист надіслано автоматично після успішної оплати курсу.<br>
+              Якщо ви не оплачували курс - повідомте нам <a href="mailto:okvozuk@gmail.com" style="color:#bbb;text-decoration:underline">okvozuk@gmail.com</a>.
+            </p>
+            <p style="margin:14px 0 0;padding-top:14px;border-top:1px solid rgba(0,0,0,0.06);font-size:11px;color:#bbb">
+              Не хочете отримувати такі листи?
+              <a href="mailto:okvozuk@gmail.com?subject=Відписка%20від%20100candle.shop&body=Прошу%20більше%20не%20надсилати%20мені%20листи%20з%20домену%20100candle.shop" style="color:#888;text-decoration:underline">Відписатись</a>
             </p>
           </td>
         </tr>
