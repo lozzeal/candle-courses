@@ -3689,10 +3689,13 @@ function renderBlockEditor(b, idx) {
         + `<div style="background:#f5f7f3;padding:12px;border-radius:10px;margin-top:14px">
             <div style="font-size:12px;color:#555;font-weight:600;margin-bottom:6px">⚙️ Налаштування плеєра</div>
             <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed rgba(0,0,0,0.1)">
-              <button type="button" class="btn-action" onclick="applyVideoPreset(${idx},'short')" style="font-size:11px;padding:5px 10px" title="Для коротких оглядів 5-15 сек: автозапуск без звуку, цикл, без керування">📱 Короткий огляд</button>
-              <button type="button" class="btn-action" onclick="applyVideoPreset(${idx},'medium')" style="font-size:11px;padding:5px 10px" title="Для відео 30-60 сек: autoplay + цикл + керування">🎬 Середній</button>
-              <button type="button" class="btn-action" onclick="applyVideoPreset(${idx},'lesson')" style="font-size:11px;padding:5px 10px" title="Для повноцінних уроків: ручний запуск, з керуванням">📚 Урок</button>
+              <button type="button" class="btn-action" onclick="applyVideoPreset(${idx},'sound')" style="font-size:11px;padding:5px 10px" title="Користувач натискає Play - звук є. Браузер не дозволяє autoplay зі звуком.">🔊 Зі звуком (ручний запуск)</button>
+              <button type="button" class="btn-action" onclick="applyVideoPreset(${idx},'silent')" style="font-size:11px;padding:5px 10px" title="Ambient-прев'ю як Instagram Reels: грає автоматично без звуку, в циклі, без керування">🔇 Тихий цикл (autoplay)</button>
+              <button type="button" class="btn-action" onclick="applyVideoPreset(${idx},'lesson')" style="font-size:11px;padding:5px 10px" title="Для повноцінних навчальних відео: 16:9, ручний запуск, керування">📚 Урок 16:9</button>
             </div>
+            <p style="margin:0 0 10px;font-size:11px;color:#888;line-height:1.4">
+              💡 Для відео зі звуком користувач має натиснути Play - браузери блокують автозапуск зі звуком як політику безпеки.
+            </p>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
               ${sel('Формат кадру', 'aspect_ratio', d.aspect_ratio || 'auto', [
                 {v:'auto', l:'Авто (за відео) - рекомендовано'},
@@ -4066,10 +4069,13 @@ function renderVideoUploader(idx, currentUrl) {
 }
 
 window.applyVideoPreset = function(idx, preset) {
+  // Важливо: браузери блокують autoplay зі звуком. Тому:
+  //  - autoplay=true ВИМАГАЄ muted=true
+  //  - щоб був звук — користувач має натиснути Play
   const presets = {
-    short:  { aspect_ratio: 'auto', size: 'narrow', autoplay: true,  loop: true,  muted: true,  controls: false },
-    medium: { aspect_ratio: 'auto', size: 'medium', autoplay: true,  loop: true,  muted: true,  controls: true  },
-    lesson: { aspect_ratio: '16-9', size: 'medium', autoplay: false, loop: false, muted: false, controls: true  }
+    sound:   { aspect_ratio: 'auto', size: 'medium', autoplay: false, loop: false, muted: false, controls: true },
+    silent:  { aspect_ratio: 'auto', size: 'narrow', autoplay: true,  loop: true,  muted: true,  controls: false },
+    lesson:  { aspect_ratio: '16-9', size: 'medium', autoplay: false, loop: false, muted: false, controls: true }
   };
   const p = presets[preset];
   if (!p) return;
