@@ -78,15 +78,11 @@ img, video { display: block; max-width: 100%; }
   opacity: 0;
   transition: opacity 0.35s;
 }
-#gal-1:checked ~ .gallery__main .gallery__img--1,
-#gal-2:checked ~ .gallery__main .gallery__img--2,
-#gal-3:checked ~ .gallery__main .gallery__img--3,
-#gal-4:checked ~ .gallery__main .gallery__img--4,
-#gal-5:checked ~ .gallery__main .gallery__img--5 { opacity: 1; }
+.gallery__img.is-active { opacity: 1; }
 
 .gallery__thumbs {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(var(--thumbs-cols, 5), 1fr);
   gap: 10px;
 }
 .gallery__thumb {
@@ -101,13 +97,7 @@ img, video { display: block; max-width: 100%; }
 }
 .gallery__thumb img { width: 100%; height: 100%; object-fit: cover; }
 .gallery__thumb:hover { transform: translateY(-2px); }
-#gal-1:checked ~ .gallery__thumbs label[for="gal-1"],
-#gal-2:checked ~ .gallery__thumbs label[for="gal-2"],
-#gal-3:checked ~ .gallery__thumbs label[for="gal-3"],
-#gal-4:checked ~ .gallery__thumbs label[for="gal-4"],
-#gal-5:checked ~ .gallery__thumbs label[for="gal-5"] {
-  border-color: var(--accent);
-}
+.gallery__thumb.is-active { border-color: var(--accent); }
 
 /* ----- Інфо-блок ----- */
 .product__cat {
@@ -946,15 +936,28 @@ body:has(.modal:target) { overflow: hidden; }
       return;
     }
 
-    const radioInputs = photos.map((_, idx) => `<input type="radio" name="gal" id="gal-${idx + 1}"${idx === 0 ? ' checked' : ''}>`).join('');
-    const mainImages = photos.map((p, idx) => `<img class="gallery__img gallery__img--${idx + 1}" src="${esc(p.url)}" alt="Фото ${idx + 1}">`).join('');
-    const thumbs = photos.map((p, idx) => `<label for="gal-${idx + 1}" class="gallery__thumb"><img src="${esc(p.url)}" alt=""></label>`).join('');
+    // Кількість колонок мініатюр: 5 за замовч., але не більше за кількість фото
+    const cols = Math.min(photos.length, 5);
+    const mainImages = photos.map((p, idx) =>
+      `<img class="gallery__img${idx === 0 ? ' is-active' : ''}" data-gal-idx="${idx}" src="${esc(p.url)}" alt="Фото ${idx + 1}" loading="${idx === 0 ? 'eager' : 'lazy'}">`
+    ).join('');
+    const thumbs = photos.map((p, idx) =>
+      `<button type="button" class="gallery__thumb${idx === 0 ? ' is-active' : ''}" data-gal-idx="${idx}" aria-label="Фото ${idx + 1}"><img src="${esc(p.url)}" alt="" loading="lazy"></button>`
+    ).join('');
 
     gallery.innerHTML = `
-      ${radioInputs}
       <div class="gallery__main">${mainImages}</div>
-      <div class="gallery__thumbs">${thumbs}</div>
+      <div class="gallery__thumbs" style="--thumbs-cols:${cols}">${thumbs}</div>
     `;
+
+    // Делегування кліку на мініатюри
+    gallery.querySelectorAll('.gallery__thumb').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = btn.dataset.galIdx;
+        gallery.querySelectorAll('.gallery__thumb').forEach(t => t.classList.toggle('is-active', t.dataset.galIdx === idx));
+        gallery.querySelectorAll('.gallery__img').forEach(img => img.classList.toggle('is-active', img.dataset.galIdx === idx));
+      });
+    });
   }
 
   function renderRelated(related, photoMap) {
