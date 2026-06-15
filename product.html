@@ -864,8 +864,7 @@ body:has(.modal:target) { overflow: hidden; }
     if (videos.length > 0) {
       $('#product-videos-section').style.display = 'block';
       // padding-bottom = 1/(width/height) у %, кросбраузерний спосіб для aspect-ratio
-      const ratioPad = { '16-9': '56.25%', '9-16': '177.78%', '1-1': '100%', '4-3': '75%' };
-      const ratioMaxW = { '9-16': '380px' };
+      const ratioPad = { '16-9': '56.25%', '1-1': '100%', '4-3': '75%' };
       const sizeMaxW = { narrow: '420px', medium: '720px', wide: '980px' };
 
       $('#product-videos-grid').innerHTML = videos.map((v, idx) => {
@@ -886,10 +885,8 @@ body:has(.modal:target) { overflow: hidden; }
         let inner = '';
 
         if (ytMatch || vimeoMatch) {
-          // Embed iframe - використовуємо padding-bottom для aspect-ratio
-          const ratioKey = ratio === 'auto' ? (isShorts || vimeoMatch && false ? '9-16' : '16-9') : ratio;
-          const pad = ratioPad[ratioKey] || ratioPad['16-9'];
-          const ratioMax = ratioMaxW[ratioKey] ? `max-width:${ratioMaxW[ratioKey]};margin:0 auto;` : '';
+          // Embed iframe
+          const ratioKey = ratio === 'auto' ? (isShorts ? '9-16' : '16-9') : ratio;
           let iframeSrc;
           if (ytMatch) {
             const params = new URLSearchParams({
@@ -907,11 +904,23 @@ body:has(.modal:target) { overflow: hidden; }
             }).toString();
             iframeSrc = `https://player.vimeo.com/video/${vimeoMatch[1]}?${params}`;
           }
-          inner = `
-            <div style="${ratioMax}position:relative;width:100%;padding-bottom:${pad};border-radius:16px;overflow:hidden;background:#000;box-shadow:0 8px 24px rgba(0,0,0,0.12)">
-              <iframe src="${iframeSrc}" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture" loading="lazy"
-                style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"></iframe>
-            </div>`;
+
+          if (ratioKey === '9-16') {
+            // Вертикальне відео - розміщуємо по висоті (80vh), щоб не вилазило за екран
+            inner = `
+              <div style="height:80vh;max-height:680px;aspect-ratio:9/16;margin:0 auto;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 8px 24px rgba(0,0,0,0.12)">
+                <iframe src="${iframeSrc}" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture" loading="lazy"
+                  style="width:100%;height:100%;border:0;display:block"></iframe>
+              </div>`;
+          } else {
+            // Горизонтальне/квадратне - padding-bottom для aspect-ratio
+            const pad = ratioPad[ratioKey] || ratioPad['16-9'];
+            inner = `
+              <div style="position:relative;width:100%;padding-bottom:${pad};border-radius:16px;overflow:hidden;background:#000;box-shadow:0 8px 24px rgba(0,0,0,0.12)">
+                <iframe src="${iframeSrc}" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture" loading="lazy"
+                  style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"></iframe>
+              </div>`;
+          }
         } else {
           // Локальний файл
           const u = url + (url.includes('#') ? '' : '#t=0.5');
@@ -923,10 +932,12 @@ body:has(.modal:target) { overflow: hidden; }
           ].filter(Boolean).join(' ');
           if (ratio === 'auto') {
             inner = `<video ${attrs} style="max-width:100%;max-height:80vh;border-radius:16px;display:block;margin:0 auto;background:#0d0d0d;box-shadow:0 8px 24px rgba(0,0,0,0.12);object-fit:${fit}" src="${esc(u)}"></video>`;
+          } else if (ratio === '9-16') {
+            // Вертикальне - по висоті
+            inner = `<div style="height:80vh;max-height:680px;aspect-ratio:9/16;margin:0 auto;border-radius:16px;overflow:hidden;background:#0d0d0d;box-shadow:0 8px 24px rgba(0,0,0,0.12)"><video ${attrs} style="width:100%;height:100%;object-fit:${fit};display:block" src="${esc(u)}"></video></div>`;
           } else {
             const pad = ratioPad[ratio] || ratioPad['16-9'];
-            const ratioMax = ratioMaxW[ratio] ? `max-width:${ratioMaxW[ratio]};margin:0 auto;` : '';
-            inner = `<div style="${ratioMax}position:relative;width:100%;padding-bottom:${pad};border-radius:16px;overflow:hidden;background:#0d0d0d;box-shadow:0 8px 24px rgba(0,0,0,0.12)"><video ${attrs} style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:${fit}" src="${esc(u)}"></video></div>`;
+            inner = `<div style="position:relative;width:100%;padding-bottom:${pad};border-radius:16px;overflow:hidden;background:#0d0d0d;box-shadow:0 8px 24px rgba(0,0,0,0.12)"><video ${attrs} style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:${fit}" src="${esc(u)}"></video></div>`;
           }
         }
         return `<div style="max-width:${outerMaxW};width:100%;margin:0 auto">${inner}</div>`;
