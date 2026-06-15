@@ -2497,17 +2497,49 @@ function renderSpecs(specs) {
   list.dataset.json = JSON.stringify(specs);
 }
 // Кнопка "+ Додати URL" для відео
-$('#btn-add-video-url').addEventListener('click', () => {
+function addVideoUrlIfPending() {
   const input = $('#f-video-url');
+  if (!input) return false;
   const url = (input.value || '').trim();
-  if (!url) return;
+  if (!url) return false;
   if (!/^https?:\/\//.test(url)) {
     alert('URL має починатись з http:// або https://');
-    return;
+    return false;
   }
-  formMedia.videos.push({ url, storage_path: null, isNew: true, metadata: { aspect_ratio: 'auto', size: 'medium', object_fit: 'contain', autoplay: false, loop: false, muted: false, controls: true } });
+  // Перевіряємо чи це підтримуваний формат
+  const isYoutube = /youtube\.com|youtu\.be/.test(url);
+  const isVimeo = /vimeo\.com/.test(url);
+  const isDirectFile = /\.(mp4|webm|mov|m4v)(\?|#|$)/i.test(url);
+  if (!isYoutube && !isVimeo && !isDirectFile) {
+    if (!confirm(
+      'Цей URL не схожий на YouTube, Vimeo або прямий файл .mp4.\n\n' +
+      'Підтримуються:\n' +
+      '✅ youtube.com / youtu.be\n' +
+      '✅ vimeo.com\n' +
+      '✅ прямі посилання на .mp4 / .webm / .mov\n\n' +
+      '❌ Instagram, TikTok, Facebook - не вбудовуються (треба завантажити файл або викласти на YouTube/Vimeo).\n\n' +
+      'Все одно додати?'
+    )) return false;
+  }
+  formMedia.videos.push({
+    url,
+    storage_path: null,
+    isNew: true,
+    metadata: { aspect_ratio: 'auto', size: 'medium', object_fit: 'contain', autoplay: false, loop: false, muted: false, controls: true }
+  });
   input.value = '';
   renderMediaGrid('video');
+  return true;
+}
+
+$('#btn-add-video-url').addEventListener('click', addVideoUrlIfPending);
+
+// Enter у полі URL також додає
+$('#f-video-url').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    addVideoUrlIfPending();
+  }
 });
 
 $('#spec-add').addEventListener('click', () => {
@@ -2530,6 +2562,14 @@ function escapeAttr(s) { return String(s || '').replace(/"/g, '&quot;').replace(
 // ====== Save ======
 $('#btn-save').addEventListener('click', async () => {
   const btn = $('#btn-save');
+  // Якщо у полі URL залишилось значення - автоматично додаємо перед збереженням
+  if (typeof addVideoUrlIfPending === 'function') {
+    const pendingInput = $('#f-video-url');
+    if (pendingInput && pendingInput.value.trim()) {
+      const added = addVideoUrlIfPending();
+      if (!added) return;   // скасовано користувачем - не зберігаємо
+    }
+  }
   btn.disabled = true;
   btn.textContent = 'Зберігаю…';
   try {
