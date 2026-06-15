@@ -2254,12 +2254,14 @@ let formMedia = { photos: [], videos: [] }; // {id?, url, storage_path, isNew?, 
 const drawer = $('#drawer-product');
 const overlay = $('#drawer-overlay');
 
-function openDrawer(product = null) {
+async function openDrawer(product = null) {
   editingId = product ? product.id : null;
   $('#drawer-title').textContent = product ? 'Редагувати товар' : 'Новий товар';
   resetForm();
-  if (product) fillForm(product);
+  // Спочатку заповнюємо опції категорій, потім значення
+  // (інакше fillForm встановить value який стертеться при populateCategorySelect)
   populateCategorySelect();
+  if (product) await fillForm(product);
   drawer.classList.add('is-open');
   overlay.classList.add('is-open');
 }
