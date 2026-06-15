@@ -258,26 +258,15 @@ input[type="radio"][name="color"]:checked + .swatch { box-shadow: 0 0 0 2px var(
 }
 
 .videos-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  max-width: 880px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  max-width: 980px;
   margin: 0 auto;
+  padding: 0 16px;
 }
-/* Якщо відео одне - центруємо і обмежуємо ширину */
-.videos-grid:has(video:only-child) {
-  grid-template-columns: minmax(0, 420px);
-  justify-content: center;
-  max-width: 420px;
-}
-.videos-grid video {
-  width: 100%;
-  aspect-ratio: 9/16;
-  background: #000;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(38,38,38,0.12);
-  object-fit: cover;
-}
+.videos-grid > div { width: 100%; }
 
 /* ===== ОПИС ===== */
 .description__text {
@@ -395,7 +384,7 @@ input[type="radio"][name="color"]:checked + .swatch { box-shadow: 0 0 0 2px var(
   .gallery__thumbs { grid-template-columns: repeat(5, 1fr); gap: 6px; }
   .product__actions { flex-direction: column; }
   .product-section { padding: 40px 16px; }
-  .videos-grid { grid-template-columns: 1fr; max-width: 380px; }
+  .videos-grid { gap: 18px; padding: 0 8px; }
   .specs-row { grid-template-columns: 1fr 1fr; padding: 12px 16px; font-size: 14px; }
   .related-grid { grid-template-columns: repeat(2, 1fr); }
   .product-hero { padding: 70px 16px 12px; }
@@ -874,11 +863,10 @@ body:has(.modal:target) { overflow: hidden; }
     const videos = media.filter(m => m.type === 'video');
     if (videos.length > 0) {
       $('#product-videos-section').style.display = 'block';
-      const ratioStyles = {
-        'auto': '', '16-9': 'aspect-ratio:16/9', '9-16': 'aspect-ratio:9/16;max-width:380px;margin:0 auto',
-        '1-1': 'aspect-ratio:1/1', '4-3': 'aspect-ratio:4/3'
-      };
-      const sizeStyles = { narrow: 'max-width:420px', medium: 'max-width:720px', wide: 'max-width:980px' };
+      // padding-bottom = 1/(width/height) у %, кросбраузерний спосіб для aspect-ratio
+      const ratioPad = { '16-9': '56.25%', '9-16': '177.78%', '1-1': '100%', '4-3': '75%' };
+      const ratioMaxW = { '9-16': '380px' };
+      const sizeMaxW = { narrow: '420px', medium: '720px', wide: '980px' };
 
       $('#product-videos-grid').innerHTML = videos.map((v, idx) => {
         const meta = v.metadata || {};
@@ -892,25 +880,40 @@ body:has(.modal:target) { overflow: hidden; }
         const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/|v\/)|youtu\.be\/)([\w-]{6,})/);
         const isShorts = /\/shorts\//.test(url);
         const vimeoMatch = url.match(/(?:vimeo\.com\/(?:video\/|channels\/[^\/]+\/)?|player\.vimeo\.com\/video\/)(\d+)/);
-        let frame;
-        if (ytMatch) {
-          const ratioFinal = ratio === 'auto' ? (isShorts ? '9-16' : '16-9') : ratio;
-          const params = new URLSearchParams({
-            rel: '0', modestbranding: '1',
-            autoplay: autoplay ? '1' : '0', mute: muted ? '1' : '0',
-            loop: loop ? '1' : '0', ...(loop ? { playlist: ytMatch[1] } : {}),
-            controls: controls ? '1' : '0'
-          }).toString();
-          frame = `<div style="position:relative;${ratioStyles[ratioFinal] || ratioStyles['16-9']};border-radius:16px;overflow:hidden;background:#000;box-shadow:0 8px 24px rgba(0,0,0,0.12)"><iframe src="https://www.youtube.com/embed/${ytMatch[1]}?${params}" allowfullscreen allow="autoplay; encrypted-media" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;border:none"></iframe></div>`;
-        } else if (vimeoMatch) {
-          const ratioFinal = ratio === 'auto' ? '16-9' : ratio;
-          const params = new URLSearchParams({
-            autoplay: autoplay ? '1' : '0', muted: muted ? '1' : '0',
-            loop: loop ? '1' : '0', controls: controls ? '1' : '0',
-            title: '0', byline: '0', portrait: '0', dnt: '1'
-          }).toString();
-          frame = `<div style="position:relative;${ratioStyles[ratioFinal] || ratioStyles['16-9']};border-radius:16px;overflow:hidden;background:#000;box-shadow:0 8px 24px rgba(0,0,0,0.12)"><iframe src="https://player.vimeo.com/video/${vimeoMatch[1]}?${params}" allowfullscreen allow="autoplay; fullscreen; picture-in-picture" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;border:none"></iframe></div>`;
+
+        // Контейнер фіксованого розміру (max-width з налаштувань)
+        const outerMaxW = sizeMaxW[meta.size || 'medium'] || '720px';
+        let inner = '';
+
+        if (ytMatch || vimeoMatch) {
+          // Embed iframe - використовуємо padding-bottom для aspect-ratio
+          const ratioKey = ratio === 'auto' ? (isShorts || vimeoMatch && false ? '9-16' : '16-9') : ratio;
+          const pad = ratioPad[ratioKey] || ratioPad['16-9'];
+          const ratioMax = ratioMaxW[ratioKey] ? `max-width:${ratioMaxW[ratioKey]};margin:0 auto;` : '';
+          let iframeSrc;
+          if (ytMatch) {
+            const params = new URLSearchParams({
+              rel: '0', modestbranding: '1',
+              autoplay: autoplay ? '1' : '0', mute: muted ? '1' : '0',
+              loop: loop ? '1' : '0', ...(loop ? { playlist: ytMatch[1] } : {}),
+              controls: controls ? '1' : '0'
+            }).toString();
+            iframeSrc = `https://www.youtube.com/embed/${ytMatch[1]}?${params}`;
+          } else {
+            const params = new URLSearchParams({
+              autoplay: autoplay ? '1' : '0', muted: muted ? '1' : '0',
+              loop: loop ? '1' : '0', controls: controls ? '1' : '0',
+              title: '0', byline: '0', portrait: '0', dnt: '1'
+            }).toString();
+            iframeSrc = `https://player.vimeo.com/video/${vimeoMatch[1]}?${params}`;
+          }
+          inner = `
+            <div style="${ratioMax}position:relative;width:100%;padding-bottom:${pad};border-radius:16px;overflow:hidden;background:#000;box-shadow:0 8px 24px rgba(0,0,0,0.12)">
+              <iframe src="${iframeSrc}" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture" loading="lazy"
+                style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"></iframe>
+            </div>`;
         } else {
+          // Локальний файл
           const u = url + (url.includes('#') ? '' : '#t=0.5');
           const attrs = [
             controls ? 'controls' : '', autoplay ? 'autoplay' : '',
@@ -919,12 +922,14 @@ body:has(.modal:target) { overflow: hidden; }
             `id="prod-video-${idx}"`
           ].filter(Boolean).join(' ');
           if (ratio === 'auto') {
-            frame = `<video ${attrs} style="max-width:100%;max-height:80vh;border-radius:16px;display:block;margin:0 auto;background:#0d0d0d;box-shadow:0 8px 24px rgba(0,0,0,0.12);object-fit:${fit}" src="${esc(u)}"></video>`;
+            inner = `<video ${attrs} style="max-width:100%;max-height:80vh;border-radius:16px;display:block;margin:0 auto;background:#0d0d0d;box-shadow:0 8px 24px rgba(0,0,0,0.12);object-fit:${fit}" src="${esc(u)}"></video>`;
           } else {
-            frame = `<div style="position:relative;${ratioStyles[ratio]};border-radius:16px;overflow:hidden;background:#0d0d0d;box-shadow:0 8px 24px rgba(0,0,0,0.12)"><video ${attrs} style="position:absolute;inset:0;width:100%;height:100%;object-fit:${fit}" src="${esc(u)}"></video></div>`;
+            const pad = ratioPad[ratio] || ratioPad['16-9'];
+            const ratioMax = ratioMaxW[ratio] ? `max-width:${ratioMaxW[ratio]};margin:0 auto;` : '';
+            inner = `<div style="${ratioMax}position:relative;width:100%;padding-bottom:${pad};border-radius:16px;overflow:hidden;background:#0d0d0d;box-shadow:0 8px 24px rgba(0,0,0,0.12)"><video ${attrs} style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:${fit}" src="${esc(u)}"></video></div>`;
           }
         }
-        return `<div style="${sizeStyles[meta.size || 'medium']};margin:0 auto">${frame}</div>`;
+        return `<div style="max-width:${outerMaxW};width:100%;margin:0 auto">${inner}</div>`;
       }).join('');
 
       // Auto-poster для локальних відео
