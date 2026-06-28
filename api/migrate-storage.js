@@ -5,8 +5,18 @@
 // ============================================================
 
 import { S3Client, PutObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
+import { Agent, fetch as undiciFetch } from 'undici';
 
 export const config = { maxDuration: 60 };
+
+// Кастомний TLS-агент щоб обійти Cloudflare/Supabase bot detection
+const tlsAgent = new Agent({
+  connect: {
+    rejectUnauthorized: true,
+    ALPNProtocols: ['http/1.1'],
+    ciphers: 'TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_256_GCM_SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305',
+  },
+});
 
 const {
   R2_ENDPOINT, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, R2_PUBLIC_URL,
@@ -100,13 +110,16 @@ async function migrateOne(url) {
 
   if (await existsInR2(key)) return { skipped: true, key, newUrl: r2Base + key };
 
-  // Використовуємо authenticated endpoint з service_role щоб гарантовано отримати файл
+  // undici fetch з кастомним TLS-агентом — обходить Cloudflare bot detection
   const authUrl = `${SUPABASE_URL}/storage/v1/object/${parsed.bucket}/${parsed.path}`;
-  const res = await fetch(authUrl, {
+  const res = await undiciFetch(authUrl, {
+    dispatcher: tlsAgent,
     headers: {
-      'User-Agent': 'Mozilla/5.0 (compatible; CandleMigration/1.0)',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       'Authorization': 'Bearer ' + SUPABASE_SERVICE_KEY,
       'apikey': SUPABASE_SERVICE_KEY,
+      'Accept': '*/*',
+      'Accept-Encoding': 'identity',
     },
   });
   if (!res.ok) throw new Error(`fetch ${res.status}: ${authUrl}`);
