@@ -19,11 +19,11 @@ export const config = { maxDuration: 60 };
 
 const {
   R2_ENDPOINT, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, R2_PUBLIC_URL,
-  SUPABASE_URL, SUPABASE_ANON_KEY,
+  SUPABASE_URL, SUPABASE_SERVICE_KEY,
   MIGRATION_TOKEN,
 } = process.env;
 
-const supa = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } });
+const supa = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, { auth: { persistSession: false } });
 const r2 = new S3Client({
   region: 'auto',
   endpoint: R2_ENDPOINT,
