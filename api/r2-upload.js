@@ -17,6 +17,18 @@
 // ============================================================
 
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { NodeHttpHandler } from '@smithy/node-http-handler';
+import https from 'https';
+import dns from 'dns';
+
+dns.setDefaultResultOrder('ipv4first');
+
+const r2Agent = new https.Agent({
+  family: 4,
+  keepAlive: true,
+  ciphers: 'DEFAULT@SECLEVEL=0',
+  minVersion: 'TLSv1.2',
+});
 
 const {
   R2_ENDPOINT,
@@ -33,6 +45,7 @@ const r2 = new S3Client({
   region: 'auto',
   endpoint: R2_ENDPOINT,
   credentials: { accessKeyId: R2_ACCESS_KEY_ID, secretAccessKey: R2_SECRET_ACCESS_KEY },
+  requestHandler: new NodeHttpHandler({ httpsAgent: r2Agent }),
 });
 
 export const config = {
