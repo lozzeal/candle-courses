@@ -1684,11 +1684,20 @@ html, body {
 
 <!-- ====================== Supabase + scripts ====================== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/r2-uploader.js"></script>
 <script>
 // ====== Config ======
 const SUPABASE_URL = 'https://jmfudjhembgeaztowcoe.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptZnVkamhlbWJnZWF6dG93Y29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDEyODMsImV4cCI6MjA5NTM3NzI4M30.AQC4uLLBE6lsbdRorypc6gKkZQU4n6yg4gGG_rG55iM';
 const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ====== Завантажуємо токен для R2 uploads після авторизації ======
+async function loadR2Token() {
+  try {
+    const { data } = await supa.from('site_settings').select('value').eq('key', 'admin_upload_token').single();
+    if (data?.value) window.ADMIN_UPLOAD_TOKEN = data.value;
+  } catch (e) { console.warn('R2 token not loaded:', e?.message); }
+}
 
 // ====== DOM helpers ======
 const $ = sel => document.querySelector(sel);
@@ -1717,6 +1726,7 @@ function showApp(user) {
   $('#app').style.display = 'grid';
   $('#user-email').textContent = user.email;
   $('#user-avatar').textContent = (user.email[0] || '?').toUpperCase();
+  loadR2Token();
   loadProducts();
   loadOrders();
   loadCategories();
@@ -2473,9 +2483,8 @@ window.onMediaPick = async (e, type) => {
     try {
       const ext = file.name.split('.').pop().toLowerCase();
       const path = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
-      const { error } = await supa.storage.from(bucket).upload(path, file, { cacheControl: '3600', upsert: false });
+      const { url: publicUrl, error } = await uploadToR2({ bucket, path, file });
       if (error) throw error;
-      const { data: { publicUrl } } = supa.storage.from(bucket).getPublicUrl(path);
       const arr = type === 'photo' ? formMedia.photos : formMedia.videos;
       arr.push({ url: publicUrl, storage_path: path, isNew: true });
       renderMediaGrid(type);
@@ -3107,9 +3116,8 @@ window.uploadAuthorPhoto = async (e) => {
   try {
     const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
     const path = `author/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
-    const { error } = await supa.storage.from('product-photos').upload(path, file, { cacheControl: '3600', upsert: false });
+    const { url: publicUrl, error } = await uploadToR2({ bucket: 'product-photos', path, file });
     if (error) throw error;
-    const { data: { publicUrl } } = supa.storage.from('product-photos').getPublicUrl(path);
     $('#t-author-photo').value = publicUrl;
     progressEl.textContent = '✓ Завантажено. Натисніть «Зберегти всі».';
     setTimeout(() => progressEl.classList.remove('is-active'), 3000);
@@ -3178,9 +3186,8 @@ $('#btn-add-review-input').addEventListener('change', async (e) => {
     try {
       const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
       const path = `reviews/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
-      const { error: upErr } = await supa.storage.from('product-photos').upload(path, file, { cacheControl: '3600', upsert: false });
+      const { url: publicUrl, error: upErr } = await uploadToR2({ bucket: 'product-photos', path, file });
       if (upErr) throw upErr;
-      const { data: { publicUrl } } = supa.storage.from('product-photos').getPublicUrl(path);
       const { error: insErr } = await supa.from('landing_reviews').insert({
         photo_url: publicUrl,
         sort_order: nextSort++,
@@ -3481,9 +3488,8 @@ window.uploadCoursePhoto = async (e) => {
   try {
     const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
     const path = `courses/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
-    const { error } = await supa.storage.from('product-photos').upload(path, file, { cacheControl: '3600', upsert: false });
+    const { url: publicUrl, error } = await uploadToR2({ bucket: 'product-photos', path, file });
     if (error) throw error;
-    const { data: { publicUrl } } = supa.storage.from('product-photos').getPublicUrl(path);
     $('#lc-photo').value = publicUrl;
     updatePhotoPreview();
     progressEl.textContent = '✓ Завантажено. Не забудьте натиснути «Зберегти».';
@@ -4093,9 +4099,8 @@ window.uploadReviewsToBlock = async function(idx, files) {
     try {
       const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
       const path = `landing-reviews/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
-      const { error: upErr } = await supa.storage.from('product-photos').upload(path, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+      const { url: publicUrl, error: upErr } = await uploadToR2({ bucket: 'product-photos', path, file });
       if (upErr) throw upErr;
-      const { data: { publicUrl } } = supa.storage.from('product-photos').getPublicUrl(path);
       maxSort += 1;
       const { data: inserted, error: insErr } = await supa
         .from('landing_reviews')
@@ -4272,9 +4277,8 @@ window.uploadVideo = async function(idx, files) {
   try {
     const ext = (file.name.split('.').pop() || 'mp4').toLowerCase();
     const path = `course-videos/${cpe.course.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
-    const { error } = await supa.storage.from('product-videos').upload(path, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+    const { url: publicUrl, error } = await uploadToR2({ bucket: 'product-videos', path, file });
     if (error) throw error;
-    const { data: { publicUrl } } = supa.storage.from('product-videos').getPublicUrl(path);
     if (!cpe.blocks[idx].data) cpe.blocks[idx].data = {};
     cpe.blocks[idx].data.url = publicUrl;
     cpe.blocks[idx]._expanded = true;
@@ -4293,9 +4297,8 @@ window.uploadWorks = async function(idx, files) {
     for (const file of files) {
       const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
       const path = `course-works/${cpe.course.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
-      const { error } = await supa.storage.from('product-photos').upload(path, file, { cacheControl: '3600', upsert: false });
+      const { url: publicUrl, error } = await uploadToR2({ bucket: 'product-photos', path, file });
       if (error) throw error;
-      const { data: { publicUrl } } = supa.storage.from('product-photos').getPublicUrl(path);
       if (!cpe.blocks[idx].data.photos) cpe.blocks[idx].data.photos = [];
       cpe.blocks[idx].data.photos.push(publicUrl);
     }

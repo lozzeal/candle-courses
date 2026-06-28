@@ -1,0 +1,18 @@
+{
+  "rules": [
+    {
+      "allowed": {
+        "origins": [
+          "https://100candle.shop",
+          "https://www.100candle.shop",
+          "http://localhost:3000",
+          "http://localhost:8080"
+        ],
+        "methods": ["GET", "HEAD"],
+        "headers": ["*"]
+      },
+      "exposeHeaders": ["Content-Length", "Content-Type", "ETag", "Accept-Ranges", "Content-Range"],
+      "maxAgeSeconds": 3600
+    }
+  ]
+}
