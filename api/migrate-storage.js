@@ -1,18 +1,9 @@
 // ============================================================
-// /api/migrate-storage — одноразова міграція файлів з Supabase Storage в R2
+// /api/migrate-storage — одноразова міграція Supabase Storage → R2
 // ============================================================
-// Запускається пакетами щоб вписатись у Vercel timeout (60 сек на Hobby).
-//
 // Виклик: GET /api/migrate-storage?token=XXX&offset=0&limit=20
-// Повертає: { offset, processed, totalFound, uploaded, skipped, errors, nextOffset }
-//
-// ENV:
-//   R2_ENDPOINT, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, R2_PUBLIC_URL
-//   SUPABASE_URL, SUPABASE_ANON_KEY
-//   MIGRATION_TOKEN (одноразовий секрет для авторизації)
 // ============================================================
 
-import { createClient } from '@supabase/supabase-js';
 import { S3Client, PutObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
 
 export const config = { maxDuration: 60 };
@@ -23,15 +14,27 @@ const {
   MIGRATION_TOKEN,
 } = process.env;
 
-const supa = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, { auth: { persistSession: false } });
 const r2 = new S3Client({
   region: 'auto',
   endpoint: R2_ENDPOINT,
   credentials: { accessKeyId: R2_ACCESS_KEY_ID, secretAccessKey: R2_SECRET_ACCESS_KEY },
 });
 
-const supaBase = `${SUPABASE_URL?.replace(/\/$/, '')}/storage/v1/object/public/`;
-const r2Base = `${R2_PUBLIC_URL?.replace(/\/$/, '')}/`;
+const supaBase = `${(SUPABASE_URL || '').replace(/\/$/, '')}/storage/v1/object/public/`;
+const r2Base = `${(R2_PUBLIC_URL || '').replace(/\/$/, '')}/`;
+
+// ----- PostgREST через raw fetch (без supabase-js, бо v2.45 потребує WebSocket) -----
+async function pgSelect(table, query = '*') {
+  const url = `${SUPABASE_URL}/rest/v1/${table}?select=${encodeURIComponent(query)}`;
+  const res = await fetch(url, {
+    headers: {
+      apikey: SUPABASE_SERVICE_KEY,
+      Authorization: 'Bearer ' + SUPABASE_SERVICE_KEY,
+    },
+  });
+  if (!res.ok) throw new Error(`PG ${table}: ${res.status} ${await res.text()}`);
+  return res.json();
+}
 
 function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 function urlToBucketKey(url) {
@@ -49,8 +52,8 @@ function guessMime(p) {
 async function collectAllFileUrls() {
   const urls = new Set();
 
-  const { data: media } = await supa.from('product_media').select('url, storage_path, type');
-  for (const r of media || []) {
+  const media = await pgSelect('product_media', 'url,storage_path,type');
+  for (const r of media) {
     if (r.url?.startsWith(supaBase)) urls.add(r.url);
     if (r.storage_path && !r.url?.startsWith(supaBase)) {
       const b = r.type === 'video' ? 'product-videos' : 'product-photos';
@@ -58,8 +61,8 @@ async function collectAllFileUrls() {
     }
   }
 
-  const { data: courses } = await supa.from('landing_courses').select('photo_path, page_blocks');
-  for (const r of courses || []) {
+  const courses = await pgSelect('landing_courses', 'photo_path,page_blocks');
+  for (const r of courses) {
     if (r.photo_path?.startsWith(supaBase)) urls.add(r.photo_path);
     if (r.page_blocks) {
       const str = JSON.stringify(r.page_blocks);
@@ -67,13 +70,13 @@ async function collectAllFileUrls() {
     }
   }
 
-  const { data: reviews } = await supa.from('landing_reviews').select('photo_url');
-  for (const r of reviews || []) {
+  const reviews = await pgSelect('landing_reviews', 'photo_url');
+  for (const r of reviews) {
     if (r.photo_url?.startsWith(supaBase)) urls.add(r.photo_url);
   }
 
-  const { data: settings } = await supa.from('site_settings').select('value');
-  for (const r of settings || []) {
+  const settings = await pgSelect('site_settings', 'value');
+  for (const r of settings) {
     if (typeof r.value === 'string' && r.value.startsWith(supaBase)) urls.add(r.value);
   }
 
