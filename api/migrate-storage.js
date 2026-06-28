@@ -100,8 +100,16 @@ async function migrateOne(url) {
 
   if (await existsInR2(key)) return { skipped: true, key, newUrl: r2Base + key };
 
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`fetch ${res.status}`);
+  // Використовуємо authenticated endpoint з service_role щоб гарантовано отримати файл
+  const authUrl = `${SUPABASE_URL}/storage/v1/object/${parsed.bucket}/${parsed.path}`;
+  const res = await fetch(authUrl, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (compatible; CandleMigration/1.0)',
+      'Authorization': 'Bearer ' + SUPABASE_SERVICE_KEY,
+      'apikey': SUPABASE_SERVICE_KEY,
+    },
+  });
+  if (!res.ok) throw new Error(`fetch ${res.status}: ${authUrl}`);
   const ct = res.headers.get('content-type') || guessMime(parsed.path);
   const buf = Buffer.from(await res.arrayBuffer());
 
