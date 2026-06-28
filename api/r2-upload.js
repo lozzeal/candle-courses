@@ -25,7 +25,9 @@ const {
   R2_BUCKET,
   R2_PUBLIC_URL,
   ADMIN_UPLOAD_TOKEN,
+  MIGRATION_TOKEN,
 } = process.env;
+const AUTH_TOKEN = ADMIN_UPLOAD_TOKEN || MIGRATION_TOKEN;
 
 const r2 = new S3Client({
   region: 'auto',
@@ -58,7 +60,7 @@ export default async function handler(req, res) {
 
   // ----- Auth -----
   const token = req.headers['x-admin-token'];
-  if (!ADMIN_UPLOAD_TOKEN || token !== ADMIN_UPLOAD_TOKEN) {
+  if (!AUTH_TOKEN || token !== AUTH_TOKEN) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
