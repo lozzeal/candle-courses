@@ -1,0 +1,13 @@
+node_modules/
+.env
+.env.local
+.env.*.local
+migration-r2/.env
+migration-r2/node_modules/
+migration-r2/url-mapping.json
+migration-r2/errors.json
+migration-r2/verify-failures.json
+.vercel
+*.log
+.DS_Store
+Thumbs.db

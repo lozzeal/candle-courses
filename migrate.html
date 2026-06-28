@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Міграція файлів Supabase → R2</title>
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 20px; color: #222; }
+  h1 { font-size: 22px; }
+  .row { margin: 14px 0; }
+  input[type=password] { width: 100%; padding: 10px; font: inherit; border: 1px solid #ccc; border-radius: 6px; }
+  button { padding: 12px 20px; font: inherit; background: #38A30D; color: #fff; border: 0; border-radius: 6px; cursor: pointer; }
+  button:disabled { background: #999; cursor: not-allowed; }
+  .progress { height: 24px; background: #eee; border-radius: 4px; overflow: hidden; margin: 10px 0; }
+  .bar { height: 100%; background: #38A30D; transition: width .3s; }
+  .log { background: #1e1e1e; color: #d4d4d4; padding: 14px; border-radius: 6px; font: 13px/1.4 monospace; max-height: 360px; overflow-y: auto; white-space: pre-wrap; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0; }
+  .stat { background: #f5f5f5; padding: 10px; border-radius: 6px; text-align: center; }
+  .stat b { display: block; font-size: 24px; color: #38A30D; }
+  .err { color: #d22; }
+  .ok { color: #38A30D; }
+</style>
+</head>
+<body>
+<h1>Міграція Supabase Storage → Cloudflare R2</h1>
+
+<div class="row">
+  <label>Migration token:</label>
+  <input type="password" id="token" placeholder="MIGRATION_TOKEN з Vercel env" autocomplete="off">
+</div>
+
+<div class="row">
+  <button id="start">Запустити міграцію</button>
+  <button id="pause" disabled style="background:#888">Пауза</button>
+</div>
+
+<div class="progress"><div class="bar" id="bar" style="width:0%"></div></div>
+
+<div class="stats">
+  <div class="stat"><b id="processed">0</b>опрацьовано</div>
+  <div class="stat"><b id="uploaded">0</b>завантажено</div>
+  <div class="stat"><b id="skipped">0</b>пропущено</div>
+  <div class="stat"><b id="errors">0</b>помилок</div>
+</div>
+
+<div class="log" id="log">Готовий до запуску. Введіть token і натисніть «Запустити».</div>
+
+<script>
+const els = {
+  token: document.getElementById('token'),
+  start: document.getElementById('start'),
+  pause: document.getElementById('pause'),
+  bar: document.getElementById('bar'),
+  log: document.getElementById('log'),
+  processed: document.getElementById('processed'),
+  uploaded: document.getElementById('uploaded'),
+  skipped: document.getElementById('skipped'),
+  errors: document.getElementById('errors'),
+};
+
+let paused = false;
+let stats = { processed: 0, uploaded: 0, skipped: 0, errors: 0, total: 0 };
+
+function log(msg, cls = '') {
+  const time = new Date().toLocaleTimeString();
+  els.log.innerHTML += `\n<span class="${cls}">[${time}] ${msg}</span>`;
+  els.log.scrollTop = els.log.scrollHeight;
+}
+
+function updateStats() {
+  els.processed.textContent = stats.processed;
+  els.uploaded.textContent = stats.uploaded;
+  els.skipped.textContent = stats.skipped;
+  els.errors.textContent = stats.errors;
+  if (stats.total) els.bar.style.width = (stats.processed / stats.total * 100) + '%';
+}
+
+async function runBatch(token, offset, limit = 20) {
+  const r = await fetch(`/api/migrate-storage?token=${encodeURIComponent(token)}&offset=${offset}&limit=${limit}`);
+  if (!r.ok) {
+    const t = await r.text();
+    throw new Error(`HTTP ${r.status}: ${t}`);
+  }
+  return r.json();
+}
+
+els.start.addEventListener('click', async () => {
+  const token = els.token.value.trim();
+  if (!token) { alert('Введи MIGRATION_TOKEN'); return; }
+  els.start.disabled = true;
+  els.pause.disabled = false;
+  paused = false;
+  stats = { processed: 0, uploaded: 0, skipped: 0, errors: 0, total: 0 };
+  updateStats();
+  els.log.innerHTML = '';
+  log('🚀 Старт міграції...');
+
+  let offset = 0;
+  try {
+    while (true) {
+      if (paused) { log('⏸ Пауза'); break; }
+      const t0 = Date.now();
+      const res = await runBatch(token, offset, 20);
+      const dt = ((Date.now() - t0) / 1000).toFixed(1);
+
+      stats.total = res.totalFound;
+      stats.processed += res.processed;
+      stats.uploaded += res.uploaded;
+      stats.skipped += res.skipped;
+      stats.errors += res.errors;
+      updateStats();
+
+      log(`✓ Batch ${offset}-${offset + res.processed} за ${dt}s: +${res.uploaded} upload, ${res.skipped} skip, ${res.errors} err`, 'ok');
+
+      for (const r of res.results.filter(x => x.error)) {
+        log(`  ✗ ${r.url.split('/').pop()}: ${r.error}`, 'err');
+      }
+
+      if (res.nextOffset === null) {
+        log(`🎉 Міграція завершена! ${stats.uploaded + stats.skipped} / ${stats.total} файлів у R2.`, 'ok');
+        break;
+      }
+      offset = res.nextOffset;
+    }
+  } catch (e) {
+    log('💥 Помилка: ' + e.message, 'err');
+  } finally {
+    els.start.disabled = false;
+    els.pause.disabled = true;
+  }
+});
+
+els.pause.addEventListener('click', () => { paused = true; });
+</script>
+</body>
+</html>
