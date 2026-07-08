@@ -50,9 +50,23 @@
     input.addEventListener('input', onInput);
   }
 
+  function restoreButton(submitBtn, originalText) {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      if (originalText) submitBtn.textContent = originalText;
+    }
+  }
+
+  function nativeSubmit(form) {
+    // Прибираємо обробник щоб уникнути рекурсії
+    form.setAttribute('data-no-ajax', '1');
+    form.submit();
+  }
+
   document.addEventListener('submit', async function (e) {
     const form = e.target;
     if (!(form instanceof HTMLFormElement)) return;
+    if (form.getAttribute('data-no-ajax') === '1') return;
     if (!isSendFormAction(form.getAttribute('action'))) return;
 
     e.preventDefault();
@@ -70,11 +84,17 @@
       const params = new URLSearchParams();
       for (const [k, v] of formData.entries()) params.append(k, v);
 
-      const resp = await fetch(form.getAttribute('action'), {
+      // Абсолютний URL з поточного origin, щоб уникнути cross-subdomain redirect
+      const action = new URL(form.getAttribute('action'), window.location.href).href;
+
+      const resp = await fetch(action, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'text/html,application/json',
+        },
         body: params.toString(),
-        redirect: 'follow',
+        credentials: 'same-origin',
       });
 
       if (resp.ok) {
@@ -95,17 +115,22 @@
         return;
       }
 
-      // Помилка — показуємо ІНЛАЙН
-      const errorText = (await resp.text()) || 'Помилка відправки. Перевірте дані.';
-      const target = findTargetInput(form, errorText);
-      attachError(target, errorText);
-    } catch (err) {
-      alert('Помилка з\'єднання: ' + (err && err.message ? err.message : 'спробуйте ще раз'));
-    } finally {
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        if (originalText) submitBtn.textContent = originalText;
+      // Тільки 400 = помилка валідації, показуємо ІНЛАЙН
+      if (resp.status === 400 || resp.status === 429) {
+        const errorText = (await resp.text()) || 'Помилка відправки. Перевірте дані.';
+        const target = findTargetInput(form, errorText);
+        attachError(target, errorText);
+        restoreButton(submitBtn, originalText);
+        return;
       }
+
+      // Інші помилки (403/500 тощо) — fallback на native submit
+      console.warn('AJAX submit failed with status', resp.status, '— fallback to native');
+      nativeSubmit(form);
+    } catch (err) {
+      // Мережева помилка (CORS, redirect, offline) — fallback на native submit
+      console.warn('AJAX submit failed:', err && err.message, '— fallback to native');
+      nativeSubmit(form);
     }
   }, true);
 })();
