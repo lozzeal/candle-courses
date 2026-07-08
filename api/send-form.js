@@ -51,6 +51,55 @@ function getClientIp(req) {
   return req.headers['x-real-ip'] || req.socket?.remoteAddress || 'unknown';
 }
 
+// ====================== ВАЛІДАЦІЯ КОНТАКТІВ ======================
+
+// Нормалізація телефону: прибирає розділювачі, залишає + та цифри
+function normalizePhone(raw) {
+  if (!raw) return null;
+  let s = String(raw).replace(/[\s\-\(\)\.]/g, '');
+  // Український 0XX → +380 XX
+  if (/^0\d{9}$/.test(s)) s = '+38' + s;
+  // 380XXXXXXXXX без + → додати +
+  else if (/^380\d{9}$/.test(s)) s = '+' + s;
+  return s;
+}
+
+// Валідний номер: український (за префіксом оператора) АБО міжнародний (E.164: + і 8-15 цифр)
+function isValidPhone(raw) {
+  const norm = normalizePhone(raw);
+  if (!norm) return false;
+  // Український — точна перевірка оператора
+  if (/^\+380(39|50|63|66|67|68|73|89|91|92|93|94|95|96|97|98|99)\d{7}$/.test(norm)) return true;
+  // Міжнародний E.164: + і 8-15 цифр загалом (не український префікс)
+  if (/^\+[1-9]\d{7,14}$/.test(norm) && !norm.startsWith('+380')) return true;
+  return false;
+}
+
+// Простий валідатор email
+function isValidEmail(raw) {
+  if (!raw) return false;
+  const s = String(raw).trim();
+  if (s.length > 254) return false;
+  // Формат X@Y.Z, TLD мін 2 символи, лише допустимі символи
+  return /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(s);
+}
+
+// Anti-spam: заявка виглядає як спам якщо в текстових полях є URL або HTML
+function looksLikeSpam(body) {
+  const suspiciousPatterns = [
+    /https?:\/\//i,
+    /<a\s+href/i,
+    /\b(loan|casino|viagra|bitcoin|crypto|investment|forex)\b/i,
+    /\bDear\s+Sirs\b/i,
+    /\bBusiness\s+(offer|proposal|opportunity)\b/i,
+  ];
+  const textToCheck = Object.entries(body || {})
+    .filter(([k]) => !k.startsWith('_'))
+    .map(([, v]) => String(v || ''))
+    .join(' ');
+  return suspiciousPatterns.some((p) => p.test(textToCheck));
+}
+
 // ====================== ПАРСИНГ ======================
 
 async function readRawBody(req) {
@@ -121,6 +170,43 @@ export default async function handler(req, res) {
     return res.status(400).send('Bad request: empty form');
   }
 
+  // 🛡️ ШАР 5: anti-spam за вмістом (URL, ключові слова, "Dear Sirs")
+  if (looksLikeSpam(body)) {
+    return res.status(400).send('Заявка виглядає як спам. Перевірте текст.');
+  }
+
+  // 🛡️ ШАР 6: валідація телефону (якщо форма його вимагає)
+  const rawPhone = body['Телефон'] || body['Контакт'];
+  if (rawPhone) {
+    if (!isValidPhone(rawPhone)) {
+      return res.status(400).send('Невірний формат телефону. Формат: +380 XX XXX XX XX');
+    }
+    // Нормалізуємо в body щоб зберегти в БД / Telegram у чистому вигляді
+    const normalized = normalizePhone(rawPhone);
+    if (body['Телефон']) body['Телефон'] = normalized;
+    if (body['Контакт']) body['Контакт'] = normalized;
+  }
+
+  // 🛡️ ШАР 7: валідація email
+  if (body['Email']) {
+    if (!isValidEmail(body['Email'])) {
+      return res.status(400).send('Невірний формат email');
+    }
+    body['Email'] = String(body['Email']).trim().toLowerCase();
+  }
+
+  // 🛡️ ШАР 8: обмеження довжини кожного поля (проти спамерів що вставляють простирадла)
+  for (const [k, v] of Object.entries(body)) {
+    if (typeof v === 'string' && v.length > 500) {
+      body[k] = v.slice(0, 500);
+    }
+  }
+
+  // Перерахунок userFields з нормалізованого body
+  const normalizedUserFields = Object.entries(body).filter(([k, v]) =>
+    !reservedKeys.has(k) && String(v || '').trim() !== ''
+  );
+
   // ====================== ФОРМУВАННЯ ПОВІДОМЛЕННЯ ======================
 
   const subject = (body._subject || 'Нова заявка з сайту').toString();
@@ -148,7 +234,7 @@ export default async function handler(req, res) {
     'Джерело': '🌐',
   };
 
-  for (const [key, value] of userFields) {
+  for (const [key, value] of normalizedUserFields) {
     const em = fieldEmoji[key] || '•';
     lines.push(`${em} ${key}: ${String(value).trim()}`);
   }

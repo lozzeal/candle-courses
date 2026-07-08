@@ -609,7 +609,7 @@ body:has(.modal:target) { overflow: hidden; }
       <input type="hidden" name="Товар" id="order-product-value" value="">
       <div class="field field--wide">
         <label>Телефон <span style="color:#D14A3F">*</span></label>
-        <input type="tel" name="Телефон" placeholder="+380..." required>
+        <input type="tel" name="Телефон" placeholder="+380 XX XXX XX XX або міжнародний" required inputmode="tel" pattern="^\+?[0-9\s\-\(\)\.]{8,20}$" title="Введіть номер телефону (мінімум 8 цифр, можна з + і країнним кодом)" minlength="8" maxlength="20">
       </div>
       <div class="field field--wide">
         <label>Email <span style="color:#D14A3F">*</span></label>
@@ -647,7 +647,7 @@ body:has(.modal:target) { overflow: hidden; }
       <input type="hidden" name="_return_url" value="/product.html">
       <div class="field field--wide">
         <label>Телефон <span style="color:#D14A3F">*</span></label>
-        <input type="tel" name="Телефон" placeholder="+380..." required>
+        <input type="tel" name="Телефон" placeholder="+380 XX XXX XX XX або міжнародний" required inputmode="tel" pattern="^\+?[0-9\s\-\(\)\.]{8,20}$" title="Введіть номер телефону (мінімум 8 цифр, можна з + і країнним кодом)" minlength="8" maxlength="20">
       </div>
       <div class="field field--wide">
         <label>Email <span style="color:#D14A3F">*</span></label>
@@ -927,7 +927,7 @@ body:has(.modal:target) { overflow: hidden; }
           const attrs = [
             controls ? 'controls' : '', autoplay ? 'autoplay' : '',
             muted ? 'muted' : '', loop ? 'loop' : '',
-            'playsinline', 'preload="metadata"', 'crossorigin="anonymous"',
+            'playsinline', 'preload="metadata"',
             `id="prod-video-${idx}"`
           ].filter(Boolean).join(' ');
           if (ratio === 'auto') {
