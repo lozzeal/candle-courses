@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resend failed emails</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; max-width: 780px; margin: 30px auto; padding: 0 20px; color: #222; }
+  h1 { font-size: 22px; }
+  input[type=password] { width: 100%; padding: 10px; font: inherit; border: 1px solid #ccc; border-radius: 6px; margin: 8px 0 16px; }
+  button { padding: 12px 22px; font: inherit; background: #38A30D; color: #fff; border: 0; border-radius: 6px; cursor: pointer; margin-right: 8px; }
+  button.secondary { background: #666; }
+  button:disabled { background: #999; cursor: not-allowed; }
+  pre { background: #1e1e1e; color: #d4d4d4; padding: 14px; border-radius: 6px; font: 12px/1.4 monospace; max-height: 520px; overflow-y: auto; white-space: pre-wrap; }
+  .row { margin: 12px 0; }
+  .stat { display: inline-block; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; margin-right: 8px; }
+  .stat.ok { background: #d4edda; color: #155724; }
+  .stat.err { background: #f8d7da; color: #721c24; }
+</style>
+</head>
+<body>
+<h1>Resend failed emails</h1>
+<p>Знаходить усі Approved-платежі з <b>email_sent = false</b> і повторно шле лист із доступом.</p>
+
+<label>Migration token:</label>
+<input type="password" id="token" placeholder="MIGRATION_TOKEN">
+
+<div class="row">
+  <button id="btn-all">Resend всім</button>
+  <button id="btn-one" class="secondary">Resend по order_reference…</button>
+</div>
+
+<div id="stats" class="row" style="display:none">
+  <span class="stat">Опрацьовано: <b id="processed">0</b></span>
+  <span class="stat ok">Надіслано: <b id="sent">0</b></span>
+  <span class="stat err">Помилок: <b id="failed">0</b></span>
+</div>
+
+<pre id="log">Готовий.</pre>
+
+<script>
+const $ = id => document.getElementById(id);
+async function run(orderRef) {
+  const token = $('token').value.trim();
+  if (!token) { alert('Введіть token'); return; }
+  $('btn-all').disabled = true; $('btn-one').disabled = true;
+  $('log').textContent = 'Виконую…\n';
+  try {
+    const res = await fetch('/api/resend-failed-emails', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
+      body: JSON.stringify(orderRef ? { orderReference: orderRef } : {}),
+    });
+    const data = await res.json();
+    $('stats').style.display = 'block';
+    $('processed').textContent = data.processed || 0;
+    $('sent').textContent = data.sent || 0;
+    $('failed').textContent = data.failed || 0;
+    $('log').textContent = JSON.stringify(data, null, 2);
+  } catch (e) {
+    $('log').textContent = 'FAIL: ' + e.message;
+  } finally {
+    $('btn-all').disabled = false; $('btn-one').disabled = false;
+  }
+}
+$('btn-all').addEventListener('click', () => run());
+$('btn-one').addEventListener('click', () => {
+  const r = prompt('order_reference (наприклад WFP-BTN-12280451-6a5f1cb652995):');
+  if (r) run(r.trim());
+});
+</script>
+</body>
+</html>

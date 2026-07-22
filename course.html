@@ -933,6 +933,38 @@ body:has(.modal:target) { overflow: hidden; }
   const params = new URLSearchParams(window.location.search);
   const slug = params.get('slug') || params.get('course');
 
+  // ====== Обробка повернення з оплати WayForPay ======
+  // WayForPay додає параметри: orderReference, merchantSignature, reason, etc
+  const isPaymentReturn = params.has('orderReference') || params.has('merchantSignature') || params.get('paid') === '1';
+  if (isPaymentReturn) {
+    // Якщо у URL є slug — редирект на thanks.html з готовою кнопкою Telegram
+    if (slug) {
+      window.location.replace(`/thanks.html?slug=${encodeURIComponent(slug)}`);
+      return;
+    }
+    // Немає slug — не знаємо який курс, показуємо загальне «дякуємо»
+    document.title = 'Дякуємо за оплату - 100candle.shop';
+    root.innerHTML = `
+      <div style="max-width:600px;margin:80px auto;padding:0 24px;text-align:center">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(#49C318,#38A30D);display:inline-flex;align-items:center;justify-content:center;margin-bottom:24px;box-shadow:0 10px 30px rgba(56,163,13,0.35)">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h1 style="font-family:'Cormorant Garamond',serif;font-size:38px;color:#262626;margin-bottom:16px;letter-spacing:0.02em">Дякуємо за оплату!</h1>
+        <p style="color:#555;line-height:1.7;font-size:17px;margin-bottom:28px">
+          Ваше замовлення прийнято. Протягом <b>кількох хвилин</b> ви отримаєте лист на пошту з посиланням на Telegram-канал курсу.
+        </p>
+        <p style="color:#888;line-height:1.6;font-size:14px;margin-bottom:36px">
+          Якщо лист не прийшов протягом <b>10 хвилин</b> — перевірте папку <b>«Спам»</b> або напишіть нам у Telegram <a href="https://t.me/GalunaSpeak" style="color:var(--accent);font-weight:600">@GalunaSpeak</a> — швидко надішлемо посилання вручну.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+          <a href="https://t.me/GalunaSpeak" style="display:inline-block;padding:14px 32px;background:#229ED9;color:#fff;text-decoration:none;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 8px 20px rgba(34,158,217,0.35)">Написати у Telegram</a>
+          <a href="index.html" style="color:#888;text-decoration:none;font-weight:500;font-size:14px">← На головну</a>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
   function showError(msg) {
     root.innerHTML = `<div class="page-loader" style="flex-direction:column;gap:14px">
       <div style="font-size:48px">🔍</div>
