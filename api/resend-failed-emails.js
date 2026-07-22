@@ -12,7 +12,7 @@
 // ============================================================
 
 import nodemailer from 'nodemailer';
-import buildEmailHtml from './_email-template.js';
+import { renderEmailTemplate } from './_email-template.js';
 
 const {
   SUPABASE_URL,
@@ -112,13 +112,7 @@ export default async function handler(req, res) {
       if (!course.telegram_url) { results.push({ ref: wh.order_reference, email, error: 'no telegram_url for ' + course.slug }); failed++; continue; }
 
       try {
-        const html = buildEmailHtml({
-          course,
-          orderRef: wh.order_reference,
-          clientFirstName: firstName,
-          brandUrl: 'https://100candle.shop',
-        });
-        const text = `Вітаємо${firstName ? ', ' + firstName : ''}!\n\nДякуємо за оплату курсу "${course.title}".\n\nВаше посилання на Telegram-групу: ${course.telegram_url}\n\nЯкщо будуть питання — @GalunaSpeak.\n\nЗ повагою, Галина, 100candle.shop`;
+        const { html, text } = renderEmailTemplate({ course });
 
         await transporter.sendMail({
           from: `"${SMTP_FROM_NAME || '100candle.shop'}" <${SMTP_FROM || SMTP_USER}>`,
