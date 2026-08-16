@@ -806,6 +806,94 @@ body:has(.modal:target) { overflow: hidden; }
 .footer__copy { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 32px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; }
 @media (max-width: 900px) { .footer__inner { grid-template-columns: 1fr 1fr; gap: 32px; } }
 @media (max-width: 560px) { .footer { padding: 40px 16px 24px; } .footer__inner { grid-template-columns: 1fr; gap: 28px; } }
+
+/* ==================== Instagram CTA ==================== */
+.ig-cta {
+  padding: 72px 20px;
+  background: linear-gradient(135deg, #fdf5ee 0%, #fce8dd 50%, #fbdbe7 100%);
+  position: relative;
+  overflow: hidden;
+}
+.ig-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255,213,178,0.4) 0, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(240,148,193,0.35) 0, transparent 45%);
+  pointer-events: none;
+}
+.ig-cta__inner {
+  max-width: 620px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.ig-cta__icon {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 20px;
+  background: linear-gradient(135deg, #F58529 0%, #DD2A7B 50%, #8134AF 100%);
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 14px 34px rgba(221,42,123,0.35);
+}
+.ig-cta__icon svg { width: 40px; height: 40px; }
+.ig-cta__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: 38px;
+  color: #262626;
+  margin-bottom: 16px;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+}
+.ig-cta__sub {
+  color: #4a4a4a;
+  font-size: 16px;
+  line-height: 1.65;
+  margin-bottom: 32px;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.ig-cta__sub b { color: #262626; font-weight: 600; }
+.ig-cta__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 36px;
+  background: linear-gradient(135deg, #F58529 0%, #DD2A7B 50%, #8134AF 100%);
+  color: #fff !important;
+  text-decoration: none;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  box-shadow: 0 14px 30px rgba(221,42,123,0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.ig-cta__btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 38px rgba(221,42,123,0.55);
+}
+.ig-cta__btn svg { width: 22px; height: 22px; }
+.ig-cta__note {
+  margin-top: 18px;
+  font-size: 13px;
+  color: #888;
+  letter-spacing: 0.02em;
+}
+@media (max-width: 560px) {
+  .ig-cta { padding: 56px 16px; }
+  .ig-cta__title { font-size: 30px; }
+  .ig-cta__sub { font-size: 15px; }
+  .ig-cta__btn { padding: 16px 26px; font-size: 15px; width: 100%; max-width: 340px; justify-content: center; }
+}
 </style>
 </head>
 <body>
@@ -1384,6 +1472,35 @@ body:has(.modal:target) { overflow: hidden; }
       })
       .join('');
 
+    // ====== Instagram CTA-блок (для тих хто не купив одразу) ======
+    const instagramBlock = `
+      <section class="ig-cta">
+        <div class="ig-cta__inner">
+          <div class="ig-cta__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </div>
+          <h2 class="ig-cta__title">Не готові купити зараз?</h2>
+          <p class="ig-cta__sub">
+            Підпишіться на мій Instagram — там нові відео курсів, поради, майстер-класи в реальному часі і <b>анонси знижок</b>.
+            Дивіться процес створення свічок зсередини — можливо, це саме те, чого вам не вистачало для рішення.
+          </p>
+          <a href="https://www.instagram.com/100.candle" target="_blank" rel="noopener" class="ig-cta__btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+            Підписатися на Instagram
+          </a>
+          <p class="ig-cta__note">@100.candle · авторка Галина</p>
+        </div>
+      </section>
+    `;
+
     // Додаємо order-modal та sticky-buy
     const price = Number(course.price || 0).toLocaleString('uk-UA').replace(/,/g, ' ');
     const orderModal = `
@@ -1424,7 +1541,7 @@ body:has(.modal:target) { overflow: hidden; }
       </div>
     `;
 
-    root.innerHTML = html + orderModal + stickyBuy;
+    root.innerHTML = html + instagramBlock + orderModal + stickyBuy;
     document.title = course.title + ' - 100candle.shop';
     if (course.page_meta_description) {
       let m = document.querySelector('meta[name="description"]');
