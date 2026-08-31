@@ -1163,8 +1163,8 @@ body:has(.modal:target) { overflow: hidden; }
             <h1 class="course-hero__title">${esc(d.title || ctx.course.title)}</h1>
             ${d.subtitle ? `<p class="course-hero__subtitle">${escMulti(d.subtitle)}</p>` : ''}
             <div class="course-hero__price">
-              ${oldPrice ? `<span class="course-hero__price-old">${oldPrice} ₴</span>` : ''}
-              <span class="course-hero__price-now">${price} ₴</span>
+              ${oldPrice ? `<span class="course-hero__price-old">${oldPrice} грн</span>` : ''}
+              <span class="course-hero__price-now">${price} грн</span>
               ${discount ? `<span class="course-hero__discount">−${discount}%</span>` : ''}
             </div>
             <a href="#order" class="cta-btn">${esc(d.button_text || 'Обрати цей курс')}</a>
@@ -1540,7 +1540,7 @@ body:has(.modal:target) { overflow: hidden; }
     `;
     const stickyBuy = `
       <div class="sticky-buy">
-        <span class="sticky-buy__price">${price} ₴</span>
+        <span class="sticky-buy__price">${price} грн</span>
         <a href="#order" class="cta-btn">Купити курс</a>
       </div>
     `;

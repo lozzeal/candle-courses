@@ -3878,12 +3878,12 @@ body:has(.modal:target) { overflow: hidden; }
           if (op) {
             const discount = Math.round((1 - Number(c.price) / Number(c.old_price)) * 100);
             return `<div class="course-card__price-block">
-              <span class="course-card__price-old">${op} ₴</span>
-              <span class="course-card__price">${p} ₴</span>
+              <span class="course-card__price-old">${op} грн</span>
+              <span class="course-card__price">${p} грн</span>
               <span class="course-card__discount">−${discount}%</span>
             </div>`;
           }
-          return `<p class="course-card__price">${p} ₴</p>`;
+          return `<p class="course-card__price">${p} грн</p>`;
         })()}
         ${(() => {
           // Якщо текст кнопки вже містить стрілку - не додаємо ще одну
@@ -4013,7 +4013,7 @@ body:has(.modal:target) { overflow: hidden; }
             <div class="shop-featured__body">
               <p class="shop-featured__cat">${esc(cat ? cat.name : '')}</p>
               <p class="shop-featured__name">${esc(p.name)}</p>
-              <p class="shop-featured__price">${p.old_price ? `<span style="text-decoration:line-through;color:#aaa;font-size:13px;margin-right:6px">${p.old_price} ₴</span>` : ''}${p.price} ₴</p>
+              <p class="shop-featured__price">${p.old_price ? `<span style="text-decoration:line-through;color:#aaa;font-size:13px;margin-right:6px">${p.old_price} грн</span>` : ''}${p.price} грн</p>
             </div>
           </a>
         `;

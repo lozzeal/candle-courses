@@ -1033,7 +1033,7 @@ html, body {
         <div class="stat-card">
           <div class="stat-label">Виторг (оплачено)</div>
           <div class="stat-value" id="ms-revenue" style="color:var(--accent)">-</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:4px">₴ за період</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px">грн за період</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Конверсія</div>
@@ -1251,11 +1251,11 @@ html, body {
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Ціна, ₴ <span class="req">*</span></label>
+          <label>Ціна, грн <span class="req">*</span></label>
           <input id="f-price" type="number" min="0" step="1" required>
         </div>
         <div class="form-group">
-          <label>Стара ціна, ₴ <span style="color:#aaa;font-weight:400">(для знижки)</span></label>
+          <label>Стара ціна, грн <span style="color:#aaa;font-weight:400">(для знижки)</span></label>
           <input id="f-old-price" type="number" min="0" step="1">
         </div>
       </div>
@@ -1415,7 +1415,7 @@ html, body {
 
     <div class="form-row">
       <div class="form-group">
-        <label>Ціна, ₴ <span class="req">*</span></label>
+        <label>Ціна, грн <span class="req">*</span></label>
         <input id="lc-price" type="number" min="0" step="1">
       </div>
       <div class="form-group">
@@ -1853,8 +1853,8 @@ function renderProducts() {
             <div class="product-card__cat">${getCategoryName(p.category_id)}</div>
             <div class="product-card__name">${escapeHtml(p.name)}</div>
             <div class="product-card__price">
-              ${p.old_price ? `<span class="product-card__price-old">${p.old_price} ₴</span>` : ''}
-              ${p.price} ₴
+              ${p.old_price ? `<span class="product-card__price-old">${p.old_price} грн</span>` : ''}
+              ${p.price} грн
             </div>
             <div class="product-card__actions">
               <button class="btn-action" onclick="editProduct(${p.id})">✏️ Редагувати</button>
@@ -3392,7 +3392,7 @@ function renderLandingCourses() {
             ${c.badge ? escapeHtml(c.badge) + ' · ' : ''}${c.items?.length || 0} пунктів${c.items_2?.length ? ' + ' + c.items_2.length : ''}
           </div>
         </div>
-        <div style="font-weight:700;color:var(--accent);font-size:18px;font-family:'Cormorant Garamond',serif">${c.price} ₴</div>
+        <div style="font-weight:700;color:var(--accent);font-size:18px;font-family:'Cormorant Garamond',serif">${c.price} грн</div>
         <div class="course-actions">
           <button class="course-actions__btn" onclick="copyCourseThanksLink(${c.id}, '${escapeAttr(c.slug || '')}', event)" title="Скопіювати посилання на сторінку доступу">
             <span class="course-actions__icon">🔗</span>

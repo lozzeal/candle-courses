@@ -868,7 +868,7 @@ body:has(.modal:target) { overflow: hidden; }
           <div class="product__body">
             <p class="product__cat">Подарунковий набір</p>
             <a href="product.html" style="text-decoration:none;color:inherit;"><p class="product__name">Букет «Полуничний рай»</p></a>
-            <p class="product__price"><span class="product__price-old">1 150 ₴</span>980 ₴</p>
+            <p class="product__price"><span class="product__price-old">1 150 грн</span>980 грн</p>
             <a href="product.html" class="product__btn">Детальніше →</a>
           </div>
         </article>
@@ -880,7 +880,7 @@ body:has(.modal:target) { overflow: hidden; }
           <div class="product__body">
             <p class="product__cat">Подарунковий набір</p>
             <p class="product__name">Набір «Романтичний вечір»</p>
-            <p class="product__price">1 200 ₴</p>
+            <p class="product__price">1 200 грн</p>
             <a href="#order" class="product__btn">Замовити</a>
           </div>
         </article>
@@ -893,7 +893,7 @@ body:has(.modal:target) { overflow: hidden; }
           <div class="product__body">
             <p class="product__cat">Фігурна свічка</p>
             <p class="product__name">Букет троянд</p>
-            <p class="product__price">380 ₴</p>
+            <p class="product__price">380 грн</p>
             <a href="#order" class="product__btn">Замовити</a>
           </div>
         </article>
@@ -906,7 +906,7 @@ body:has(.modal:target) { overflow: hidden; }
           <div class="product__body">
             <p class="product__cat">Фігурна свічка</p>
             <p class="product__name">Свічка-піон білий</p>
-            <p class="product__price"><span class="product__price-old">320 ₴</span>270 ₴</p>
+            <p class="product__price"><span class="product__price-old">320 грн</span>270 грн</p>
             <a href="#order" class="product__btn">Замовити</a>
           </div>
         </article>
@@ -919,7 +919,7 @@ body:has(.modal:target) { overflow: hidden; }
           <div class="product__body">
             <p class="product__cat">Аромасвічка</p>
             <p class="product__name">Соєва свічка «Ваніль»</p>
-            <p class="product__price">220 ₴</p>
+            <p class="product__price">220 грн</p>
             <a href="#order" class="product__btn">Замовити</a>
           </div>
         </article>
@@ -932,7 +932,7 @@ body:has(.modal:target) { overflow: hidden; }
           <div class="product__body">
             <p class="product__cat">Аромасвічка</p>
             <p class="product__name">Соєва свічка «Лаванда»</p>
-            <p class="product__price">240 ₴</p>
+            <p class="product__price">240 грн</p>
             <a href="#order" class="product__btn">Замовити</a>
           </div>
         </article>
@@ -945,7 +945,7 @@ body:has(.modal:target) { overflow: hidden; }
           <div class="product__body">
             <p class="product__cat">Весільна</p>
             <p class="product__name">Свічки для церемонії (пара)</p>
-            <p class="product__price">680 ₴</p>
+            <p class="product__price">680 грн</p>
             <a href="#order" class="product__btn">Замовити</a>
           </div>
         </article>
@@ -957,7 +957,7 @@ body:has(.modal:target) { overflow: hidden; }
           <div class="product__body">
             <p class="product__cat">Весільна</p>
             <p class="product__name">Сімейне вогнище (набір 3 шт)</p>
-            <p class="product__price">950 ₴</p>
+            <p class="product__price">950 грн</p>
             <a href="#order" class="product__btn">Замовити</a>
           </div>
         </article>
@@ -971,7 +971,7 @@ body:has(.modal:target) { overflow: hidden; }
           <div class="product__body">
             <p class="product__cat">З таємним написом</p>
             <p class="product__name">Свічка-сюрприз «Я тебе кохаю»</p>
-            <p class="product__price">320 ₴</p>
+            <p class="product__price">320 грн</p>
             <a href="#order" class="product__btn">Замовити</a>
           </div>
         </article>
@@ -983,7 +983,7 @@ body:has(.modal:target) { overflow: hidden; }
           <div class="product__body">
             <p class="product__cat">З таємним написом</p>
             <p class="product__name">З персональним повідомленням</p>
-            <p class="product__price">от 350 ₴</p>
+            <p class="product__price">от 350 грн</p>
             <a href="#order" class="product__btn">Замовити</a>
           </div>
         </article>
@@ -996,7 +996,7 @@ body:has(.modal:target) { overflow: hidden; }
           <div class="product__body">
             <p class="product__cat">Спрей</p>
             <p class="product__name">Спрей для дому «Сандал», 50 мл</p>
-            <p class="product__price">280 ₴</p>
+            <p class="product__price">280 грн</p>
             <a href="#order" class="product__btn">Замовити</a>
           </div>
         </article>
@@ -1238,7 +1238,7 @@ body:has(.modal:target) { overflow: hidden; }
         <span class="shop-cat-tile__icon">${TOP_CAT_ICONS[x.cat.slug] || '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#9EE86A" stroke-width="1.8"/></svg>'}</span>
         <span class="shop-cat-tile__text">
           <span class="shop-cat-tile__name">${esc(x.cat.name)}</span>
-          <span class="shop-cat-tile__count">${x.minPrice ? 'від ' + x.minPrice + ' ₴' : x.count + ' тов.'}</span>
+          <span class="shop-cat-tile__count">${x.minPrice ? 'від ' + x.minPrice + ' грн' : x.count + ' тов.'}</span>
         </span>
       </a>
     `).join('');
@@ -1352,8 +1352,8 @@ body:has(.modal:target) { overflow: hidden; }
               <p class="product__name">${esc(p.name)}</p>
             </a>
             <p class="product__price">
-              ${p.old_price ? `<span class="product__price-old">${p.old_price} ₴</span>` : ''}
-              ${p.price} ₴
+              ${p.old_price ? `<span class="product__price-old">${p.old_price} грн</span>` : ''}
+              ${p.price} грн
             </p>
             <a href="product.html?id=${p.id}" class="product__btn">Детальніше →</a>
           </div>
